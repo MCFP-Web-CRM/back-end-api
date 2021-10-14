@@ -1,10 +1,8 @@
-package com.mcfuturepartners.crm.api.entity;
+package com.mcfuturepartners.crm.api.user.entity;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.stereotype.Component;
-
-import java.util.Set;
 
 @Data @Component
 public class UserDto {

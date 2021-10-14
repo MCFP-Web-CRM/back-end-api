@@ -1,11 +1,10 @@
-package com.mcfuturepartners.crm.api.entity;
+package com.mcfuturepartners.crm.api.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

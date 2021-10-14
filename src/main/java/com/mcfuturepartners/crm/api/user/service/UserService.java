@@ -1,6 +1,6 @@
-package com.mcfuturepartners.crm.api.service;
+package com.mcfuturepartners.crm.api.user.service;
 
-import com.mcfuturepartners.crm.api.entity.User;
+import com.mcfuturepartners.crm.api.user.entity.User;
 import org.springframework.stereotype.Component;
 
 @Component

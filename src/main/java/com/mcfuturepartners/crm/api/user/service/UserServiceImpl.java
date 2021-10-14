@@ -1,10 +1,9 @@
-package com.mcfuturepartners.crm.api.service;
+package com.mcfuturepartners.crm.api.user.service;
 
-import com.mcfuturepartners.crm.api.entity.Authority;
-import com.mcfuturepartners.crm.api.entity.User;
-import com.mcfuturepartners.crm.api.entity.UserDto;
+import com.mcfuturepartners.crm.api.user.entity.Authority;
+import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
-import com.mcfuturepartners.crm.api.repository.UserRepository;
+import com.mcfuturepartners.crm.api.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,12 +25,13 @@ public class UserServiceImpl implements UserService {
         if(!userRepository.existsByUsername(user.getUsername())){
             user.setPassword(encoder.encode(user.getPassword()));
             Set<Authority> authorities = new HashSet<>();
+            //입력된 authority에 따라서 분기처리
             authorities.add(Authority.USER);
             authorities.add(Authority.ADMIN);
             user.setAuthorities(authorities);
             userRepository.save(user);
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
-                    = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(),user.getAuthorities());
+                    = new UsernamePasswordAuthenticationToken(user.getUsername(),"",user.getAuthorities());
             return provider.createToken(usernamePasswordAuthenticationToken);
         }
         return null;

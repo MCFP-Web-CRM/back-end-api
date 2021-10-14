@@ -1,6 +1,6 @@
-package com.mcfuturepartners.crm.api.repository;
+package com.mcfuturepartners.crm.api.user.repository;
 
-import com.mcfuturepartners.crm.api.entity.User;
+import com.mcfuturepartners.crm.api.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

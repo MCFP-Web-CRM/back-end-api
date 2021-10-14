@@ -1,11 +1,11 @@
 package com.mcfuturepartners.crm.api;
 
-import com.mcfuturepartners.crm.api.entity.User;
-import com.mcfuturepartners.crm.api.entity.UserDto;
+import com.mcfuturepartners.crm.api.user.entity.User;
+import com.mcfuturepartners.crm.api.user.entity.UserDto;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
-import com.mcfuturepartners.crm.api.repository.UserRepository;
+import com.mcfuturepartners.crm.api.user.repository.UserRepository;
 import com.mcfuturepartners.crm.api.security.filter.TokenFilter;
-import com.mcfuturepartners.crm.api.service.UserService;
+import com.mcfuturepartners.crm.api.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -17,7 +17,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @RestController

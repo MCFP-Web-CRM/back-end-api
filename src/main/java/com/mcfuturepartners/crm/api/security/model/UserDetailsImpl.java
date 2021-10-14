@@ -1,7 +1,7 @@
 package com.mcfuturepartners.crm.api.security.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mcfuturepartners.crm.api.entity.User;
+import com.mcfuturepartners.crm.api.user.entity.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

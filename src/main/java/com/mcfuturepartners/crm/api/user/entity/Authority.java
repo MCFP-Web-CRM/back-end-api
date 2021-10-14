@@ -1,16 +1,10 @@
-package com.mcfuturepartners.crm.api.entity;
+package com.mcfuturepartners.crm.api.user.entity;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Table(name = "authority")

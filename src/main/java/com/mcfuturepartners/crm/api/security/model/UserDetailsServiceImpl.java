@@ -1,7 +1,7 @@
 package com.mcfuturepartners.crm.api.security.model;
 
-import com.mcfuturepartners.crm.api.entity.User;
-import com.mcfuturepartners.crm.api.repository.UserRepository;
+import com.mcfuturepartners.crm.api.user.entity.User;
+import com.mcfuturepartners.crm.api.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
