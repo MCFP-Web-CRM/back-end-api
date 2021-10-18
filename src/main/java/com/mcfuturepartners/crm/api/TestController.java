@@ -48,7 +48,6 @@ public class TestController {
             return new ResponseEntity<>("Logged in", httpHeaders, HttpStatus.OK);
         }
         return ResponseEntity.ok("Log in failed");
-
     }
     @PostMapping(path="/authenticate")
     public ResponseEntity<String> authorize(@RequestBody UserDto userDto){
