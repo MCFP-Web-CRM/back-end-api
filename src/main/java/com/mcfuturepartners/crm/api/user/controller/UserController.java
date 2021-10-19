@@ -1,8 +1,10 @@
-package com.mcfuturepartners.crm.api;
+package com.mcfuturepartners.crm.api.user.controller;
 
-import com.mcfuturepartners.crm.api.user.entity.User;
-import com.mcfuturepartners.crm.api.user.entity.UserDto;
+import com.mcfuturepartners.crm.api.user.dto.RequestLogin;
+import com.mcfuturepartners.crm.api.user.dto.UserDto;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
+import com.mcfuturepartners.crm.api.user.entity.User;
+import com.mcfuturepartners.crm.api.user.exception.ErrorCode;
 import com.mcfuturepartners.crm.api.user.repository.UserRepository;
 import com.mcfuturepartners.crm.api.security.filter.TokenFilter;
 import com.mcfuturepartners.crm.api.user.service.UserService;
@@ -20,9 +22,9 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping(path = "/api")
+@RequestMapping(path = "/users")
 @RequiredArgsConstructor
-public class TestController {
+public class UserController {
     private final UserRepository userRepository;
     private final UserService userService;
     private final TokenProvider tokenProvider;
@@ -37,31 +39,21 @@ public class TestController {
 
     @PostMapping(path="/signup")
     public ResponseEntity<String> signup(@RequestBody UserDto userDto){
-        return ResponseEntity.ok(userService.signup(mapper.map(userDto, User.class)));
+        if(userService.signup(userDto.toEntity()).equals(ErrorCode.USER_ALREADY_EXISTS.getMsg())){
+            return ResponseEntity.badRequest().body(ErrorCode.USER_ALREADY_EXISTS.getMsg());
+        }
+        return new ResponseEntity<>("User Register Succeeded", HttpStatus.CREATED);
     }
     @PostMapping(path="/signin")
-    public ResponseEntity<String> signin(@RequestBody UserDto userDto){
-        String jwt = userService.signin(mapper.map(userDto,User.class));
+    public ResponseEntity<String> signin(@RequestBody RequestLogin requestLogin){
+        String jwt = userService.signin(mapper.map(requestLogin, User.class));
+
         if(jwt != "Wrong Password" && jwt != null){
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add(TokenFilter.AUTHORIZATION_HEADER, "Bearer "+jwt);
             return new ResponseEntity<>("Logged in", httpHeaders, HttpStatus.OK);
         }
-        return ResponseEntity.ok("Log in failed");
-
-    }
-    @PostMapping(path="/authenticate")
-    public ResponseEntity<String> authorize(@RequestBody UserDto userDto){
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(userDto.getUsername(),encoder.encode(userDto.getPassword()));
-
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        String jwt = tokenProvider.createToken(authenticationToken);
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(TokenFilter.AUTHORIZATION_HEADER, "Bearer "+jwt);
-
-        return new ResponseEntity<>("HIHI", httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>("Log in failed",HttpStatus.BAD_REQUEST);
     }
     @GetMapping("/admin")
     public ResponseEntity<String> forAdmin(){

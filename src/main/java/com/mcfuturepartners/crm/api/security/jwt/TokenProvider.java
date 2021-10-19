@@ -41,13 +41,14 @@ public class TokenProvider implements InitializingBean  {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-
         long now = (new Date()).getTime();
         Date validity = new Date(now + validityInMs);
+        log.info("login authority : " + authorities);
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
+                .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256,securityKey)
                 .compact();
     }
@@ -57,7 +58,7 @@ public class TokenProvider implements InitializingBean  {
                 .setSigningKey(securityKey)
                 .parseClaimsJws(token)
                 .getBody();
-
+        log.info("token validation" + claims.toString());
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
                         .map(SimpleGrantedAuthority::new)
