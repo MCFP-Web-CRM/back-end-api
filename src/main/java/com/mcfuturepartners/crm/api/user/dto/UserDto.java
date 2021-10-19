@@ -1,7 +1,9 @@
 package com.mcfuturepartners.crm.api.user.dto;
 
 import com.mcfuturepartners.crm.api.user.entity.Authority;
+import com.mcfuturepartners.crm.api.user.entity.Department;
 import com.mcfuturepartners.crm.api.user.entity.User;
+import com.mcfuturepartners.crm.api.user.repository.DepartmentRepository;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,12 +28,13 @@ public class UserDto {
         Set<Authority> authorities = new HashSet<>();
         if(authority.equals(Authority.ADMIN.name())) authorities.add(Authority.ADMIN);
         authorities.add(Authority.USER);
+
         return User.builder()
                 .username(username)
                 .password(password)
                 .name(name)
-                .department(department)
                 .phone(phone)
+                .department(department)
                 .authorities(authorities)
                 .build();
     }

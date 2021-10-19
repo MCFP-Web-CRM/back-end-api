@@ -38,6 +38,10 @@ public class User {
     //얘도 one to many, many to one 처리 해야함
     private String department;
 
+    /*@ManyToOne
+    @JoinColumn(name="department_id")
+    private Department department;*/
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(
