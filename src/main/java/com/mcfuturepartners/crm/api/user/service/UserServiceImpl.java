@@ -46,4 +46,14 @@ public class UserServiceImpl implements UserService {
             throw new LoginException();
         }
     }
+
+    @Override
+    public String deleteUser(long id) {
+        try {
+            userRepository.deleteById(id);
+            return "successfully done";
+        } catch (Exception e){
+            throw e;
+        }
+    }
 }

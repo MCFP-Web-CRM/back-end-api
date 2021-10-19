@@ -7,4 +7,5 @@ import org.springframework.stereotype.Component;
 public interface UserService {
     String signup(User user);
     String signin(User user);
+    String deleteUser(long id);
 }

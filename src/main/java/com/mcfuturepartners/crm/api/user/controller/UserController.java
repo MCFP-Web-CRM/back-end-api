@@ -37,6 +37,7 @@ public class UserController {
         return ResponseEntity.ok().body("Hello");
     }
 
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping(path="/signup")
     public ResponseEntity<String> signup(@RequestBody UserDto userDto){
         if(userService.signup(userDto.toEntity()).equals(ErrorCode.USER_ALREADY_EXISTS.getMsg())){
@@ -44,6 +45,8 @@ public class UserController {
         }
         return new ResponseEntity<>("User Register Succeeded", HttpStatus.CREATED);
     }
+
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping(path="/signin")
     public ResponseEntity<String> signin(@RequestBody RequestLogin requestLogin){
         String jwt = userService.signin(mapper.map(requestLogin, User.class));
@@ -55,10 +58,23 @@ public class UserController {
         }
         return new ResponseEntity<>("Log in failed",HttpStatus.BAD_REQUEST);
     }
+
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @DeleteMapping(path = "/{userid}")
+    public ResponseEntity<String> deleteUser(@PathVariable("userid") long userId){
+        if(userService.deleteUser(userId).isEmpty()){
+            return new ResponseEntity<>("not found", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("deleted",HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping("/admin")
     public ResponseEntity<String> forAdmin(){
         return ResponseEntity.ok().body("admin 만세!");
     }
+
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping("/user")
     public ResponseEntity<String> forUser(){
         return ResponseEntity.ok().body("user 만세!");
