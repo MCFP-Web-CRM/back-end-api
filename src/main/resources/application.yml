@@ -5,7 +5,7 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://10.33.200.36:3306/mcfuturepartners?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:mariadb://localhost:3306/mcfuturepartners?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
     username: user
     password: user
 
