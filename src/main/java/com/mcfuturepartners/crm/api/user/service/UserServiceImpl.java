@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String deleteUser(long id) {
         try {
-            userRepository.deleteById(id);
+            userRepository.delete(userRepository.findById(id).get());
             return "successfully done";
         } catch (Exception e){
             throw e;

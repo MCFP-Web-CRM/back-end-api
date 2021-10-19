@@ -46,7 +46,7 @@ public class UserController {
         return new ResponseEntity<>("User Register Succeeded", HttpStatus.CREATED);
     }
 
-    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @CrossOrigin(origins = "*", allowedHeaders = "*", exposedHeaders = "Authorization")
     @PostMapping(path="/signin")
     public ResponseEntity<String> signin(@RequestBody RequestLogin requestLogin){
         String jwt = userService.signin(mapper.map(requestLogin, User.class));
