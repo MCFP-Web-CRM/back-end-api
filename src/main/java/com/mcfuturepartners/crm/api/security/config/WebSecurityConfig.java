@@ -35,13 +35,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
        http.csrf().disable();
        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
        http.authorizeRequests()
-               .antMatchers("/api/signup").permitAll()
-               .antMatchers("/api/signin").permitAll()
-               .antMatchers("/api/authenticate").permitAll()
-               .antMatchers("/api/authority").permitAll()
+               .antMatchers("/users/signup").permitAll()
+               .antMatchers("/users/signin").permitAll()
                .antMatchers("/h2-console/**/**").permitAll()
-               .antMatchers("/api/admin").hasAuthority("ADMIN")
-               .antMatchers("/api/user").hasAuthority("USER")
+               .antMatchers("/users/admin").hasAuthority("ADMIN")
+               .antMatchers("/users/user").hasAuthority("USER")
                .anyRequest().authenticated();
        http.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
    }

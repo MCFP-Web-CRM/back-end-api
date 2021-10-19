@@ -5,16 +5,16 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/test
-    username: root
-    password: root
+    url: jdbc:mariadb://3.36.166.137:3306/mcfuturepartners?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
+    username: user
+    password: user
 
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MariaDB53Dialect
+        dialect: org.hibernate.dialect.MariaDB103Dialect
     defer-datasource-initialization: true
-
-
+server:
+  port: 8081
