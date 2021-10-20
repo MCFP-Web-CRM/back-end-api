@@ -1,4 +1,4 @@
-package com.mcfuturepartners.crm.api.user.exception;
+package com.mcfuturepartners.crm.api.exception;
 
 public class LoginException extends RuntimeException{
     private static final long SerializableUID = 1L;

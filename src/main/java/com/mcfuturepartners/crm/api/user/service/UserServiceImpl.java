@@ -1,11 +1,9 @@
 package com.mcfuturepartners.crm.api.user.service;
 
-import com.mcfuturepartners.crm.api.user.dto.UserDto;
-import com.mcfuturepartners.crm.api.user.entity.Authority;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
-import com.mcfuturepartners.crm.api.user.exception.ErrorCode;
-import com.mcfuturepartners.crm.api.user.exception.LoginException;
+import com.mcfuturepartners.crm.api.exception.ErrorCode;
+import com.mcfuturepartners.crm.api.exception.LoginException;
 import com.mcfuturepartners.crm.api.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +12,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
 @Slf4j
 @Service @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {

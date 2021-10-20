@@ -4,7 +4,7 @@ import com.mcfuturepartners.crm.api.user.dto.RequestLogin;
 import com.mcfuturepartners.crm.api.user.dto.UserDto;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
 import com.mcfuturepartners.crm.api.user.entity.User;
-import com.mcfuturepartners.crm.api.user.exception.ErrorCode;
+import com.mcfuturepartners.crm.api.exception.ErrorCode;
 import com.mcfuturepartners.crm.api.user.repository.UserRepository;
 import com.mcfuturepartners.crm.api.security.filter.TokenFilter;
 import com.mcfuturepartners.crm.api.user.service.UserService;
@@ -14,9 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
