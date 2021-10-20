@@ -9,6 +9,7 @@ spring:
     username: user
     password: user
 
+
   jpa:
     hibernate:
       ddl-auto: update
