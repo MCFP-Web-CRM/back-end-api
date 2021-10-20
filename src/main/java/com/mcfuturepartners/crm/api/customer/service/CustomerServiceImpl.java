@@ -44,10 +44,10 @@ public class CustomerServiceImpl implements CustomerService{
         try {
             Optional<Customer> exist = customerRepository.findByNameAndPhone(customer.getName(),customer.getPhone());
             if(exist.isPresent()){
+                return "customer already exist";
+            }else{
                 customerRepository.save(customer);
                 return "successfully done";
-            }else{
-                return "customer already exist";
             }
         } catch(Exception e){
             throw e;
