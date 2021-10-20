@@ -8,8 +8,9 @@ import java.util.Optional;
 
 public interface CustomerService {
     List<Customer> findAllCustomer();
-    Customer save(Customer customer);
+    Customer findCustomer(Long id);
+    String save(Customer customer);
     List<Customer> selectCustomer(Map<String,String> map);
-    boolean updateCustomer(Customer customer);
-    boolean deleteCustomer(Long customerno);
+    String updateCustomer(Customer customer);
+    String deleteCustomer(Long id);
 }

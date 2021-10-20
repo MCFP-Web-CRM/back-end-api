@@ -3,11 +3,14 @@ package com.mcfuturepartners.crm.api.customer.service;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.customer.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,10 +24,9 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public Customer save(Customer customer) {
-        Customer save = customerRepository.save(customer);
-        System.out.println("save.getRegDate() = " + save.getRegDate());
-        return save;
+    public Customer findCustomer(Long id) {
+        return customerRepository.findById(id)
+                .orElseThrow(()-> new HttpClientErrorException(HttpStatus.NOT_FOUND,"doesn't exist customer"));
     }
 
     @Override
@@ -38,72 +40,36 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public boolean updateCustomer(Customer customer) {
-        if(customerRepository.existsById(customer.getNo())){
-            //update처리
-//            customerRepository.deleteById(customerno);
-            return true;
-        }else{
-            return false;
+    public String save(Customer customer) {
+        try {
+            Optional<Customer> exist = customerRepository.findByNameAndPhone(customer.getName(),customer.getPhone());
+            if(exist.isPresent()){
+                customerRepository.save(customer);
+                return "successfully done";
+            }else{
+                return "customer already exist";
+            }
+        } catch(Exception e){
+            throw e;
         }
     }
 
     @Override
-    public boolean deleteCustomer(Long customerno) {
-        if(customerRepository.existsById(customerno)){
-            customerRepository.deleteById(customerno);
-            return true;
-        }else{
-            return false;
+    public String updateCustomer(Customer customer) {
+        try {
+            customerRepository.save(customerRepository.findById(customer.getId()).get());
+            return "successfully done";
+        } catch (Exception e){
+            throw e;
         }
     }
-
-//    @Override
-//    public List<Customer> findAllCustomer() {
-//        List<Customer> allCustomer = customerRepository.findAllCustomer();
-//        //받아온 객체 json형식 string으로 반환
-//        if(allCustomer.isEmpty()){
-//            return null;
-//        }else {
-//            return allCustomer;
-//        }
-//    }
-//    @Override
-//    public List<Customer> selectCustomer(String keyword, String type) {
-//        List<Customer> allCustomer = customerRepository.findAllCustomer();
-//        //조건에 맞는 고객데이터 json형식 string으로 반환
-//        if(allCustomer.isEmpty()){
-//            return null;
-//        }else {
-//            List<Customer> result = null;
-//            for (Customer customer : allCustomer) {
-//
-//            }
-//            return result;
-//        }
-//    }
-//    @Override
-//    public boolean save(Customer customer) {
-//        if(customerRepository.registerCustomer(customer)){
-//            return true;
-//        }else{
-//            return false;
-//        }
-//    }
-//    @Override
-//    public boolean updateCustomer(Customer customer) {
-//        if(customerRepository.updateCustomer(customer)){
-//            return true;
-//        }else{
-//            return false;
-//        }
-//    }
-//    @Override
-//    public boolean deleteCustomer(String customerno) {
-//        if(customerRepository.deleteCustomer(customerno)){
-//            return true;
-//        }else{
-//            return false;
-//        }
-//    }
+    @Override
+    public String deleteCustomer(Long id) {
+        try {
+            customerRepository.delete(customerRepository.findById(id).get());
+            return "successfully done";
+        } catch (Exception e){
+            throw e;
+        }
+    }
 }

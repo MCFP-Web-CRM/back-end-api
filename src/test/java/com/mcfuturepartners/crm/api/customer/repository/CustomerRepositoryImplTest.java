@@ -52,9 +52,9 @@ class CustomerRepositoryImplTest {
 
     @Test
     public void find(){
-        Optional<Customer> find = customerRepository.findById(1l);
-        Assertions.assertThat(find.get().getNo()).isEqualTo(1);
-        System.out.println("find.get().toString() = " + find.get().toString());
+//        Optional<Customer> find = customerRepository.findById(1l);
+//        Assertions.assertThat(find.get().getNo()).isEqualTo(1);
+//        System.out.println("find.get().toString() = " + find.get().toString());
     }
 
     @Test

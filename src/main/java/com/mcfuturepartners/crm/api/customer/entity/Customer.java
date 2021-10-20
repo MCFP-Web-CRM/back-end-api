@@ -18,9 +18,9 @@ import java.util.Date;
 @NoArgsConstructor
 public class Customer {
     @Id
-    @Column(name = "no")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long no;
+    private Long id;
 
     @Column(name = "name")
     @NotNull
