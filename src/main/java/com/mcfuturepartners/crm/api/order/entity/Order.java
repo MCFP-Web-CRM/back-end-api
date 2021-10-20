@@ -1,5 +1,6 @@
 package com.mcfuturepartners.crm.api.order.entity;
 
+import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,11 +20,11 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private long id;
-    //ManytoOne
-    private String customerId;
-    private String employeeId;
+
+    @ManyToOne
+    @JoinColumn(name = "custumer_id")
+    private Customer customer;
     private String productId;
 
-    private String customerMembership;
     private Date regDate;
 }

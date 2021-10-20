@@ -1,5 +1,6 @@
 package com.mcfuturepartners.crm.api.customer.controller;
 
+import com.mcfuturepartners.crm.api.customer.dto.CustomerDto;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.customer.service.CustomerService;
 import lombok.RequiredArgsConstructor;
@@ -41,11 +42,9 @@ public class CustomerController {
 
     }
     @PostMapping(path="/customer")
-    public ResponseEntity<String> saveCustomer(@RequestBody @Valid Customer customer){
-        if(customerService.save(mapper.map(customer, Customer.class)).isEmpty()){
+    public ResponseEntity<String> saveCustomer(@RequestBody CustomerDto customerDto){
+        if(customerService.save(mapper.map(customerDto, Customer.class)).isEmpty()){
             return new ResponseEntity<>("not found", HttpStatus.BAD_REQUEST);
-        }else{
-
         }
         return new ResponseEntity<>("saved",HttpStatus.OK);
     }

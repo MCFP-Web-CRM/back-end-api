@@ -107,7 +107,7 @@ public class CounselController {
 
         if(tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())){
             return new ResponseEntity<>(counselService.updateCounsel(counselId, counselDto), HttpStatus.OK);
-        } else if(username.equals(counselDto.getUser().getUsername())){
+        } else if (true){
             return new ResponseEntity<>(counselService.updateCounsel(counselId, counselDto), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
