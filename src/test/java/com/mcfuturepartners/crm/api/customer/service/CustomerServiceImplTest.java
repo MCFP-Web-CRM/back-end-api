@@ -16,9 +16,7 @@ import java.util.Date;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ContextConfiguration
 @AutoConfigureMockMvc
-@WebAppConfiguration
 @Transactional
 class CustomerServiceImplTest {
     @Autowired
