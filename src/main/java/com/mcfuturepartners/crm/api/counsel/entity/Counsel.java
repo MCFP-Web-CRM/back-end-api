@@ -1,5 +1,6 @@
-package com.mcfuturepartners.crm.api.order.entity;
+package com.mcfuturepartners.crm.api.counsel.entity;
 
+import com.mcfuturepartners.crm.api.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,16 +15,23 @@ import java.util.Date;
 @Table(name = "orders")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Order {
+public class Counsel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private long id;
     //ManytoOne
     private String customerId;
-    private String employeeId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User employeeId;
+
     private String productId;
 
-    private String customerMembership;
+    //진행상황
+    private String status;
+    private String contents;
+
     private Date regDate;
 }
