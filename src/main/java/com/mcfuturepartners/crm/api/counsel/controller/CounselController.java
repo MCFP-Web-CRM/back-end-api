@@ -37,8 +37,6 @@ public class CounselController {
         String token = bearerToken.replace("Bearer ","");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
-        log.info(username, token);
-        //userId validation check 하고 들어와야함
         counselService.saveCounsel(username,counselDto);
         return new ResponseEntity<>("save Succeeded",HttpStatus.CREATED);
     }
@@ -56,7 +54,6 @@ public class CounselController {
         return new ResponseEntity<>(counselService.findAllByUsername(username), HttpStatus.OK);
     }
 
-    //getCounselByUser => ADMIN 권한이면 모두다 access 가능. USER 권한이면 요청이 본인 데이터 외에 요청 시 access deny
     @GetMapping(path = "/user/{user-id}")
     public ResponseEntity<List<Counsel>> getCounselByUser(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,@PathVariable(value = "user-id") long userId){
         String token = bearerToken.replace("Bearer ", "");
@@ -71,7 +68,6 @@ public class CounselController {
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
-    //getCounselById => ADMIN 권한이면 모두다 access 가능. USER 권한이면 본인 데이터 일 시에만 확인 가능 or access deny
     @GetMapping(path = "/{counsel-id}")
     public ResponseEntity<Counsel> getCounselById(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,@PathVariable(value = "counsel-id") long counselId){
         String token = bearerToken.replace("Bearer ", "");
@@ -84,7 +80,6 @@ public class CounselController {
         return new ResponseEntity<>(counselService.findByUsernameId(username,counselId).orElseThrow(),HttpStatus.OK);
     }
 
-    //searchByKeyword => ADMIN 권한이면 전체에서, USER 권한이면 본인 데이터 안에서
     @GetMapping(path="/search")
     public ResponseEntity<List<Counsel>> getCounselByKeyword(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,@RequestParam(value="keyword") String keyword){
         String token = bearerToken.replace("Bearer ", "");
@@ -103,7 +98,6 @@ public class CounselController {
         }
     }
 
-    //updateCounsel => path variable {id} ADMIN 권한이면 모두다 access 가능. USER 권한이면 본인 데이터 외 access deny
     @PutMapping(path = "/{counsel-id}")
     public ResponseEntity<Counsel> updateCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken, @PathVariable(value = "counsel-id") long counselId,
                                                 @RequestBody CounselDto counselDto){
@@ -116,10 +110,8 @@ public class CounselController {
         } else if(username.equals(counselDto.getUser().getUsername())){
             return new ResponseEntity<>(counselService.updateCounsel(counselId, counselDto), HttpStatus.OK);
         }
-        //existByUsername and Id => no? 403(not authorized) Response dto layer에서 작업 후 controller에서 전달만
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-    //deleteCounsel => path variable {id} ADMIN 권한이면 모두다 access 가능. USER 권한이면 본인 데이터 외 access deny
     @DeleteMapping(path = "/{counsel-id}")
     public ResponseEntity<Void> deleteCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken, @PathVariable(value = "counsel-id") long counselId){
         String token = bearerToken.replace("Bearer ", "");
@@ -127,7 +119,6 @@ public class CounselController {
         String username = decodedJWT.getSubject();
 
         if(tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())){
-            //delete and Response
             counselService.deleteCounsel(counselId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
