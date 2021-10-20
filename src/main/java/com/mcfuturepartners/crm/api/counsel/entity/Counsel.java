@@ -12,7 +12,7 @@ import java.util.Date;
 @Entity
 @Data
 @Builder
-@Table(name = "orders")
+@Table(name = "counsels")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Counsel {
@@ -21,13 +21,13 @@ public class Counsel {
     @Column
     private long id;
     //ManytoOne
-    private String customerId;
+    private String customer;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User employeeId;
+    private User user;
 
-    private String productId;
+    private String product;
 
     //진행상황
     private String status;
