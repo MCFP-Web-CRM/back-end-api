@@ -1,6 +1,8 @@
 package com.mcfuturepartners.crm.api.product.entity;
 
 import javax.persistence.Entity;
+
+import com.mcfuturepartners.crm.api.order.entity.Order;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,6 +10,13 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -17,16 +26,19 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class Product {
     @Id
-    @Column(name = "id")
+    @Column(name = "product_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private long id;
 
-    @Column(name = "name")
+    @Column(name = "product_name")
     @NotNull
-    String name;
+    private String name;
 
-    @Column(name = "price")
+    @Column(name = "product_price")
     @NotNull
-    int price;
+    private int price;
+
+    @OneToMany(mappedBy = "product")
+    private List<Order> orders = new ArrayList<>();
 
 }
