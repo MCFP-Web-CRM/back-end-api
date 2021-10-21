@@ -1,5 +1,6 @@
 package com.mcfuturepartners.crm.api.counsel.entity;
 
+import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +22,9 @@ public class Counsel {
     @Column
     private long id;
     //ManytoOne
-    private String customer;
+    @ManyToOne
+    @JoinColumn(name = "custumer_id")
+    private Customer customer;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

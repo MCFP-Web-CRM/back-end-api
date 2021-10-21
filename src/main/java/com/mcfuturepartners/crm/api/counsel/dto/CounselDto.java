@@ -1,6 +1,7 @@
 package com.mcfuturepartners.crm.api.counsel.dto;
 
 import com.mcfuturepartners.crm.api.counsel.entity.Counsel;
+import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.user.repository.UserRepository;
 import io.swagger.annotations.ApiModelProperty;
@@ -17,18 +18,19 @@ import java.util.Date;
 @NoArgsConstructor
 public class CounselDto {
     @ApiModelProperty(position = 0) private long id;
-    @ApiModelProperty(position = 1) private String customerId;
+    @ApiModelProperty(position = 1) private long customerId;
     @ApiModelProperty(position = 2) private String productId;
     @ApiModelProperty(position = 3) private String status;
     @ApiModelProperty(position = 4) private String contents;
-
+    private String username;
     private User user;
+    private Customer customer;
+
 
     public Counsel toEntity(){
        return Counsel.builder()
-                .customer(customerId)
-                .product(productId)
-                .user(user)
+               .customer(Customer.builder().id(customerId).build())
+               .product(productId)
                 .status(status)
                 .contents(contents)
                 .regDate(new Date())
