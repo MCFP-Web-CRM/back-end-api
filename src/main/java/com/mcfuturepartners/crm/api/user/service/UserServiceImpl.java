@@ -1,9 +1,11 @@
 package com.mcfuturepartners.crm.api.user.service;
 
+import com.mcfuturepartners.crm.api.user.dto.UserRevenueDto;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
 import com.mcfuturepartners.crm.api.exception.ErrorCode;
 import com.mcfuturepartners.crm.api.exception.LoginException;
+import com.mcfuturepartners.crm.api.user.entity.UserRevenue;
 import com.mcfuturepartners.crm.api.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service @RequiredArgsConstructor
@@ -51,5 +56,10 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e){
             throw e;
         }
+    }
+
+    @Override
+    public List<UserRevenue> getAllUserRevenue() {
+        return userRepository.findAll().stream().map(user -> UserRevenueDto.salesRevenue(user)).collect(Collectors.toList());
     }
 }
