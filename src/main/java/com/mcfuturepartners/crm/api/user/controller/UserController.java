@@ -5,6 +5,7 @@ import com.mcfuturepartners.crm.api.user.dto.UserDto;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.exception.ErrorCode;
+import com.mcfuturepartners.crm.api.user.entity.UserRevenue;
 import com.mcfuturepartners.crm.api.user.repository.UserRepository;
 import com.mcfuturepartners.crm.api.security.filter.TokenFilter;
 import com.mcfuturepartners.crm.api.user.service.UserService;
@@ -17,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -63,6 +66,13 @@ public class UserController {
         return new ResponseEntity<>("deleted",HttpStatus.OK);
     }
 
+    @GetMapping(path = "/revenue")
+    public ResponseEntity<List<UserRevenue>> getUserRevenue(){
+        return new ResponseEntity<>(userService.getAllUserRevenue(),HttpStatus.OK);
+    }
+
+
+
     @GetMapping("/admin")
     public ResponseEntity<String> forAdmin(){
         return ResponseEntity.ok().body("admin 만세!");
@@ -72,4 +82,6 @@ public class UserController {
     public ResponseEntity<String> forUser(){
         return ResponseEntity.ok().body("user 만세!");
     }
+
+
 }

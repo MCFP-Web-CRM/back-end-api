@@ -2,6 +2,8 @@ package com.mcfuturepartners.crm.api.counsel.service;
 
 import com.mcfuturepartners.crm.api.counsel.dto.CounselDto;
 import com.mcfuturepartners.crm.api.counsel.entity.Counsel;
+import com.mcfuturepartners.crm.api.customer.entity.Customer;
+import com.mcfuturepartners.crm.api.customer.repository.CustomerRepository;
 import com.mcfuturepartners.crm.api.exception.CounselException;
 import com.mcfuturepartners.crm.api.counsel.repository.CounselRepository;
 import com.mcfuturepartners.crm.api.exception.ErrorCode;
@@ -18,6 +20,7 @@ import java.util.Optional;
 public class CounselServiceImpl implements CounselService {
     private final CounselRepository counselRepository;
     private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
     @Override
     public long saveCounsel(String username, CounselDto counselDto) {
         counselDto.setUser(userRepository.getByUsername(username));
@@ -61,9 +64,13 @@ public class CounselServiceImpl implements CounselService {
 
     @Override
     public Counsel updateCounsel(long counselId, CounselDto counselDto) {
-        Counsel counsel = counselRepository.findById(counselId).get();
-        counselDto.setId(counsel.getId());
-        return counselRepository.save(counselDto.toEntity());
+        Counsel updatedCounsel = counselDto.toEntity();
+
+        updatedCounsel.setCustomer(customerRepository.getById(updatedCounsel.getCustomer().getId()));
+        updatedCounsel.setId(counselId);
+        updatedCounsel.setUser(userRepository.getByUsername(counselDto.getUsername()));
+
+        return counselRepository.save(updatedCounsel);
     }
 
     @Override

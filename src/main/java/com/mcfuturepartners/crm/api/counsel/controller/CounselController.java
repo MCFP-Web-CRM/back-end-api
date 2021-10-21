@@ -105,6 +105,8 @@ public class CounselController {
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
 
+        counselDto.setUsername(username);
+
         if(tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())){
             return new ResponseEntity<>(counselService.updateCounsel(counselId, counselDto), HttpStatus.OK);
         } else if (true){
