@@ -1,0 +1,18 @@
+spring:
+  h2:
+    console:
+      enabled: true
+
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://${spring.datasource.env}:3306/mcfuturepartners?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MariaDB103Dialect
+    defer-datasource-initialization: true
+server:
+  port: 8081

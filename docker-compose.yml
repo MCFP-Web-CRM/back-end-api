@@ -1,0 +1,8 @@
+version: "3.7"
+services:
+  app:
+    container_name: "mcfp-api-service"
+    build: .
+    restart: always
+    ports:
+      - "8081:8081"
