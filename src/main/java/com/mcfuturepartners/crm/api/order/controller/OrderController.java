@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.mcfuturepartners.crm.api.order.dto.OrderCancelDto;
 import com.mcfuturepartners.crm.api.order.dto.OrderDto;
+import com.mcfuturepartners.crm.api.order.entity.OrderRevenue;
 import com.mcfuturepartners.crm.api.order.service.OrderService;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
 import com.mcfuturepartners.crm.api.user.entity.Authority;
@@ -41,7 +42,7 @@ public class OrderController {
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
 
-        if(orderService.deletOrder(OrderCancelDto.builder()
+        if(orderService.deleteOrder(OrderCancelDto.builder()
                 .authorities(tokenProvider.getAuthentication(token).getAuthorities().toString())
                 .username(username)
                 .orderId(orderId).build())
@@ -49,5 +50,10 @@ public class OrderController {
             return new ResponseEntity<>("deleted successfully", HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+
+    @GetMapping(path = "/revenue")
+    public ResponseEntity<OrderRevenue> getCurrentRevenue(){
+        return new ResponseEntity<>(orderService.getTotalRevenue(),HttpStatus.OK);
     }
 }

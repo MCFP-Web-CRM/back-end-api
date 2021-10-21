@@ -1,12 +1,15 @@
 package com.mcfuturepartners.crm.api.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mcfuturepartners.crm.api.order.entity.Order;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -41,6 +44,9 @@ public class User {
     /*@ManyToOne
     @JoinColumn(name="department_id")
     private Department department;*/
+
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
