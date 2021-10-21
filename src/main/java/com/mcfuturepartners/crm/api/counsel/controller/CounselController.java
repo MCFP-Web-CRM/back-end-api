@@ -4,6 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.mcfuturepartners.crm.api.counsel.dto.CounselDto;
 import com.mcfuturepartners.crm.api.counsel.entity.Counsel;
+import com.mcfuturepartners.crm.api.customer.entity.Customer;
+import com.mcfuturepartners.crm.api.customer.service.CustomerService;
 import com.mcfuturepartners.crm.api.exception.CounselException;
 import com.mcfuturepartners.crm.api.counsel.service.CounselService;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
@@ -24,6 +26,7 @@ import java.util.List;
 @Slf4j
 public class CounselController {
     private final CounselService counselService;
+    private final CustomerService customerService;
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
 
@@ -33,12 +36,13 @@ public class CounselController {
     }
 
     @PostMapping
-    public ResponseEntity<String> saveCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken, @RequestBody CounselDto counselDto){
+    public ResponseEntity<Counsel> saveCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken, @RequestBody CounselDto counselDto){
         String token = bearerToken.replace("Bearer ","");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
-        counselService.saveCounsel(username,counselDto);
-        return new ResponseEntity<>("save Succeeded",HttpStatus.CREATED);
+        counselDto.setUsername(username);
+
+        return new ResponseEntity<>(counselService.saveCounsel(counselDto),HttpStatus.CREATED);
     }
 
     //bearerToken 권한 확인하고, ADMIN 권한이면 전체 갖다주기. USER면 본인 해당 부분만 갖다주기
@@ -99,7 +103,7 @@ public class CounselController {
     }
 
     @PutMapping(path = "/{counsel-id}")
-    public ResponseEntity<Counsel> updateCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken, @PathVariable(value = "counsel-id") long counselId,
+    public ResponseEntity<String> updateCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken, @PathVariable(value = "counsel-id") long counselId,
                                                 @RequestBody CounselDto counselDto){
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
@@ -108,11 +112,15 @@ public class CounselController {
         counselDto.setUsername(username);
 
         if(tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())){
-            return new ResponseEntity<>(counselService.updateCounsel(counselId, counselDto), HttpStatus.OK);
-        } else if (true){
-            return new ResponseEntity<>(counselService.updateCounsel(counselId, counselDto), HttpStatus.OK);
+            counselService.updateCounsel(counselId, counselDto);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        if(counselService.updateCounsel(counselId, counselDto).equals("UNAUTHORIZED")){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+
     }
     @DeleteMapping(path = "/{counsel-id}")
     public ResponseEntity<Void> deleteCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken, @PathVariable(value = "counsel-id") long counselId){

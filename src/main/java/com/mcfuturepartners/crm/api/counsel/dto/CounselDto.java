@@ -23,15 +23,12 @@ public class CounselDto {
     @ApiModelProperty(position = 3) private String status;
     @ApiModelProperty(position = 4) private String contents;
     private String username;
-    private User user;
-    private Customer customer;
-
 
     public Counsel toEntity(){
        return Counsel.builder()
                .customer(Customer.builder().id(customerId).build())
                .product(productId)
-                .status(status)
+               .status(status)
                 .contents(contents)
                 .regDate(new Date())
                 .build();

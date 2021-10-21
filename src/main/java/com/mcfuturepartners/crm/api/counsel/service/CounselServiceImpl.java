@@ -22,9 +22,13 @@ public class CounselServiceImpl implements CounselService {
     private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
     @Override
-    public long saveCounsel(String username, CounselDto counselDto) {
-        counselDto.setUser(userRepository.getByUsername(username));
-        return counselRepository.save(counselDto.toEntity()).getId();
+    public Counsel saveCounsel(CounselDto counselDto) {
+        log.info(userRepository.getByUsername(counselDto.getUsername()).toString());
+        Counsel counsel = counselDto.toEntity();
+
+        counsel.setUser(userRepository.getByUsername(counselDto.getUsername()));
+
+        return counselRepository.save(counsel);
     }
 
     @Override
@@ -63,14 +67,23 @@ public class CounselServiceImpl implements CounselService {
     }
 
     @Override
-    public Counsel updateCounsel(long counselId, CounselDto counselDto) {
-        Counsel updatedCounsel = counselDto.toEntity();
+    public String updateCounsel(long counselId, CounselDto counselDto) {
 
+        if(!counselDto.getUsername().equals(counselRepository.findById(counselId).get().getUser().getUsername()))
+            return ErrorCode.UNAUTHORIZED.getMsg();
+
+        Counsel updatedCounsel = counselDto.toEntity();
         updatedCounsel.setCustomer(customerRepository.getById(updatedCounsel.getCustomer().getId()));
         updatedCounsel.setId(counselId);
         updatedCounsel.setUser(userRepository.getByUsername(counselDto.getUsername()));
 
-        return counselRepository.save(updatedCounsel);
+        try{
+            counselRepository.save(updatedCounsel);
+            return "successfully done";
+        } catch (Exception e){
+            throw e;
+        }
+
     }
 
     @Override

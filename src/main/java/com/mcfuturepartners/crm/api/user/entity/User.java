@@ -27,6 +27,7 @@ public class User {
     @Column(name = "username", unique = true, nullable = false)
     private String username;
 
+    @JsonIgnore
     @Size(min = 20, max = 40, message = "8자리 이상 입력하시오")
     @Column(name = "password", nullable = false)
     private String password;

@@ -41,8 +41,8 @@ class CounselServiceImplTest {
         counselDto.setProductId("22");
         counselDto.setStatus("가망 상");
         counselDto.setContents("12123");
-
-        counselService.saveCounsel("test1",counselDto);
+        counselDto.setUsername("test123");
+        counselService.saveCounsel(counselDto);
         Assertions.assertThat(counselService.findById(1).get().getCustomer().getId().equals(1));
 
     }
