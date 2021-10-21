@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -49,6 +50,7 @@ public class CustomerDto {
                     .funnel(funnel)
                     .specialNote(specialNote)
                     .businessStatus(businessStatus)
+                    .regDate(LocalDateTime.now())
                     .build();
         }
 }

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -30,7 +31,7 @@ public class CounselDto {
                .product(productId)
                .status(status)
                 .contents(contents)
-                .regDate(new Date())
+                .regDate(LocalDateTime.now())
                 .build();
     }
 
