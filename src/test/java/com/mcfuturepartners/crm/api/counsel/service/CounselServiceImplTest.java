@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +33,7 @@ class CounselServiceImplTest {
                         .email("test@test.com")
                         .phone("01091321231")
                         .sex("MALE")
-                        .regDate(new Date())
+                        .regDate(LocalDateTime.now())
                         .funnel("카카오톡")
                         .manager("")
                 .build());
@@ -44,7 +45,6 @@ class CounselServiceImplTest {
         counselDto.setUsername("test123");
         counselService.saveCounsel(counselDto);
         Assertions.assertThat(counselService.findById(1).get().getCustomer().getId().equals(1));
-
     }
 
 }

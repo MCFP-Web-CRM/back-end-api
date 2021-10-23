@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +32,7 @@ class CustomerRepositoryImplTest {
         customer.setPhone("01012345678");
         customer.setSex("남");
         customer.setManager("2");
-        customer.setRegDate(new Date());
+        customer.setRegDate(LocalDateTime.now());
         customer.setFunnel("내페이지");
         Customer save = customerRepository.save(customer);
 //        customerRepository.registerCustomer(customer);
