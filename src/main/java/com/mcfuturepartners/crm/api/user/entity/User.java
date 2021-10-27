@@ -1,11 +1,11 @@
 package com.mcfuturepartners.crm.api.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mcfuturepartners.crm.api.department.entity.Department;
 import com.mcfuturepartners.crm.api.order.entity.Order;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -38,17 +38,13 @@ public class User {
     @Column(name = "phone", nullable = false)
     private String phone;
 
-    @Column(name = "department", nullable = false)
-    //얘도 one to many, many to one 처리 해야함
-    private String department;
-
-    /*@ManyToOne
+    @ManyToOne
     @JoinColumn(name="department_id")
-    private Department department;*/
-
+    private Department department;
 
     @OneToMany(mappedBy = "user")
     private List<Order> orders = new ArrayList<>();
+
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)

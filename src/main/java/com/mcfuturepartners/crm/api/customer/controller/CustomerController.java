@@ -2,6 +2,7 @@ package com.mcfuturepartners.crm.api.customer.controller;
 
 import com.mcfuturepartners.crm.api.customer.dto.CustomerDto;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
+import com.mcfuturepartners.crm.api.customer.entity.CustomerCategory;
 import com.mcfuturepartners.crm.api.customer.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,18 +13,27 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Null;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping(path = "/api")
+@RequestMapping(path = "/customer")
 @RequiredArgsConstructor
 public class CustomerController {
     private final CustomerService customerService;
     private final ModelMapper mapper;
 
-    @GetMapping(path="/customer")
-    public ResponseEntity<List<Customer>> searchCustomer(@Nullable Long id, @Nullable String name,@Nullable String phone){
+    @GetMapping(path="/search")
+    public ResponseEntity<List<Customer>> searchCustomer(@RequestParam(value = "customer-category") @Nullable String customerCategory,
+                                                         @RequestParam(value = "product-name") @Nullable String productName,
+                                                         @RequestParam(value = "funnel") @Nullable String funnel,
+                                                         @RequestParam(value = "manager") @Nullable String username,
+                                                         @RequestParam(value = "start-date") @Nullable LocalDateTime startDateTime,
+                                                         @RequestParam(value = "end-date") @Nullable LocalDateTime endDateTime,
+                                                         @RequestParam(value = "special-note") @Nullable String specialNote){
+        //logic 추가 필요
         List<Customer> listCustomer = customerService.findAllCustomer();
         if(listCustomer==null){
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
@@ -31,7 +41,7 @@ public class CustomerController {
             return  new ResponseEntity<>(listCustomer, HttpStatus.OK);
         }
     }
-    @GetMapping(path="/customerlist")
+    @GetMapping(path="")
     public ResponseEntity<List<Customer>> getCustomerList(){
         List<Customer> listCustomer = customerService.findAllCustomer();
         if(listCustomer==null){
@@ -41,21 +51,21 @@ public class CustomerController {
         }
 
     }
-    @PostMapping(path="/customer")
+    @PostMapping(path="")
     public ResponseEntity<String> saveCustomer(@RequestBody CustomerDto customerDto){
         if(customerService.save(mapper.map(customerDto, Customer.class)).isEmpty()){
             return new ResponseEntity<>("not found", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>("saved",HttpStatus.OK);
     }
-    @PutMapping(path="/customer")
+    @PutMapping(path="")
     public ResponseEntity<String> updateCustomer(@RequestBody @Valid Customer customer){
         if(customerService.updateCustomer(customer).isEmpty()){
             return new ResponseEntity<>("not found", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>("updated",HttpStatus.OK);
     }
-    @DeleteMapping(path="/customer")
+    @DeleteMapping(path="")
     public ResponseEntity<String> deleteCustomer(@PathVariable("customerid") long customerid){
         if(customerService.deleteCustomer(customerid).isEmpty()){
             return new ResponseEntity<>("not found", HttpStatus.BAD_REQUEST);

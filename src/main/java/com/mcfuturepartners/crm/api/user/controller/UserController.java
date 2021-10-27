@@ -40,7 +40,7 @@ public class UserController {
 
     @PostMapping(path="/signup")
     public ResponseEntity<String> signup(@RequestBody UserDto userDto){
-        if(userService.signup(userDto.toEntity()).equals(ErrorCode.USER_ALREADY_EXISTS.getMsg())){
+        if(userService.signup(userDto).equals(ErrorCode.USER_ALREADY_EXISTS.getMsg())){
             return ResponseEntity.badRequest().body(ErrorCode.USER_ALREADY_EXISTS.getMsg());
         }
         return new ResponseEntity<>("User Register Succeeded", HttpStatus.CREATED);

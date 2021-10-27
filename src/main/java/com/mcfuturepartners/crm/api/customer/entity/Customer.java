@@ -48,6 +48,11 @@ public class Customer {
     @NotNull
     private String sex;
 
+    /*@ManyToOne
+    @Column(name = "customer_category")
+    @JoinColumn(name = "customer_category_id")
+    private CustomerCategory businessStatus;*/
+
     @Column(name = "manager")
     @NotNull
     private String manager;
@@ -65,6 +70,5 @@ public class Customer {
     @Column(name = "special_note")
     private String specialNote;
 
-    @Column(name = "business_status")
-    private String businessStatus;
+
 }

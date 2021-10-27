@@ -1,11 +1,13 @@
 package com.mcfuturepartners.crm.api.user.service;
 
+import com.mcfuturepartners.crm.api.user.dto.UserDto;
 import com.mcfuturepartners.crm.api.user.dto.UserRevenueDto;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
 import com.mcfuturepartners.crm.api.exception.ErrorCode;
 import com.mcfuturepartners.crm.api.exception.LoginException;
 import com.mcfuturepartners.crm.api.user.entity.UserRevenue;
+import com.mcfuturepartners.crm.api.department.repository.DepartmentRepository;
 import com.mcfuturepartners.crm.api.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,12 +23,16 @@ import java.util.stream.Collectors;
 @Service @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final DepartmentRepository departmentRepository;
     private final PasswordEncoder encoder;
     private final TokenProvider provider;
-    private final ModelMapper modelMapper;
 
     @Override
-    public String signup(User user) {
+    public String signup(UserDto userDto) {
+        User user = userDto.toEntity();
+
+        user.setDepartment(departmentRepository.findById(userDto.getId()).get());
+
         if(!userRepository.existsByUsername(user.getUsername())){
             user.setPassword(encoder.encode(user.getPassword()));
             userRepository.save(user);

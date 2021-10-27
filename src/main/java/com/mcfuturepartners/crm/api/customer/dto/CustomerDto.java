@@ -49,7 +49,7 @@ public class CustomerDto {
                     .manager(manager)
                     .funnel(funnel)
                     .specialNote(specialNote)
-                    .businessStatus(businessStatus)
+                    //.businessStatus(businessStatus)
                     .regDate(LocalDateTime.now())
                     .build();
         }
