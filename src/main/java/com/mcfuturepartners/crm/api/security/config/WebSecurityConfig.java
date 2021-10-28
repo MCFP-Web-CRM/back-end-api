@@ -41,17 +41,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
        http.cors();
        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
        http.authorizeRequests()
+               .antMatchers("/**").permitAll()
                //.antMatchers("/admin/**").hasAuthority("ADMIN")
-               .antMatchers("/department/**").hasAuthority("USER")
-               .antMatchers("/api/**").hasAuthority("USER")
-               .antMatchers("/counsel/**").hasAuthority("USER")
-               .antMatchers("/product/**").hasAuthority("USER")
-               .antMatchers("/users/signup").permitAll()
-               .antMatchers("/users/signin").permitAll()
+               //.antMatchers("/department/**").hasAuthority("USER")
+               //.antMatchers("/api/**").hasAuthority("USER")
+               //.antMatchers("/counsel/**").hasAuthority("USER")
+               //.antMatchers("/product/**").hasAuthority("USER")
+               //.antMatchers("/users/signup").permitAll()
+               //.antMatchers("/users/signin").permitAll()
                //.antMatchers("/users").hasAuthority("ADMIN")
-               .antMatchers("/h2-console/**/**").permitAll()
-               .antMatchers("/users/admin").hasAuthority("ADMIN")
-               .antMatchers("/users/user").hasAuthority("USER")
+               //.antMatchers("/h2-console/**/**").permitAll()
+               //.antMatchers("/users/admin").hasAuthority("ADMIN")
+               //.antMatchers("/users/user").hasAuthority("USER")
                .anyRequest().authenticated();
        http.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
    }

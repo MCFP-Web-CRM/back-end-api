@@ -1,5 +1,6 @@
 package com.mcfuturepartners.crm.api.user.dto;
 
+import com.mcfuturepartners.crm.api.department.entity.Department;
 import com.mcfuturepartners.crm.api.user.entity.Authority;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import io.swagger.annotations.ApiModelProperty;
@@ -20,6 +21,7 @@ public class UserDto {
     @ApiModelProperty(position = 4) private String phone;
     @ApiModelProperty(position = 5) private long departmentId;
     @ApiModelProperty(position = 6) private String authority;
+    private Department department;
 
     public User toEntity(){
         Set<Authority> authorities = new HashSet<>();
@@ -31,6 +33,7 @@ public class UserDto {
                 .password(password)
                 .name(name)
                 .phone(phone)
+                .department(department)
                 .authorities(authorities)
                 .build();
     }

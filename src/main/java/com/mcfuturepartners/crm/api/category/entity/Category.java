@@ -1,5 +1,6 @@
-package com.mcfuturepartners.crm.api.customer.entity;
+package com.mcfuturepartners.crm.api.category.entity;
 
+import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,18 +13,18 @@ import java.util.List;
 @Entity
 @Data
 @Builder
-@Table(name = "customer_category")
+@Table(name = "category")
 @AllArgsConstructor
 @NoArgsConstructor
-public class CustomerCategory {
+public class Category {
     @Id
-    @Column(name = "customer_category_id")
+    @Column(name = "category_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "customer_category_name")
+    @Column(name = "category_name")
     private String name;
-/*
-    @OneToMany(mappedBy = "customer-category")
-    private List<Customer> customers = new ArrayList<>();*/
+
+    @OneToMany(mappedBy = "category")
+    private List<Customer> customers = new ArrayList<>();
 }

@@ -1,8 +1,10 @@
 package com.mcfuturepartners.crm.api.user.controller;
 
+import com.mcfuturepartners.crm.api.department.service.DepartmentService;
 import com.mcfuturepartners.crm.api.user.dto.RequestLogin;
 import com.mcfuturepartners.crm.api.user.dto.UserDto;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
+import com.mcfuturepartners.crm.api.user.dto.UserResponseDto;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.exception.ErrorCode;
 import com.mcfuturepartners.crm.api.user.entity.UserRevenue;
@@ -27,6 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final UserRepository userRepository;
+    private final DepartmentService departmentService;
     private final UserService userService;
     private final TokenProvider tokenProvider;
     private final PasswordEncoder encoder;
@@ -40,6 +43,7 @@ public class UserController {
 
     @PostMapping(path="/signup")
     public ResponseEntity<String> signup(@RequestBody UserDto userDto){
+        userDto.setDepartment(departmentService.getDepartmentById(userDto.getDepartmentId()).orElseThrow());
         if(userService.signup(userDto).equals(ErrorCode.USER_ALREADY_EXISTS.getMsg())){
             return ResponseEntity.badRequest().body(ErrorCode.USER_ALREADY_EXISTS.getMsg());
         }
@@ -64,6 +68,11 @@ public class UserController {
             return new ResponseEntity<>("not found", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>("deleted",HttpStatus.OK);
+    }
+
+    @GetMapping(path="/{userid}")
+    public ResponseEntity<UserResponseDto> getUser(@PathVariable("userid") long userId){
+        return new ResponseEntity<>(userService.getUserById(userId),HttpStatus.OK);
     }
 
     @GetMapping(path = "/revenue")

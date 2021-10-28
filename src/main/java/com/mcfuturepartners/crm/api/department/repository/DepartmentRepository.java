@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface DepartmentRepository extends JpaRepository<Department, String> {
     Optional<Department> findById(long id);
-
+    void deleteById(long id);
 }

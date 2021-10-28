@@ -1,6 +1,7 @@
 package com.mcfuturepartners.crm.api.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.department.entity.Department;
 import com.mcfuturepartners.crm.api.order.entity.Order;
 import lombok.*;
@@ -38,13 +39,15 @@ public class User {
     @Column(name = "phone", nullable = false)
     private String phone;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="department_id")
     private Department department;
 
     @OneToMany(mappedBy = "user")
     private List<Order> orders = new ArrayList<>();
 
+    @OneToMany(mappedBy = "manager")
+    private List<Customer> customers = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
@@ -53,4 +56,14 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id")
     )
     private Set<Authority> authorities = new HashSet<>();
+
+    public void setDepartment(Department department){
+        if(this.department != null){
+            this.department.getUsers().remove(this);
+        }
+        this.department = department;
+        if(!department.getUsers().contains(this)){
+            department.addUser(this);
+        }
+    }
 }

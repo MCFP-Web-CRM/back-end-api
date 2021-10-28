@@ -6,6 +6,7 @@ import com.mcfuturepartners.crm.api.user.entity.User;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Column;
@@ -23,20 +24,18 @@ import java.util.Set;
 public class CustomerDto {
     @ApiModelProperty(position = 0) private long id;
     @ApiModelProperty(position = 1) private String name;
-    @ApiModelProperty(position = 2) private String phone;
+    @ApiModelProperty(position = 2) private String birth;
     @ApiModelProperty(position = 3) private String email;
-    @ApiModelProperty(position = 4) private String birth;
+    @ApiModelProperty(position = 4) private String phone;
     @ApiModelProperty(position = 5) private String sex;
-    @ApiModelProperty(position = 6) private String manager;
-
-    @ApiModelProperty(position = 7)
-    private String funnel;
-
-    @ApiModelProperty(position = 8)
+    @ApiModelProperty(position = 6) private String funnel;
+    private long categoryId;
+    @Nullable
     private String specialNote;
-
-    @ApiModelProperty(position = 9)
-    private String businessStatus;
+    @Nullable
+    private String managerUsername;
+    @Nullable
+    private long counselId;
 
     public Customer toEntity(){
 
@@ -46,7 +45,6 @@ public class CustomerDto {
                     .email(email)
                     .birth(birth)
                     .sex(sex)
-                    .manager(manager)
                     .funnel(funnel)
                     .specialNote(specialNote)
                     //.businessStatus(businessStatus)

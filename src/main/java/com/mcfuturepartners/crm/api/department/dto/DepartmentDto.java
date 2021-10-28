@@ -1,4 +1,4 @@
-package com.mcfuturepartners.crm.api.admin.dto;
+package com.mcfuturepartners.crm.api.department.dto;
 
 import com.mcfuturepartners.crm.api.department.entity.Department;
 import io.swagger.annotations.ApiModelProperty;

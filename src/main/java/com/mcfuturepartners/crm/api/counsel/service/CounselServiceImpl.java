@@ -23,7 +23,6 @@ public class CounselServiceImpl implements CounselService {
     private final CustomerRepository customerRepository;
     @Override
     public Counsel saveCounsel(CounselDto counselDto) {
-        log.info(userRepository.getByUsername(counselDto.getUsername()).toString());
         Counsel counsel = counselDto.toEntity();
 
         counsel.setUser(userRepository.getByUsername(counselDto.getUsername()));

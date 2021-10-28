@@ -1,10 +1,15 @@
 package com.mcfuturepartners.crm.api.customer.service;
 
+import com.mcfuturepartners.crm.api.category.repository.CategoryRepository;
+import com.mcfuturepartners.crm.api.customer.dto.CustomerDto;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.customer.repository.CustomerRepository;
+import com.mcfuturepartners.crm.api.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.HashMap;
@@ -13,10 +18,13 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@Transactional
+@Slf4j
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService{
     private final CustomerRepository customerRepository;
-
+    private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
     @Override
     public List<Customer> findAllCustomer() {
         List<Customer> customerList = customerRepository.findAll();
@@ -40,12 +48,15 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public String save(Customer customer) {
+    public String save(CustomerDto customerDto) {
         try {
-            Optional<Customer> exist = customerRepository.findByNameAndPhone(customer.getName(),customer.getPhone());
+            Optional<Customer> exist = customerRepository.findByNameAndPhone(customerDto.getName(),customerDto.getPhone());
             if(exist.isPresent()){
                 return "customer already exist";
             }else{
+                Customer customer = customerDto.toEntity();
+                customer.setManager(userRepository.findByUsername(customerDto.getManagerUsername()).orElseThrow());
+                customer.setCategory(categoryRepository.findById(customerDto.getCategoryId()).orElseThrow());
                 customerRepository.save(customer);
                 return "successfully done";
             }

@@ -41,11 +41,10 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String customerMembership;
-
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     @Column(name = "regdate")
     @NotNull
-    private LocalDateTime regDate;}
+    private LocalDateTime regDate;
+}

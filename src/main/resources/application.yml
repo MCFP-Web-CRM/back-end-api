@@ -11,10 +11,16 @@ spring:
     env: localhost
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MariaDB103Dialect
+        show_sql: true
     defer-datasource-initialization: true
+
 server:
-  port: 8081
+  port: 8080
+logging:
+  level:
+    org.hibernate.SQL: debug    # Logger
+    org.hibernate.type: trace   # Show Query Parameter

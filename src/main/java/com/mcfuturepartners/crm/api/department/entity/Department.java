@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -28,4 +29,10 @@ public class Department {
     @OneToMany(mappedBy = "department")
     private List<User> users = new ArrayList<>();
 
+    public void addUser(User user){
+        this.users.add(user);
+        if(user.getDepartment() != this){
+            user.setDepartment(this);
+        }
+    }
 }
