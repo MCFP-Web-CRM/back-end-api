@@ -11,6 +11,7 @@ import com.mcfuturepartners.crm.api.counsel.service.CounselService;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
 import com.mcfuturepartners.crm.api.user.entity.Authority;
 import com.mcfuturepartners.crm.api.user.repository.UserRepository;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -36,6 +37,7 @@ public class CounselController {
     }
 
     @PostMapping
+    @ApiOperation(value = "상담 저장", notes = "고객 상담 저장 api")
     public ResponseEntity<List<CounselDto>> saveCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken, @RequestBody CounselDto counselDto){
         String token = bearerToken.replace("Bearer ","");
         DecodedJWT decodedJWT = JWT.decode(token);
