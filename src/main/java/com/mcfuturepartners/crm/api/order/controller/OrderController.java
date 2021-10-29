@@ -45,10 +45,10 @@ public class OrderController {
         String username = decodedJWT.getSubject();
 
 
-            return new ResponseEntity<>(orderService.deleteOrder(OrderCancelDto.builder()
-                            .authorities(tokenProvider.getAuthentication(token).getAuthorities().toString())
-                            .username(username)
-                            .orderId(orderId).build()), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(orderService.deleteOrder(OrderCancelDto.builder()
+                .authorities(tokenProvider.getAuthentication(token).getAuthorities().toString())
+                .username(username)
+                .orderId(orderId).build()), HttpStatus.NO_CONTENT);
     }
 
     @GetMapping(path = "/revenue")

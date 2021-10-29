@@ -71,6 +71,7 @@ public class Customer {
     @Column(name = "funnel")
     private String funnel;
 
+    //지우기
     @Column(name = "special_note")
     private String specialNote;
 

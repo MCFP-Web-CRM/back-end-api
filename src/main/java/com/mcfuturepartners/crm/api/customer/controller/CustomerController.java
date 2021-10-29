@@ -29,6 +29,7 @@ public class CustomerController {
     private final ModelMapper mapper;
 
     @GetMapping(path="/search")
+
     public ResponseEntity<List<CustomerResponseDto>> searchCustomer(@RequestParam(value = "customer-category") @Nullable String customerCategory,
                                                          @RequestParam(value = "product-name") @Nullable String productName,
                                                          @RequestParam(value = "funnel") @Nullable String funnel,
