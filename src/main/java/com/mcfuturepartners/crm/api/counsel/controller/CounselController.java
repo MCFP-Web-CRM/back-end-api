@@ -31,11 +31,6 @@ public class CounselController {
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
 
-    @GetMapping("/health-check")
-    public ResponseEntity<String> counselHealthCheck(){
-        return new ResponseEntity<>("counsel Health Check", HttpStatus.OK);
-    }
-
     @PostMapping
     @ApiOperation(value = "상담 저장", notes = "고객 상담 저장 api")
     public ResponseEntity<List<CounselDto>> saveCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken, @RequestBody CounselDto counselDto){
@@ -49,7 +44,8 @@ public class CounselController {
 
     //bearerToken 권한 확인하고, ADMIN 권한이면 전체 갖다주기. USER면 본인 해당 부분만 갖다주기
     @GetMapping
-    public ResponseEntity<List<Counsel>> getCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken){
+    @ApiOperation(value = "상담 내역 전체 조회", notes = "현재 customer 도메인으로 상담 내용 데이터를 받아서 사용하지 않음")
+    public ResponseEntity<List<CounselDto>> getCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken){
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
@@ -61,6 +57,7 @@ public class CounselController {
     }
 
     @GetMapping(path = "/user/{user-id}")
+    @ApiOperation(value = "사원 번호 기반 상담 내역 조회", notes = "현재 customer 도메인으로 상담 내용 데이터를 받아서 사용하지 않음")
     public ResponseEntity<List<Counsel>> getCounselByUser(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,@PathVariable(value = "user-id") long userId){
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
@@ -75,6 +72,7 @@ public class CounselController {
     }
 
     @GetMapping(path = "/{counsel-id}")
+    @ApiOperation(value = "상담 번호 기반 상담 내역 조회", notes = "현재 customer 도메인으로 상담 내용 데이터를 받아서 사용하지 않음")
     public ResponseEntity<Counsel> getCounselById(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,@PathVariable(value = "counsel-id") long counselId){
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
@@ -86,58 +84,35 @@ public class CounselController {
         return new ResponseEntity<>(counselService.findByUsernameId(username,counselId).orElseThrow(),HttpStatus.OK);
     }
 
-    @GetMapping(path="/search")
-    public ResponseEntity<List<Counsel>> getCounselByKeyword(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,@RequestParam(value="keyword") String keyword){
-        String token = bearerToken.replace("Bearer ", "");
-        DecodedJWT decodedJWT = JWT.decode(token);
-        String username = decodedJWT.getSubject();
-
-        if(tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())){
-            //findAllCounselByKeyword  and Response
-            return new ResponseEntity<>(counselService.findAllByKeyword(keyword),HttpStatus.OK);
-        }
-
-        try{
-            return new ResponseEntity<>(counselService.findAllByUsernameKeyword(username,keyword),HttpStatus.OK);
-        }catch(Exception e){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
 
     @PutMapping(path = "/{counsel-id}")
-    public ResponseEntity<List<CounselDto>> updateCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken, @PathVariable(value = "counsel-id") long counselId,
-                                                @RequestBody CounselDto counselDto){
+    @ApiOperation(value = "상담 수정 데이터", notes = "상담 수정 데이터. PathVariable = counsel-id, 사원 username 필수")
+    public ResponseEntity<List<CounselDto>> updateCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
+                                                          @PathVariable(value = "counsel-id") long counselId,
+                                                          @RequestBody CounselDto counselDto){
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
 
         counselDto.setUsername(username);
 
-        if(tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())){
-
+        if(counselService.findCustomerIfManager(counselId,username)||tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())){
             return new ResponseEntity<>(counselService.updateCounsel(counselId, counselDto),HttpStatus.OK);
         }
-
-        if(counselService.updateCounsel(counselId, counselDto).equals("UNAUTHORIZED")){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        return new ResponseEntity<>(counselService.updateCounsel(counselId, counselDto),HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
     }
     @DeleteMapping(path = "/{counsel-id}")
+    @ApiOperation(value = "상담 삭제 데이터", notes = "상담 삭제 데이터. PathVariable = counsel-id, 사원 username 필수 / Response로 삭제 반영한 상담 데이터 제공")
     public ResponseEntity<List<CounselDto>> deleteCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
                                                           @PathVariable(value = "counsel-id") long counselId){
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
 
-        if(tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())){
-            return new ResponseEntity<>(counselService.deleteCounsel(counselId),HttpStatus.NO_CONTENT);
+        if(counselService.findCustomerIfManager(counselId,username) || tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())){
+            return new ResponseEntity<>(counselService.deleteCounsel(counselId),HttpStatus.OK);
         }
-        try{
-            return new ResponseEntity<>(counselService.deleteCounselByUsername(username,counselId),HttpStatus.NO_CONTENT);
-        }catch(CounselException c){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 }

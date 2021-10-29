@@ -6,10 +6,14 @@ import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.customer.repository.CustomerRepository;
 import com.mcfuturepartners.crm.api.exception.CounselException;
 import com.mcfuturepartners.crm.api.counsel.repository.CounselRepository;
+import com.mcfuturepartners.crm.api.exception.DatabaseErrorCode;
 import com.mcfuturepartners.crm.api.exception.ErrorCode;
+import com.mcfuturepartners.crm.api.exception.FindException;
+import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.dialect.Database;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +31,12 @@ public class CounselServiceImpl implements CounselService {
     private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
     private final ModelMapper modelMapper;
+
+    @Override
+    public CounselDto wrapCounselDto(Counsel counsel) {
+        return modelMapper.map(counsel, CounselDto.class);
+    }
+
     @Override
     public List<CounselDto> saveCounsel(CounselDto counselDto) {
         Counsel counsel = counselDto.toEntity();
@@ -36,17 +46,16 @@ public class CounselServiceImpl implements CounselService {
         counselRepository.save(counsel);
 
 
-        return counselRepository.findAllByCustomer(customer).stream().map(counsel1 -> modelMapper.map(counsel1,CounselDto.class)).collect(Collectors.toList());
+        return counselRepository.findAllByCustomer(customer).stream().map(counsel1 -> wrapCounselDto(counsel1)).collect(Collectors.toList());
+    }
+    @Override
+    public List<CounselDto> findAll() {
+        return counselRepository.findAll().stream().map(counsel -> wrapCounselDto(counsel)).collect(Collectors.toList());
     }
 
     @Override
-    public List<Counsel> findAll() {
-        return counselRepository.findAll();
-    }
-
-    @Override
-    public List<Counsel> findAllByUsername(String username) {
-        return counselRepository.findAllByUser(userRepository.findByUsername(username).get());
+    public List<CounselDto> findAllByUsername(String username) {
+        return counselRepository.findAllByUser(userRepository.findByUsername(username).orElseThrow(()-> new FindException(DatabaseErrorCode.USER_NOT_FOUND.name()))).stream().map(counsel -> wrapCounselDto(counsel)).collect(Collectors.toList());
     }
 
     @Override
@@ -69,55 +78,56 @@ public class CounselServiceImpl implements CounselService {
         return counselRepository.findAllByContentsContaining(searchKeyword);
     }
 
+
     @Override
-    public List<Counsel> findAllByUsernameKeyword(String username, String searchKeyword) {
-        return counselRepository.findAllByUserAndContentsContaining(userRepository.getByUsername(username),searchKeyword);
+    public Boolean findCustomerIfManager(long counselId, String username) {
+        Customer customer = counselRepository.findById(counselId)
+                .orElseThrow(()->
+                        new FindException(DatabaseErrorCode.CUSTOMER_NOT_FOUND.name()))
+                .getCustomer();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(()->
+                        new FindException(DatabaseErrorCode.USER_NOT_FOUND.name()));
+
+        if(!customer.getManager().getUsername().equals(user.getUsername()))
+            return false;
+
+        return false;
     }
 
     @Override
     public List<CounselDto> updateCounsel(long counselId, CounselDto counselDto) {
-        Customer customer = counselRepository.findById(counselId).get().getCustomer();
-
-
+        Customer customer = counselRepository.findById(counselId)
+                .orElseThrow(()->
+                        new FindException(DatabaseErrorCode.CUSTOMER_NOT_FOUND.name()))
+                .getCustomer();
 
         Counsel updatedCounsel = counselDto.toEntity();
-        updatedCounsel.setCustomer(customerRepository.getById(counselDto.getCustomerId()));
+        updatedCounsel.setCustomer(customer);
         updatedCounsel.setId(counselId);
         updatedCounsel.setUser(userRepository.getByUsername(counselDto.getUsername()));
 
         try{
             counselRepository.save(updatedCounsel);
-            return counselRepository.findAllByCustomer(customer).stream().map(counsel1 -> modelMapper.map(counsel1,CounselDto.class)).collect(Collectors.toList());
-
         } catch (Exception e){
-            throw e;
+            log.info("Counsel Update Failed");
         }
-
+        return counselRepository.findAllByCustomer(customer)
+                .stream().map(counsel1 -> wrapCounselDto(counsel1))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<CounselDto> deleteCounsel(long counselId) {
         Customer customer = counselRepository.findById(counselId).orElseThrow().getCustomer();
         try{
-            counselRepository.delete(counselRepository.findById(counselId).orElseThrow());
-            return counselRepository.findAllByCustomer(customer).stream().map(counsel1 -> modelMapper.map(counsel1,CounselDto.class)).collect(Collectors.toList());
+            counselRepository.delete(counselRepository.findById(counselId).orElseThrow(()-> new FindException(DatabaseErrorCode.COUNSEL_NOT_FOUND.name())));
+            return counselRepository.findAllByCustomer(customer).stream().map(counsel1 -> wrapCounselDto(counsel1)).collect(Collectors.toList());
 
         } catch(Exception e){
-            throw e;
+            log.info("Counsel Delete Failed");
         }
+        return counselRepository.findAllByCustomer(customer).stream().map(counsel1 -> wrapCounselDto(counsel1)).collect(Collectors.toList());
     }
 
-    @Override
-    public List<CounselDto> deleteCounselByUsername(String username, long counselId) throws CounselException{
-        Customer customer = counselRepository.findById(counselId).get().getCustomer();
-
-        if(counselRepository.findById(counselId).get().getUser().getUsername().equals(username)){
-
-            return deleteCounsel(counselId);
-
-        } else{
-            throw new CounselException(ErrorCode.UNAUTHORIZED.getCode());
-        }
-
-    }
 }

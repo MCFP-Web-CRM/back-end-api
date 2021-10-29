@@ -25,7 +25,7 @@ public class CounselDto {
     @ApiModelProperty(position = 1, example = "고객 ID") private long customerId;
     @ApiModelProperty(position = 2, example = "상담 상태") private String status;
     @ApiModelProperty(position = 3, example = "상담 내용") private String contents;
-    @ApiModelProperty(position = 4, example = "상담사(영업사원) id") private String username;
+    @ApiModelProperty(position = 4, example = "상담사(영업사원) username") private String username;
 
     public Counsel toEntity(){
        return Counsel.builder()
