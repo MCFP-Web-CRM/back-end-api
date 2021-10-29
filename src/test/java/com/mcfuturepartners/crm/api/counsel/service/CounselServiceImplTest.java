@@ -25,26 +25,5 @@ class CounselServiceImplTest {
     @Autowired
     private CustomerService customerService;
 
-    @Test @DisplayName("counsel save test")
-    void save(){
-        customerService.save(Customer.builder()
-                        .name("박재현")
-                        .birth("19920309")
-                        .email("test@test.com")
-                        .phone("01091321231")
-                        .sex("MALE")
-                        .regDate(LocalDateTime.now())
-                        .funnel("카카오톡")
-                        .manager("")
-                .build());
-        CounselDto counselDto = new CounselDto();
-        counselDto.setCustomerId(1);
-        counselDto.setProductId("22");
-        counselDto.setStatus("가망 상");
-        counselDto.setContents("12123");
-        counselDto.setUsername("test123");
-        counselService.saveCounsel(counselDto);
-        Assertions.assertThat(counselService.findById(1).get().getCustomer().getId().equals(1));
-    }
 
 }

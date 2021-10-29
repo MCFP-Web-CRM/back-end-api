@@ -6,6 +6,7 @@ import com.mcfuturepartners.crm.api.user.entity.User;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Column;
@@ -16,27 +17,24 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 @Data
 @Component
 @NoArgsConstructor
-public class CustomerDto {
+public class CustomerRegisterDto {
     @ApiModelProperty(position = 0) private long id;
     @ApiModelProperty(position = 1) private String name;
-    @ApiModelProperty(position = 2) private String phone;
+    @ApiModelProperty(position = 2) private String birth;
     @ApiModelProperty(position = 3) private String email;
-    @ApiModelProperty(position = 4) private String birth;
+    @ApiModelProperty(position = 4) private String phone;
     @ApiModelProperty(position = 5) private String sex;
-    @ApiModelProperty(position = 6) private String manager;
-
-    @ApiModelProperty(position = 7)
-    private String funnel;
-
-    @ApiModelProperty(position = 8)
+    @ApiModelProperty(position = 6) private String funnel;
+    private long categoryId;
+    @Nullable
     private String specialNote;
-
-    @ApiModelProperty(position = 9)
-    private String businessStatus;
+    @Nullable
+    private String managerUsername;
 
     public Customer toEntity(){
 
@@ -46,10 +44,9 @@ public class CustomerDto {
                     .email(email)
                     .birth(birth)
                     .sex(sex)
-                    .manager(manager)
                     .funnel(funnel)
                     .specialNote(specialNote)
-                    .businessStatus(businessStatus)
+                    //.businessStatus(businessStatus)
                     .regDate(LocalDateTime.now())
                     .build();
         }

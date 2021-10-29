@@ -39,7 +39,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> getProducts(){
+    public ResponseEntity<List<ProductDto>> getProducts(){
         return new ResponseEntity<>(productService.findAllProduct(),HttpStatus.OK);
     }
     @GetMapping("/revenue")

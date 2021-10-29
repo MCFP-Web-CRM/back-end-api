@@ -1,12 +1,14 @@
 package com.mcfuturepartners.crm.api.product.service;
 
 
+import com.mcfuturepartners.crm.api.product.dto.ProductDto;
 import com.mcfuturepartners.crm.api.product.dto.ProductRevenueDto;
 import com.mcfuturepartners.crm.api.product.entity.Product;
 import com.mcfuturepartners.crm.api.product.entity.ProductRevenue;
 import com.mcfuturepartners.crm.api.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -22,11 +24,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
-
+    private final ModelMapper modelMapper;
     @Override
-    public List<Product> findAllProduct() {
+    public List<ProductDto> findAllProduct() {
         List<Product> productList = productRepository.findAll();
-        return productList;
+        return productList.stream().map(product -> modelMapper.map(product, ProductDto.class)).collect(Collectors.toList());
     }
 
     @Override

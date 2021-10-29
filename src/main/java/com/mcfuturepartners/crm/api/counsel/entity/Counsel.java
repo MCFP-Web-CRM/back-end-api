@@ -30,17 +30,17 @@ public class Counsel {
     private long id;
     //ManytoOne
     @ManyToOne
-    @JoinColumn(name = "custumer_id")
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String product;
-
     //진행상황
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private CounselStatus status;
+
     private String contents;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)

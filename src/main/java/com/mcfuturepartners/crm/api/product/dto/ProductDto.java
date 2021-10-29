@@ -12,7 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 @Data
-@Component @NoArgsConstructor
+@NoArgsConstructor
 public class ProductDto {
     @ApiModelProperty(position = 0) private long id;
     @ApiModelProperty(position = 1) private String name;

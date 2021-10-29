@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 public class UserRevenueDto {
 
-
+//service layer에서 처리 해야하지 않을까?
     public static UserRevenue salesRevenue(User user){
         return UserRevenue.builder()
                 .name(user.getName())

@@ -1,6 +1,7 @@
 package com.mcfuturepartners.crm.api.counsel.dto;
 
 import com.mcfuturepartners.crm.api.counsel.entity.Counsel;
+import com.mcfuturepartners.crm.api.counsel.entity.CounselStatus;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.user.repository.UserRepository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Date;
 
 @Data
@@ -20,16 +22,13 @@ import java.util.Date;
 public class CounselDto {
     @ApiModelProperty(position = 0) private long id;
     @ApiModelProperty(position = 1) private long customerId;
-    @ApiModelProperty(position = 2) private String productId;
-    @ApiModelProperty(position = 3) private String status;
-    @ApiModelProperty(position = 4) private String contents;
+    @ApiModelProperty(position = 2) private String status;
+    @ApiModelProperty(position = 3) private String contents;
     private String username;
 
     public Counsel toEntity(){
        return Counsel.builder()
-               .customer(Customer.builder().id(customerId).build())
-               .product(productId)
-               .status(status)
+               .status(Arrays.stream(CounselStatus.values()).filter(counselStatus -> counselStatus.getStatus().equals(status)).findFirst().get())
                 .contents(contents)
                 .regDate(LocalDateTime.now())
                 .build();

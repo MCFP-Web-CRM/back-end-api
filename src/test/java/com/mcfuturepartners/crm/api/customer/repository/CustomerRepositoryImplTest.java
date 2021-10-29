@@ -31,7 +31,7 @@ class CustomerRepositoryImplTest {
         customer.setEmail("test@test.com");
         customer.setPhone("01012345678");
         customer.setSex("남");
-        customer.setManager("2");
+        //customer.setManager("2");
         customer.setRegDate(LocalDateTime.now());
         customer.setFunnel("내페이지");
         Customer save = customerRepository.save(customer);
