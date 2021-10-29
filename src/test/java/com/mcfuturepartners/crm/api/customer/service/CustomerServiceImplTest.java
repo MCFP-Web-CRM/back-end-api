@@ -11,6 +11,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +33,7 @@ class CustomerServiceImplTest {
         customer.setPhone("01012345678");
         customer.setSex("남");
         customer.setManager(v+"");
-        customer.setRegDate(new Date());
+        customer.setRegDate(LocalDateTime.now());
         customer.setFunnel("카카오톡");
 //        Assertions.assertThrows(customerService.save(customer));
         assertThrows(Exception.class,()->customerService.save(customer));
@@ -47,7 +48,7 @@ class CustomerServiceImplTest {
         customer.setPhone("01098765431");
         customer.setSex("남");
         customer.setManager(v+"");
-        customer.setRegDate(new Date());
+        customer.setRegDate(LocalDateTime.now());
         customer.setFunnel("카카오톡");
         Assertions.assertThat(customerService.save(customer)).isEqualTo("successfully done");
     }
@@ -72,7 +73,7 @@ class CustomerServiceImplTest {
         customer.setPhone("01012345678");
         customer.setSex("남");
         customer.setManager(v+"");
-        customer.setRegDate(new Date());
+        customer.setRegDate(LocalDateTime.now());
         customer.setFunnel("카카오톡");
         String saveResult = customerService.updateCustomer(customer);
         Assertions.assertThat(saveResult).isEqualTo("successfully done");
@@ -89,7 +90,7 @@ class CustomerServiceImplTest {
         customer.setPhone("01012345678");
         customer.setSex("남");
         customer.setManager(v+"");
-        customer.setRegDate(new Date());
+        customer.setRegDate(LocalDateTime.now());
         customer.setFunnel("카카오톡");
         String saveResult = customerService.deleteCustomer(customer.getId());
         Assertions.assertThat(saveResult).isEqualTo("successfully done");
