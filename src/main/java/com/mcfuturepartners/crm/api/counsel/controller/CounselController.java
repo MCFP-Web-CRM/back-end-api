@@ -36,7 +36,7 @@ public class CounselController {
     }
 
     @PostMapping
-    public ResponseEntity<Counsel> saveCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken, @RequestBody CounselDto counselDto){
+    public ResponseEntity<List<CounselDto>> saveCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken, @RequestBody CounselDto counselDto){
         String token = bearerToken.replace("Bearer ","");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();

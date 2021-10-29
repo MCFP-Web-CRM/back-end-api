@@ -1,8 +1,10 @@
 package com.mcfuturepartners.crm.api.user.service;
 
 import com.mcfuturepartners.crm.api.user.dto.UserDto;
+import com.mcfuturepartners.crm.api.user.dto.UserLoginResponseDto;
 import com.mcfuturepartners.crm.api.user.dto.UserResponseDto;
 import com.mcfuturepartners.crm.api.user.dto.UserRevenueDto;
+import com.mcfuturepartners.crm.api.user.entity.Authority;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
 import com.mcfuturepartners.crm.api.exception.ErrorCode;
@@ -33,10 +35,8 @@ public class UserServiceImpl implements UserService {
         User user = userDto.toEntity();
         if(!userRepository.existsByUsername(user.getUsername())){
             user.setPassword(encoder.encode(user.getPassword()));
-            log.info(user.toString());
 
             userRepository.save(user);
-            log.info(user.toString());
 
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
                     = new UsernamePasswordAuthenticationToken(user.getUsername(),"",user.getAuthorities());
@@ -45,12 +45,16 @@ public class UserServiceImpl implements UserService {
         return ErrorCode.USER_ALREADY_EXISTS.getMsg();
     }
     @Override
-    public String signin(User user) throws LoginException{
+    public UserLoginResponseDto signin(User user) throws LoginException{
+        UserLoginResponseDto userLoginResponseDto = new UserLoginResponseDto();
+        User loginUser = userRepository.findByUsername(user.getUsername()).get();
         try {
-            String token = (encoder.matches(user.getPassword(), userRepository.findByUsername(user.getUsername()).get().getPassword()))
-            ? provider.createToken(new UsernamePasswordAuthenticationToken(user.getUsername(),"",userRepository.findByUsername(user.getUsername()).get().getAuthorities()))
-                    :"Wrong Password";
-            return token;
+            userLoginResponseDto.setToken((encoder.matches(user.getPassword(), loginUser.getPassword()))
+            ? provider.createToken(new UsernamePasswordAuthenticationToken(user.getUsername(),"", loginUser.getAuthorities()))
+                    :"Wrong Password");
+            if(loginUser.getAuthorities().contains(Authority.ADMIN)) userLoginResponseDto.setAuthority("ADMIN");
+
+            return userLoginResponseDto;
         } catch (Exception e){
             throw new LoginException();
         }

@@ -38,7 +38,9 @@ public class Counsel {
     private User user;
 
     //진행상황
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private CounselStatus status;
+
     private String contents;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)

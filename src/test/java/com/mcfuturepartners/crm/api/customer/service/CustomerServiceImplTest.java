@@ -1,7 +1,7 @@
 package com.mcfuturepartners.crm.api.customer.service;
 
 import com.mcfuturepartners.crm.api.admin.controller.AdminController;
-import com.mcfuturepartners.crm.api.customer.dto.CustomerDto;
+import com.mcfuturepartners.crm.api.customer.dto.CustomerRegisterDto;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.department.dto.DepartmentDto;
 import com.mcfuturepartners.crm.api.user.dto.UserDto;
@@ -11,18 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -53,7 +47,7 @@ class CustomerServiceImplTest {
 
         userService.signup(userDto);
 
-        CustomerDto customerDto = new CustomerDto();
+        CustomerRegisterDto customerDto = new CustomerRegisterDto();
         customerDto.setName("이남순");
         customerDto.setPhone("01095510270");
         customerDto.setEmail("test@test.com");

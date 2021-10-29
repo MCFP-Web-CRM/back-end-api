@@ -1,8 +1,7 @@
 package com.mcfuturepartners.crm.api;
 
 import com.mcfuturepartners.crm.api.admin.controller.AdminController;
-import com.mcfuturepartners.crm.api.customer.dto.CustomerDto;
-import com.mcfuturepartners.crm.api.customer.service.CustomerService;
+import com.mcfuturepartners.crm.api.customer.dto.CustomerRegisterDto;
 import com.mcfuturepartners.crm.api.customer.service.CustomerServiceImpl;
 import com.mcfuturepartners.crm.api.department.dto.DepartmentDto;
 import com.mcfuturepartners.crm.api.department.controller.DepartmentController;
@@ -88,7 +87,7 @@ public class UserTest {
 
         userService.signup(userDto);
 
-        CustomerDto customerDto = new CustomerDto();
+        CustomerRegisterDto customerDto = new CustomerRegisterDto();
         customerDto.setName("이남순");
         customerDto.setPhone("01095510270");
         customerDto.setEmail("test@test.com");

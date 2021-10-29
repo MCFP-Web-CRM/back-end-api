@@ -1,6 +1,7 @@
 package com.mcfuturepartners.crm.api.user.service;
 
 import com.mcfuturepartners.crm.api.user.dto.UserDto;
+import com.mcfuturepartners.crm.api.user.dto.UserLoginResponseDto;
 import com.mcfuturepartners.crm.api.user.dto.UserResponseDto;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.user.entity.UserRevenue;
@@ -12,7 +13,7 @@ import java.util.Optional;
 @Component
 public interface UserService {
     String signup(UserDto userDto);
-    String signin(User user);
+    UserLoginResponseDto signin(User user);
     String deleteUser(long id);
     List<UserRevenue> getAllUserRevenue();
     UserResponseDto getUserById(long id);

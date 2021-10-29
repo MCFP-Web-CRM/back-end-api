@@ -10,10 +10,13 @@ import com.mcfuturepartners.crm.api.exception.ErrorCode;
 import com.mcfuturepartners.crm.api.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -21,13 +24,17 @@ public class CounselServiceImpl implements CounselService {
     private final CounselRepository counselRepository;
     private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
+    private final ModelMapper modelMapper;
     @Override
-    public Counsel saveCounsel(CounselDto counselDto) {
+    public List<CounselDto> saveCounsel(CounselDto counselDto) {
         Counsel counsel = counselDto.toEntity();
-
+        Customer customer = customerRepository.getById(counselDto.getCustomerId());
+        counsel.setCustomer(customer);
         counsel.setUser(userRepository.getByUsername(counselDto.getUsername()));
+        counselRepository.save(counsel);
 
-        return counselRepository.save(counsel);
+
+        return counselRepository.findAllByCustomer(customer).stream().map(counsel1 -> modelMapper.map(counsel1,CounselDto.class)).collect(Collectors.toList());
     }
 
     @Override

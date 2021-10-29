@@ -4,6 +4,7 @@ import com.mcfuturepartners.crm.api.department.service.DepartmentService;
 import com.mcfuturepartners.crm.api.user.dto.RequestLogin;
 import com.mcfuturepartners.crm.api.user.dto.UserDto;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
+import com.mcfuturepartners.crm.api.user.dto.UserLoginResponseDto;
 import com.mcfuturepartners.crm.api.user.dto.UserResponseDto;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.exception.ErrorCode;
@@ -51,15 +52,16 @@ public class UserController {
     }
 
     @PostMapping(path="/signin")
-    public ResponseEntity<String> signin(@RequestBody RequestLogin requestLogin){
-        String jwt = userService.signin(mapper.map(requestLogin, User.class));
+    public ResponseEntity<UserLoginResponseDto> signin(@RequestBody RequestLogin requestLogin){
+        UserLoginResponseDto loginInfo = userService.signin(mapper.map(requestLogin, User.class));
 
-        if(jwt != "Wrong Password" && jwt != null){
+        if(loginInfo.getToken() != "Wrong Password" && loginInfo.getToken() != null){
             HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.add(TokenFilter.AUTHORIZATION_HEADER, "Bearer "+jwt);
-            return new ResponseEntity<>("Logged in", httpHeaders, HttpStatus.OK);
+            httpHeaders.add(TokenFilter.AUTHORIZATION_HEADER, "Bearer "+loginInfo.getToken());
+
+            return new ResponseEntity<>(loginInfo, httpHeaders, HttpStatus.OK);
         }
-        return new ResponseEntity<>("Log in failed",HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping(path = "/{userid}")

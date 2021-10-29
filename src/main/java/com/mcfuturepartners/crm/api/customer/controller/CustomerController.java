@@ -2,7 +2,9 @@ package com.mcfuturepartners.crm.api.customer.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.mcfuturepartners.crm.api.customer.dto.CustomerDto;
+import com.mcfuturepartners.crm.api.customer.dto.CustomerRegisterDto;
+import com.mcfuturepartners.crm.api.customer.dto.CustomerResponseDto;
+import com.mcfuturepartners.crm.api.customer.dto.CustomerUpdateDto;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.customer.service.CustomerService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,7 @@ public class CustomerController {
     private final ModelMapper mapper;
 
     @GetMapping(path="/search")
-    public ResponseEntity<List<Customer>> searchCustomer(@RequestParam(value = "customer-category") @Nullable String customerCategory,
+    public ResponseEntity<List<CustomerResponseDto>> searchCustomer(@RequestParam(value = "customer-category") @Nullable String customerCategory,
                                                          @RequestParam(value = "product-name") @Nullable String productName,
                                                          @RequestParam(value = "funnel") @Nullable String funnel,
                                                          @RequestParam(value = "manager") @Nullable String username,
@@ -35,16 +37,16 @@ public class CustomerController {
                                                          @RequestParam(value = "end-date") @Nullable LocalDateTime endDateTime,
                                                          @RequestParam(value = "special-note") @Nullable String specialNote){
         //logic 추가 필요
-        List<Customer> listCustomer = customerService.findAllCustomer();
+        List<CustomerResponseDto> listCustomer = customerService.findAllCustomer();
         if(listCustomer==null){
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         }else{
             return  new ResponseEntity<>(listCustomer, HttpStatus.OK);
         }
     }
-    @GetMapping(path="")
-    public ResponseEntity<List<Customer>> getCustomerList(){
-        List<Customer> listCustomer = customerService.findAllCustomer();
+    @GetMapping
+    public ResponseEntity<List<CustomerResponseDto>> getCustomerList(){
+        List<CustomerResponseDto> listCustomer = customerService.findAllCustomer();
         if(listCustomer==null){
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         }else{
@@ -52,9 +54,13 @@ public class CustomerController {
         }
 
     }
+    @GetMapping(path = "/{customer-id}")
+    public ResponseEntity<CustomerResponseDto> getCustomer(@PathVariable("customer-id") long customerId){
+        return new ResponseEntity<>(customerService.findCustomer(customerId),HttpStatus.OK);
+    }
     @PostMapping
     public ResponseEntity<String> saveCustomer(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
-                                               @RequestBody CustomerDto customerDto){
+                                               @RequestBody CustomerRegisterDto customerDto){
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
@@ -66,15 +72,17 @@ public class CustomerController {
         }
         return new ResponseEntity<>("saved",HttpStatus.OK);
     }
-    @PutMapping(path="")
-    public ResponseEntity<String> updateCustomer(@RequestBody @Valid Customer customer){
-        if(customerService.updateCustomer(customer).isEmpty()){
+    @PutMapping(path="{customer-id}")
+    public ResponseEntity<String> updateCustomer(@PathVariable("customer-id") long customerId,
+                                                 @RequestBody CustomerUpdateDto customerUpdateDto){
+        customerUpdateDto.setId(customerId);
+        if(customerService.updateCustomer(customerUpdateDto).isEmpty()){
             return new ResponseEntity<>("not found", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>("updated",HttpStatus.OK);
     }
-    @DeleteMapping(path="")
-    public ResponseEntity<String> deleteCustomer(@PathVariable("customerid") long customerid){
+    @DeleteMapping(path="{customer-id}")
+    public ResponseEntity<String> deleteCustomer(@PathVariable("customer-id") long customerid){
         if(customerService.deleteCustomer(customerid).isEmpty()){
             return new ResponseEntity<>("not found", HttpStatus.BAD_REQUEST);
         }

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Service
 public interface CounselService {
-    Counsel saveCounsel(CounselDto counselDto);
+    List<CounselDto> saveCounsel(CounselDto counselDto);
     List<Counsel> findAll();
     List<Counsel> findAllByUsername(String username);
     List<Counsel> findAllByUserId(long userId);

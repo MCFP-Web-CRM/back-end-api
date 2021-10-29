@@ -1,21 +1,30 @@
 package com.mcfuturepartners.crm.api.customer.service;
 
+import com.mcfuturepartners.crm.api.category.entity.Category;
 import com.mcfuturepartners.crm.api.category.repository.CategoryRepository;
-import com.mcfuturepartners.crm.api.customer.dto.CustomerDto;
+import com.mcfuturepartners.crm.api.counsel.dto.CounselDto;
+import com.mcfuturepartners.crm.api.customer.dto.CustomerRegisterDto;
+import com.mcfuturepartners.crm.api.customer.dto.CustomerResponseDto;
+import com.mcfuturepartners.crm.api.customer.dto.CustomerUpdateDto;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.customer.repository.CustomerRepository;
+import com.mcfuturepartners.crm.api.order.dto.OrderDto;
+import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -25,16 +34,22 @@ public class CustomerServiceImpl implements CustomerService{
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final ModelMapper modelMapper;
     @Override
-    public List<Customer> findAllCustomer() {
+    public List<CustomerResponseDto> findAllCustomer() {
         List<Customer> customerList = customerRepository.findAll();
-        return customerList;
+
+        return customerList.stream().map(customer -> modelMapper.map(customer, CustomerResponseDto.class)).collect(Collectors.toList());
     }
 
     @Override
-    public Customer findCustomer(Long id) {
-        return customerRepository.findById(id)
-                .orElseThrow(()-> new HttpClientErrorException(HttpStatus.NOT_FOUND,"doesn't exist customer"));
+    public CustomerResponseDto findCustomer(Long id) {
+        Customer customer = customerRepository.findById(id).orElseThrow();
+        CustomerResponseDto customerResponseDto = modelMapper.map(customer,CustomerResponseDto.class);
+        customerResponseDto.setCounselList(customer.getCounsels().stream().map(counsel -> modelMapper.map(counsel, CounselDto.class)).collect(Collectors.toList()));
+        customerResponseDto.setOrderList(customer.getOrders().stream().map(order -> modelMapper.map(order, OrderDto.class)).collect(Collectors.toList()));
+
+        return customerResponseDto;
     }
 
     @Override
@@ -48,7 +63,7 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public String save(CustomerDto customerDto) {
+    public String save(CustomerRegisterDto customerDto) {
         try {
             Optional<Customer> exist = customerRepository.findByNameAndPhone(customerDto.getName(),customerDto.getPhone());
             if(exist.isPresent()){
@@ -66,9 +81,14 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public String updateCustomer(Customer customer) {
+    public String updateCustomer(CustomerUpdateDto customerUpdateDto) {
+        User user = userRepository.findById(customerUpdateDto.getManagerUserId()).get();
+        Category category = categoryRepository.findById(customerUpdateDto.getCategoryId()).get();
+        Customer customer = customerUpdateDto.toEntity();
+        customer.setCategory(category);
+        customer.setManager(user);
         try {
-            customerRepository.save(customerRepository.findById(customer.getId()).get());
+            customerRepository.save(customer);
             return "successfully done";
         } catch (Exception e){
             throw e;

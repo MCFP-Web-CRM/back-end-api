@@ -1,17 +1,18 @@
 package com.mcfuturepartners.crm.api.customer.service;
 
-import com.mcfuturepartners.crm.api.customer.dto.CustomerDto;
+import com.mcfuturepartners.crm.api.customer.dto.CustomerRegisterDto;
+import com.mcfuturepartners.crm.api.customer.dto.CustomerResponseDto;
+import com.mcfuturepartners.crm.api.customer.dto.CustomerUpdateDto;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public interface CustomerService {
-    List<Customer> findAllCustomer();
-    Customer findCustomer(Long id);
-    String save(CustomerDto customerDto);
+    List<CustomerResponseDto> findAllCustomer();
+    CustomerResponseDto findCustomer(Long id);
+    String save(CustomerRegisterDto customerDto);
     List<Customer> selectCustomer(Map<String,String> map);
-    String updateCustomer(Customer customer);
+    String updateCustomer(CustomerUpdateDto customerUpdateDto);
     String deleteCustomer(Long id);
 }

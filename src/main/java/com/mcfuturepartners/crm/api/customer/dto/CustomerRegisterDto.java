@@ -17,11 +17,12 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 @Data
 @Component
 @NoArgsConstructor
-public class CustomerDto {
+public class CustomerRegisterDto {
     @ApiModelProperty(position = 0) private long id;
     @ApiModelProperty(position = 1) private String name;
     @ApiModelProperty(position = 2) private String birth;
@@ -34,8 +35,6 @@ public class CustomerDto {
     private String specialNote;
     @Nullable
     private String managerUsername;
-    @Nullable
-    private long counselId;
 
     public Customer toEntity(){
 
