@@ -98,6 +98,5 @@ public class UserTest {
 
         Assertions.assertThat(customerService.save(customerDto)).isEqualTo("successfully done");
 
-        Assertions.assertThat(userService.getUserById(1).getCustomers().size()).isEqualTo(1);
     }
 }

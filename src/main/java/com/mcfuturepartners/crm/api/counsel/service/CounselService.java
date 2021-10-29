@@ -18,7 +18,7 @@ public interface CounselService {
     Optional<Counsel> findByUsernameId(String username, long counselId);
     List<Counsel> findAllByKeyword(String searchKeyword);
     List<Counsel> findAllByUsernameKeyword(String username, String searchKeyword);
-    String updateCounsel(long counselId, CounselDto counsel);
-    void deleteCounsel(long counselId);
-    void deleteCounselByUsername(String username, long counselId);
+    List<CounselDto> updateCounsel(long counselId, CounselDto counsel);
+    List<CounselDto> deleteCounsel(long counselId);
+    List<CounselDto> deleteCounselByUsername(String username, long counselId);
 }

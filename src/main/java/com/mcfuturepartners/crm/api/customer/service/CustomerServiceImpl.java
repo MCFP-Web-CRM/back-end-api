@@ -1,5 +1,6 @@
 package com.mcfuturepartners.crm.api.customer.service;
 
+import com.mcfuturepartners.crm.api.category.dto.CategoryDto;
 import com.mcfuturepartners.crm.api.category.entity.Category;
 import com.mcfuturepartners.crm.api.category.repository.CategoryRepository;
 import com.mcfuturepartners.crm.api.counsel.dto.CounselDto;
@@ -9,6 +10,9 @@ import com.mcfuturepartners.crm.api.customer.dto.CustomerUpdateDto;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.customer.repository.CustomerRepository;
 import com.mcfuturepartners.crm.api.order.dto.OrderDto;
+import com.mcfuturepartners.crm.api.order.dto.OrderResponseDto;
+import com.mcfuturepartners.crm.api.product.dto.ProductDto;
+import com.mcfuturepartners.crm.api.product.entity.Product;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,8 +50,13 @@ public class CustomerServiceImpl implements CustomerService{
     public CustomerResponseDto findCustomer(Long id) {
         Customer customer = customerRepository.findById(id).orElseThrow();
         CustomerResponseDto customerResponseDto = modelMapper.map(customer,CustomerResponseDto.class);
+        customerResponseDto.setCategory(modelMapper.map(customer.getCategory(), CategoryDto.class));
         customerResponseDto.setCounselList(customer.getCounsels().stream().map(counsel -> modelMapper.map(counsel, CounselDto.class)).collect(Collectors.toList()));
-        customerResponseDto.setOrderList(customer.getOrders().stream().map(order -> modelMapper.map(order, OrderDto.class)).collect(Collectors.toList()));
+        customerResponseDto.setOrderList(customer.getOrders().stream().map(order -> {
+            OrderResponseDto orderResponseDto = modelMapper.map(order, OrderResponseDto.class);
+            orderResponseDto.setProduct(modelMapper.map(order.getProduct(), ProductDto.class));
+            return orderResponseDto;
+        }).collect(Collectors.toList()));
 
         return customerResponseDto;
     }

@@ -1,7 +1,9 @@
 package com.mcfuturepartners.crm.api.customer.dto;
 
+import com.mcfuturepartners.crm.api.category.dto.CategoryDto;
 import com.mcfuturepartners.crm.api.counsel.dto.CounselDto;
 import com.mcfuturepartners.crm.api.order.dto.OrderDto;
+import com.mcfuturepartners.crm.api.order.dto.OrderResponseDto;
 import com.mcfuturepartners.crm.api.order.entity.Order;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,11 +24,11 @@ public class CustomerResponseDto {
     @ApiModelProperty(position = 5) private String sex;
     @ApiModelProperty(position = 6) private String funnel;
     //CategoryDto
-    private long categoryId;
+    private CategoryDto category;
     @Nullable
     private String specialNote;
     //UserDto로 보내기
     private String managerName;
-    private List<OrderDto> orderList;
+    private List<OrderResponseDto> orderList;
     private List<CounselDto> counselList;
 }

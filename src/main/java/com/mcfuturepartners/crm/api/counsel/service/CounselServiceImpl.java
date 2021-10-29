@@ -12,12 +12,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class CounselServiceImpl implements CounselService {
@@ -73,19 +75,20 @@ public class CounselServiceImpl implements CounselService {
     }
 
     @Override
-    public String updateCounsel(long counselId, CounselDto counselDto) {
+    public List<CounselDto> updateCounsel(long counselId, CounselDto counselDto) {
+        Customer customer = counselRepository.findById(counselId).get().getCustomer();
 
-        if(!counselDto.getUsername().equals(counselRepository.findById(counselId).get().getUser().getUsername()))
-            return ErrorCode.UNAUTHORIZED.getMsg();
+
 
         Counsel updatedCounsel = counselDto.toEntity();
-        updatedCounsel.setCustomer(customerRepository.getById(updatedCounsel.getCustomer().getId()));
+        updatedCounsel.setCustomer(customerRepository.getById(counselDto.getCustomerId()));
         updatedCounsel.setId(counselId);
         updatedCounsel.setUser(userRepository.getByUsername(counselDto.getUsername()));
 
         try{
             counselRepository.save(updatedCounsel);
-            return "successfully done";
+            return counselRepository.findAllByCustomer(customer).stream().map(counsel1 -> modelMapper.map(counsel1,CounselDto.class)).collect(Collectors.toList());
+
         } catch (Exception e){
             throw e;
         }
@@ -93,19 +96,25 @@ public class CounselServiceImpl implements CounselService {
     }
 
     @Override
-    public void deleteCounsel(long counselId) {
+    public List<CounselDto> deleteCounsel(long counselId) {
+        Customer customer = counselRepository.findById(counselId).orElseThrow().getCustomer();
         try{
-            log.info(counselRepository.findById(counselId).get().toString());
-            counselRepository.delete(counselRepository.findById(counselId).get());
+            counselRepository.delete(counselRepository.findById(counselId).orElseThrow());
+            return counselRepository.findAllByCustomer(customer).stream().map(counsel1 -> modelMapper.map(counsel1,CounselDto.class)).collect(Collectors.toList());
+
         } catch(Exception e){
-            e.printStackTrace();
+            throw e;
         }
     }
 
     @Override
-    public void deleteCounselByUsername(String username, long counselId) throws CounselException{
+    public List<CounselDto> deleteCounselByUsername(String username, long counselId) throws CounselException{
+        Customer customer = counselRepository.findById(counselId).get().getCustomer();
+
         if(counselRepository.findById(counselId).get().getUser().getUsername().equals(username)){
-            deleteCounsel(counselId);
+
+            return deleteCounsel(counselId);
+
         } else{
             throw new CounselException(ErrorCode.UNAUTHORIZED.getCode());
         }

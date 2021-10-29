@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
             ? provider.createToken(new UsernamePasswordAuthenticationToken(user.getUsername(),"", loginUser.getAuthorities()))
                     :"Wrong Password");
             if(loginUser.getAuthorities().contains(Authority.ADMIN)) userLoginResponseDto.setAuthority("ADMIN");
-
+            else userLoginResponseDto.setAuthority("USER");
             return userLoginResponseDto;
         } catch (Exception e){
             throw new LoginException();
