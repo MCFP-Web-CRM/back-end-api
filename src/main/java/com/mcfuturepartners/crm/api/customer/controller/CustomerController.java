@@ -42,7 +42,7 @@ public class CustomerController {
     public ResponseEntity<List<CustomerResponseDto>> getCustomerList(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
                                                                      @RequestParam(value = "customer-category") @Nullable String customerCategory,
                                                                      @RequestParam(value = "product-name") @Nullable String productName,
-                                                                     @RequestParam(value = "funnel") @Nullable String funnel,
+                                                                     @RequestParam(value = "funnel-id") @Nullable Long funnelId,
                                                                      @RequestParam(value = "manager-id") @Nullable Long managerId,
                                                                      @RequestParam(value = "start-date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Nullable LocalDate startDate,
                                                                      @RequestParam(value = "end-date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Nullable LocalDate endDate,
@@ -55,7 +55,7 @@ public class CustomerController {
                 CustomerSearch.builder()
                         .categoryName(customerCategory)
                         .productName(productName)
-                        .funnel(funnel)
+                        .funnelId(funnelId)
                         .managerId(managerId)
                         .startDate(startDate)
                         .endDate(endDate)
@@ -110,7 +110,7 @@ public class CustomerController {
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
 
-        if(customerService.findCustomerIfManager(customerId,username)||tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())){
+        if(tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())||customerService.findCustomerIfManager(customerId,username)){
 
             customerUpdateDto.setId(customerId);
 
@@ -129,8 +129,7 @@ public class CustomerController {
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
 
-        if(customerService.findCustomerIfManager(customerId,username)||tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())){
-
+        if(tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())||customerService.findCustomerIfManager(customerId,username)){
 
             customerService.deleteCustomer(customerId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

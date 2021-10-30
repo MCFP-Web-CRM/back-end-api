@@ -39,13 +39,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductRevenue> findAllProductRevenue() {
-        log.info(""+LocalDate.now().getYear()+""+LocalDate.now().getMonth().getValue()+""+1);
         return productRepository.findAll().stream().map(product -> ProductRevenueDto.salesRevenue(product)).collect(Collectors.toList());
     }
 
     @Override
     public String save(Product product) {
-        log.info(product.toString());
         try {
             Optional<Product> exist = productRepository.findByName(product.getName());
             if(exist.isPresent()){

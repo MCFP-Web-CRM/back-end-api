@@ -5,7 +5,8 @@ import com.mcfuturepartners.crm.api.product.entity.ProductRevenue;
 
 import java.time.LocalDate;
 import java.util.List;
-
+//도메인 레벨, 혹은 서비스레벨로 내려가야함
+//order에서 처리할 예정 수정 필요
 public class ProductRevenueDto{
 
     public static ProductRevenue salesRevenue(Product product){

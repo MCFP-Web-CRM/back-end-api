@@ -29,8 +29,8 @@ public class CustomerRegisterDto {
     @ApiModelProperty(position = 3, example = "고객 email") private String email;
     @ApiModelProperty(position = 4, example = "고객 phone") private String phone;
     @ApiModelProperty(position = 5, example = "고객 성별") private String sex;
-    @ApiModelProperty(position = 6, example = "고객 유입 (필수 항목)") private String funnel;
-    @ApiModelProperty(position = 6, example = "고객 상태 (필수 항목)")private long categoryId;
+    @ApiModelProperty(position = 6, example = "고객 유입 (필수 항목)") private Long funnelId;
+    @ApiModelProperty(position = 6, example = "고객 상태 (필수 항목)")private Long categoryId;
     @ApiModelProperty(position = 6, example = "사원 명 (필요 없음)")private String managerUsername;
 
     public Customer toEntity(){
@@ -41,7 +41,6 @@ public class CustomerRegisterDto {
                     .email(email)
                     .birth(birth)
                     .sex(sex)
-                    .funnel(funnel)
                     .regDate(LocalDateTime.now())
                     .build();
         }

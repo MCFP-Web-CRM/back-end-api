@@ -1,23 +1,16 @@
 package com.mcfuturepartners.crm.api;
 
-import com.mcfuturepartners.crm.api.admin.controller.AdminController;
+import com.mcfuturepartners.crm.api.admin.department.AdminController;
 import com.mcfuturepartners.crm.api.department.dto.DepartmentDto;
 import com.mcfuturepartners.crm.api.department.controller.DepartmentController;
-import com.mcfuturepartners.crm.api.department.entity.Department;
 import com.mcfuturepartners.crm.api.department.repository.DepartmentRepository;
 import com.mcfuturepartners.crm.api.department.service.DepartmentServiceImpl;
-import com.mcfuturepartners.crm.api.user.controller.UserController;
-import com.mcfuturepartners.crm.api.user.repository.UserRepository;
-import com.mcfuturepartners.crm.api.user.service.UserServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;

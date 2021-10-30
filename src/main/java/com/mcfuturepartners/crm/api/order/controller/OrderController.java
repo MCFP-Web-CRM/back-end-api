@@ -9,6 +9,7 @@ import com.mcfuturepartners.crm.api.order.entity.OrderRevenue;
 import com.mcfuturepartners.crm.api.order.service.OrderService;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
 import com.mcfuturepartners.crm.api.user.entity.Authority;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ public class OrderController {
     private final TokenProvider tokenProvider;
 
     @PostMapping
+    @ApiOperation(value = "상품 구독 생성 api", notes = "상품 구독 생성 api")
     public ResponseEntity<List<OrderResponseDto>> createOrder(@RequestHeader(HttpHeaders.AUTHORIZATION) String bearerToken,
                                                               @RequestBody OrderDto orderDto){
 
@@ -38,12 +40,12 @@ public class OrderController {
 
     }
     @DeleteMapping(path = "/{order-id}")
+    @ApiOperation(value = "상품 구독 취소 api", notes = "상품 구독 취소 api")
     public ResponseEntity<List<OrderResponseDto>> cancelOrder(@RequestHeader(HttpHeaders.AUTHORIZATION) String bearerToken,
-                                              @PathVariable(value="order-id") long orderId){
+                                              @PathVariable(value="order-id") Long orderId){
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
-
 
         return new ResponseEntity<>(orderService.deleteOrder(OrderCancelDto.builder()
                 .authorities(tokenProvider.getAuthentication(token).getAuthorities().toString())
@@ -52,6 +54,7 @@ public class OrderController {
     }
 
     @GetMapping(path = "/revenue")
+    @ApiOperation(value = "상품별 수익률 api", notes = "전체 수익률 api")
     public ResponseEntity<OrderRevenue> getCurrentRevenue(){
         return new ResponseEntity<>(orderService.getTotalRevenue(),HttpStatus.OK);
     }

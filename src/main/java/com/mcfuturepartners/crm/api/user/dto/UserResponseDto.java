@@ -1,5 +1,6 @@
 package com.mcfuturepartners.crm.api.user.dto;
 
+import com.mcfuturepartners.crm.api.department.dto.DepartmentResponseDto;
 import com.mcfuturepartners.crm.api.department.entity.Department;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -13,5 +14,5 @@ public class UserResponseDto {
     @ApiModelProperty(position = 1) private String username;
     @ApiModelProperty(position = 3) private String name;
     @ApiModelProperty(position = 4) private String phone;
-    private String departmentName;
+    @ApiModelProperty(position = 5)private DepartmentResponseDto department;
 }

@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 @Data
 @NoArgsConstructor
 public class OrderDto {
-    @ApiModelProperty(position = 0) private long id;
-    @ApiModelProperty(position = 1) private long customerId;
-    @ApiModelProperty(position = 2) private long productId;
-    private String username;
+    @ApiModelProperty(position = 0, example = "구독 결제 id / 필요 없음") private Long id;
+    @ApiModelProperty(position = 1, example = "고객 id") private long customerId;
+    @ApiModelProperty(position = 2, example = "상품 id") private long productId;
+    @ApiModelProperty(position = 3, example = "사원 username / 필요 없음") private String username;
 }
