@@ -7,17 +7,20 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.mcfuturepartners.crm.api.category.entity.Category;
 import com.mcfuturepartners.crm.api.counsel.entity.Counsel;
+import com.mcfuturepartners.crm.api.customer.dto.CustomerUpdateDto;
 import com.mcfuturepartners.crm.api.order.entity.Order;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -71,9 +74,6 @@ public class Customer {
     @Column(name = "funnel")
     private String funnel;
 
-    //지우기
-    @Column(name = "special_note")
-    private String specialNote;
 
     @OneToMany(mappedBy = "customer")
     private List<Order> orders = new ArrayList<>();
@@ -81,6 +81,22 @@ public class Customer {
     @OneToMany(mappedBy = "customer")
     private List<Counsel> counsels = new ArrayList<>();
 
-
-
+    public Customer modifyUpdated(CustomerUpdateDto customerUpdateDto){
+        if(StringUtils.hasText(customerUpdateDto.getPhone())){
+            this.phone = customerUpdateDto.getBirth();
+        }
+        if(StringUtils.hasText(customerUpdateDto.getName())){
+            this.name = customerUpdateDto.getName();
+        }
+        if(StringUtils.hasText(customerUpdateDto.getBirth())){
+            this.birth = customerUpdateDto.getBirth();
+        }
+        if(StringUtils.hasText(customerUpdateDto.getEmail())){
+            this.email = customerUpdateDto.getEmail();
+        }
+        if(StringUtils.hasText(customerUpdateDto.getSex())){
+            this.sex = customerUpdateDto.getSex();
+        }
+        return this;
+    }
 }

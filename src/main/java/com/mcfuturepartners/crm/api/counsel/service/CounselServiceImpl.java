@@ -1,6 +1,7 @@
 package com.mcfuturepartners.crm.api.counsel.service;
 
 import com.mcfuturepartners.crm.api.counsel.dto.CounselDto;
+import com.mcfuturepartners.crm.api.counsel.dto.CounselUpdateDto;
 import com.mcfuturepartners.crm.api.counsel.entity.Counsel;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.customer.repository.CustomerRepository;
@@ -92,20 +93,23 @@ public class CounselServiceImpl implements CounselService {
         if(!customer.getManager().getUsername().equals(user.getUsername()))
             return false;
 
-        return false;
+        return true;
     }
 
     @Override
-    public List<CounselDto> updateCounsel(long counselId, CounselDto counselDto) {
-        Customer customer = counselRepository.findById(counselId)
+    public List<CounselDto> updateCounsel(long counselId, CounselUpdateDto counselUpdateDto) {
+        Counsel originalCounsel = counselRepository.findById(counselId)
                 .orElseThrow(()->
-                        new FindException(DatabaseErrorCode.CUSTOMER_NOT_FOUND.name()))
-                .getCustomer();
+                        new FindException(DatabaseErrorCode.CUSTOMER_NOT_FOUND.name()));
 
-        Counsel updatedCounsel = counselDto.toEntity();
+        Customer customer = originalCounsel.getCustomer();
+
+        Counsel updatedCounsel = counselUpdateDto.toEntity();
+
+        updatedCounsel.setRegDate(originalCounsel.getRegDate());
         updatedCounsel.setCustomer(customer);
         updatedCounsel.setId(counselId);
-        updatedCounsel.setUser(userRepository.getByUsername(counselDto.getUsername()));
+        updatedCounsel.setUser(userRepository.getByUsername(counselUpdateDto.getUsername()));
 
         try{
             counselRepository.save(updatedCounsel);

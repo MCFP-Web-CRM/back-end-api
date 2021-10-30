@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Date;
 
 @Data
-@Component
 @NoArgsConstructor
 public class CounselDto {
     @ApiModelProperty(position = 0, example = "상담 데이터 id(추가 api 수행 시 불필요)") private long id;

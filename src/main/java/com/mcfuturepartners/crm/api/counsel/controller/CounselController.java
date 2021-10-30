@@ -3,6 +3,7 @@ package com.mcfuturepartners.crm.api.counsel.controller;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.mcfuturepartners.crm.api.counsel.dto.CounselDto;
+import com.mcfuturepartners.crm.api.counsel.dto.CounselUpdateDto;
 import com.mcfuturepartners.crm.api.counsel.entity.Counsel;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.customer.service.CustomerService;
@@ -89,15 +90,15 @@ public class CounselController {
     @ApiOperation(value = "상담 수정 데이터", notes = "상담 수정 데이터. PathVariable = counsel-id, 사원 username 필수")
     public ResponseEntity<List<CounselDto>> updateCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
                                                           @PathVariable(value = "counsel-id") long counselId,
-                                                          @RequestBody CounselDto counselDto){
+                                                          @RequestBody CounselUpdateDto counselUpdateDto){
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
 
-        counselDto.setUsername(username);
+        counselUpdateDto.setUsername(username);
 
         if(counselService.findCustomerIfManager(counselId,username)||tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())){
-            return new ResponseEntity<>(counselService.updateCounsel(counselId, counselDto),HttpStatus.OK);
+            return new ResponseEntity<>(counselService.updateCounsel(counselId, counselUpdateDto),HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
