@@ -38,8 +38,8 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
             booleanBuilder.and(customer.category.name.eq(customerSearch.getCategoryName()));
         }
 
-        if(StringUtils.hasText(customerSearch.getFunnel())){
-            booleanBuilder.and(customer.funnel.eq(customerSearch.getFunnel()));
+        if(!ObjectUtils.isEmpty(customerSearch.getFunnelId())){
+            booleanBuilder.and(customer.funnel.funnelId.eq(customerSearch.getFunnelId()));
         }
         if(StringUtils.hasText(customerSearch.getProductName())){
             booleanBuilder.and(customer.orders.any().product.name.eq(customerSearch.getProductName()));

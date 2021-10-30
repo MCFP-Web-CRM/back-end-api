@@ -28,11 +28,11 @@ public class CustomerUpdateDto {
     @ApiModelProperty(position = 5, example = "성별")
     private String sex;
     @ApiModelProperty(position = 6, example = "유입 경로")
-    private String funnel;
+    private Long funnel;
     @ApiModelProperty(position = 7, example = "고객 상태 그룹 id")
-    private long categoryId;
+    private Long categoryId;
     @ApiModelProperty(position = 8, example = "담당 직원 id")
-    private long managerUserId;
+    private Long managerUserId;
 
     public Customer toEntity(){
         return Customer.builder()
@@ -41,7 +41,6 @@ public class CustomerUpdateDto {
                 .birth(birth)
                 .email(email)
                 .sex(sex)
-                .funnel(funnel)
                 .phone(phone)
                 .build();
     }

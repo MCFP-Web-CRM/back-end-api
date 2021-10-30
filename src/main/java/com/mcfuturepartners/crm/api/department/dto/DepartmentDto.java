@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class DepartmentDto {
-
-    @ApiModelProperty(position = 0, example = "부서 ID") private long id;
     @ApiModelProperty(position = 1, example = "부서명") private String departmentName;
 
     public Department toEntity(){

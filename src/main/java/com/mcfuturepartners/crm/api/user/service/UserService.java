@@ -15,6 +15,7 @@ public interface UserService {
     String signup(UserDto userDto);
     UserLoginResponseDto signin(User user);
     String deleteUser(long id);
+    List<UserResponseDto> getAllUsers();
     List<UserRevenue> getAllUserRevenue();
     UserResponseDto getUserById(long id);
 }

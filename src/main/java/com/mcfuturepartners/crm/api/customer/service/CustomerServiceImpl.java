@@ -17,6 +17,8 @@ import com.mcfuturepartners.crm.api.customer.repository.CustomerRepository;
 import com.mcfuturepartners.crm.api.customer.repository.CustomerRepositoryImpl;
 import com.mcfuturepartners.crm.api.exception.DatabaseErrorCode;
 import com.mcfuturepartners.crm.api.exception.FindException;
+import com.mcfuturepartners.crm.api.funnel.dto.FunnelResponseDto;
+import com.mcfuturepartners.crm.api.funnel.repository.FunnelRepository;
 import com.mcfuturepartners.crm.api.order.dto.OrderDto;
 import com.mcfuturepartners.crm.api.order.dto.OrderResponseDto;
 import com.mcfuturepartners.crm.api.order.repository.OrderRepository;
@@ -39,6 +41,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 
+import javax.validation.constraints.Null;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -55,15 +58,18 @@ public class CustomerServiceImpl implements CustomerService{
     private final CounselRepository counselRepository;
     private final OrderRepository orderRepository;
     private final ModelMapper modelMapper;
+    private final FunnelRepository funnelRepository;
     private final TokenProvider tokenProvider;
 
     @Override
     public List<CustomerResponseDto> searchCustomers(CustomerSearch customerSearch) {
 
-
         return qCustomerRepository.search(customerSearch).stream().map(customer -> {
                     CustomerResponseDto customerResponseDto = modelMapper.map(customer, CustomerResponseDto.class);
-                    customerResponseDto.setManager(modelMapper.map(customer.getManager(), UserResponseDto.class));
+                    if(customer.getManager() != null)
+                        customerResponseDto.setManager(modelMapper.map(customer.getManager(), UserResponseDto.class));
+                    if(customer.getFunnel() != null)
+                        customerResponseDto.setFunnel(modelMapper.map(customer.getFunnel(), FunnelResponseDto.class));
                     return customerResponseDto;
                 })
                 .collect(Collectors.toList());
@@ -78,16 +84,18 @@ public class CustomerServiceImpl implements CustomerService{
                 .orElseThrow(()->
                         new FindException(DatabaseErrorCode.USER_NOT_FOUND.name()));
 
-        if(!customer.getManager().getUsername().equals(user.getUsername()))
-            return false;
+        if(ObjectUtils.isEmpty(customer.getManager())||customer.getManager().getUsername().equals(user.getUsername()))
+            return true;
 
-        return true;
+        return false;
     }
     @Override
     public CustomerResponseDto findCustomer(Long id) {
-        Customer customer = customerRepository.findById(id).orElseThrow();
+        Customer customer = customerRepository.findById(id).orElseThrow(()->new FindException(DatabaseErrorCode.CUSTOMER_NOT_FOUND.name()));
         CustomerResponseDto customerResponseDto = modelMapper.map(customer,CustomerResponseDto.class);
         customerResponseDto.setCategory(modelMapper.map(customer.getCategory(), CategoryDto.class));
+        customerResponseDto.setFunnel(modelMapper.map(customer.getFunnel(), FunnelResponseDto.class));
+
         customerResponseDto.setCounselList(customer.getCounsels().stream().map(counsel -> modelMapper.map(counsel, CounselDto.class)).collect(Collectors.toList()));
         customerResponseDto.setOrderList(customer.getOrders().stream().map(order -> {
             OrderResponseDto orderResponseDto = modelMapper.map(order, OrderResponseDto.class);
@@ -116,8 +124,9 @@ public class CustomerServiceImpl implements CustomerService{
                 return "customer already exist";
             }else{
                 Customer customer = customerDto.toEntity();
-                customer.setManager(userRepository.findByUsername(customerDto.getManagerUsername()).orElseThrow());
-                customer.setCategory(categoryRepository.findById(customerDto.getCategoryId()).orElseThrow());
+                if(customerDto.getFunnelId() != null) customer.setFunnel(funnelRepository.findById(customerDto.getFunnelId()).orElse(null));
+                if(customerDto.getManagerUsername() != null) customer.setManager(userRepository.findByUsername(customerDto.getManagerUsername()).orElse(null));
+                if(customerDto.getCategoryId() != null) customer.setCategory(categoryRepository.findById(customerDto.getCategoryId()).orElse(null));
                 customerRepository.save(customer);
                 return "successfully done";
             }
@@ -128,6 +137,7 @@ public class CustomerServiceImpl implements CustomerService{
 
     @Override
     public String updateCustomer(CustomerUpdateDto customerUpdateDto) {
+
         User user = userRepository.findById(customerUpdateDto.getManagerUserId()).orElseThrow(()->new FindException(DatabaseErrorCode.USER_NOT_FOUND.name()));
         Category category = categoryRepository.findById(customerUpdateDto.getCategoryId()).get();
         Customer customer = customerRepository.findById(customerUpdateDto.getId()).orElseThrow(()->new FindException(DatabaseErrorCode.CUSTOMER_NOT_FOUND.name()));

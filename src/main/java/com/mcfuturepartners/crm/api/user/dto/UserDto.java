@@ -14,14 +14,14 @@ import java.util.Set;
 @Data @Component
 @NoArgsConstructor
 public class UserDto {
-    @ApiModelProperty(position = 0) private long id;
-    @ApiModelProperty(position = 1) private String username;
-    @ApiModelProperty(position = 2) private String password;
-    @ApiModelProperty(position = 3) private String name;
-    @ApiModelProperty(position = 4) private String phone;
-    @ApiModelProperty(position = 5) private long departmentId;
-    @ApiModelProperty(position = 6) private String authority;
-    private Department department;
+    @ApiModelProperty(position = 0, example = "사원 등록 시 필요없음") private Long id;
+    @ApiModelProperty(position = 1, example = "사원 계정 id(username)") private String username;
+    @ApiModelProperty(position = 2, example = "사원 계정 비밀번호") private String password;
+    @ApiModelProperty(position = 3, example = "사원 명") private String name;
+    @ApiModelProperty(position = 4, example = "핸드폰 번호") private String phone;
+    @ApiModelProperty(position = 5, example = "부서 ") private Long departmentId;
+    @ApiModelProperty(position = 6, example = "권한 / 사용자 추가 시 필요 없음") private String authority;
+    @ApiModelProperty(position = 6, example = "부서 / 사용자 추가 시 필요 없음")private Department department;
 
     public User toEntity(){
         Set<Authority> authorities = new HashSet<>();

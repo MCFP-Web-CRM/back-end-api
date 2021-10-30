@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class CustomerSearch {
     private String categoryName;
     private String productName;
-    private String funnel;
+    private Long funnelId;
     private Long managerId;
     private LocalDate startDate;
     private LocalDate endDate;

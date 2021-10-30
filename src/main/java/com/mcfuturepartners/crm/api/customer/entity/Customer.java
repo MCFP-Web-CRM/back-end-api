@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.mcfuturepartners.crm.api.category.entity.Category;
 import com.mcfuturepartners.crm.api.counsel.entity.Counsel;
 import com.mcfuturepartners.crm.api.customer.dto.CustomerUpdateDto;
+import com.mcfuturepartners.crm.api.funnel.entity.Funnel;
 import com.mcfuturepartners.crm.api.order.entity.Order;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import lombok.AllArgsConstructor;
@@ -71,8 +72,9 @@ public class Customer {
     @NotNull
     private LocalDateTime regDate;
 
-    @Column(name = "funnel")
-    private String funnel;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "funnel_id")
+    private Funnel funnel;
 
 
     @OneToMany(mappedBy = "customer")

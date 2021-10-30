@@ -6,10 +6,9 @@ spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://${spring.datasource.env}:3306/mcfuturepartners?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
-    username: mcfuturepartners
-    password: corudals12
-    env: 210.114.18.105
-
+    username: user
+    password: user
+    env: 3.36.166.137
   jpa:
     hibernate:
       ddl-auto: update

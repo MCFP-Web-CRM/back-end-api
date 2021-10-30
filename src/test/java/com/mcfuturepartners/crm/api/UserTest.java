@@ -1,6 +1,6 @@
 package com.mcfuturepartners.crm.api;
 
-import com.mcfuturepartners.crm.api.admin.controller.AdminController;
+import com.mcfuturepartners.crm.api.admin.department.AdminController;
 import com.mcfuturepartners.crm.api.customer.dto.CustomerRegisterDto;
 import com.mcfuturepartners.crm.api.customer.service.CustomerServiceImpl;
 import com.mcfuturepartners.crm.api.department.dto.DepartmentDto;
