@@ -12,8 +12,7 @@ import org.springframework.lang.Nullable;
 @NoArgsConstructor @Data
 public class CategoryDto {
 
-    @ApiModelProperty(position = 0, example = "카테고리 ID")
-    @Nullable private long id;
+    @ApiModelProperty(position = 0, example = "카테고리 ID (category 추가 요청 시 필요 없음)") @Nullable private long id;
     @ApiModelProperty(position = 1, example = "카테고리 명") private String categoryName;
 
     public Category toEntity(){
