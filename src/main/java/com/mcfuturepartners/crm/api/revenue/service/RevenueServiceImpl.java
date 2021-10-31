@@ -101,7 +101,7 @@ public class RevenueServiceImpl implements RevenueService{
             for(int period = 0 ; period < productMonthlyRequest.getMonth() ; period ++){
                 productMonthlyRevenues.add(ProductMonthlyRevenue.builder().product(modelMapper.map(product, ProductDto.class))
                         .year(startDate.getYear()).month(startDate.getMonthValue()).amount(orderRepository.findAllByRegDateIsBetween(startDate,endDate).stream()
-                                .filter(order -> order.getUser().equals(product))
+                                .filter(order -> order.getProduct().equals(product))
                                 .map(order -> order.getPrice())
                                 .reduce(0L,Long::sum)).build());
 
