@@ -7,6 +7,6 @@ import lombok.Data;
 @Builder
 public class ProductRevenue {
     private String productName;
-    private long dailySales;
-    private long monthlySales;
+    private Long dailySales;
+    private Long monthlySales;
 }

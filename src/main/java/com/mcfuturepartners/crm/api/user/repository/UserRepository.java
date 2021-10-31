@@ -8,13 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, String> {
+public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAll();
     User getByUsername(String username);
     User save(User entity);
     Optional<User> findByUsername(String username);
-    Optional<User> findById(long id);
-    boolean existsById(long id);
     boolean existsByUsername(String username);
 
 

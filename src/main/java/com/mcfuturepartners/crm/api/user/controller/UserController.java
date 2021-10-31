@@ -68,14 +68,15 @@ public class UserController {
 
     @GetMapping(path="/{userid}")
     @ApiOperation(value = "개별 사원 호출 api", notes = "개별 사원 호출")
-    public ResponseEntity<UserResponseDto> getUser(@PathVariable("userid") long userId){
+    public ResponseEntity<UserResponseDto> getUser(@PathVariable("userid") Long userId){
         return new ResponseEntity<>(userService.getUserById(userId),HttpStatus.OK);
     }
 
-    @GetMapping(path = "/revenue")
+    @GetMapping(path = "/{userid}/revenue")
     @ApiOperation(value = "사원별 매출 확인 api", notes = "사원별 매출 확인 api / 1개월치 호출 가능 / 로직 수정 중")
-    public ResponseEntity<List<UserRevenue>> getUserRevenue(){
+    public ResponseEntity<List<UserRevenue>> getUserRevenue(@PathVariable("userid") Long userId){
         return new ResponseEntity<>(userService.getAllUserRevenue(),HttpStatus.OK);
     }
+
 
 }

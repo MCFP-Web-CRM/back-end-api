@@ -41,6 +41,9 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @JoinColumn(name = "price")
+    private Long price;
+
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")

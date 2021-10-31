@@ -1,8 +1,10 @@
 package com.mcfuturepartners.crm.api.counsel.service;
 
 import com.mcfuturepartners.crm.api.counsel.dto.CounselDto;
+import com.mcfuturepartners.crm.api.counsel.dto.CounselResponseDto;
 import com.mcfuturepartners.crm.api.counsel.dto.CounselUpdateDto;
 import com.mcfuturepartners.crm.api.counsel.entity.Counsel;
+import com.mcfuturepartners.crm.api.customer.dto.CustomerResponseDto;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.customer.repository.CustomerRepository;
 import com.mcfuturepartners.crm.api.exception.CounselException;
@@ -10,6 +12,7 @@ import com.mcfuturepartners.crm.api.counsel.repository.CounselRepository;
 import com.mcfuturepartners.crm.api.exception.DatabaseErrorCode;
 import com.mcfuturepartners.crm.api.exception.ErrorCode;
 import com.mcfuturepartners.crm.api.exception.FindException;
+import com.mcfuturepartners.crm.api.user.dto.UserResponseDto;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,12 +37,14 @@ public class CounselServiceImpl implements CounselService {
     private final ModelMapper modelMapper;
 
     @Override
-    public CounselDto wrapCounselDto(Counsel counsel) {
-        return modelMapper.map(counsel, CounselDto.class);
+    public CounselResponseDto wrapCounselResponseDto(Counsel counsel) {
+        CounselResponseDto counselResponseDto = modelMapper.map(counsel, CounselResponseDto.class);
+        counselResponseDto.setUser(modelMapper.map(counsel.getUser(), UserResponseDto.class));
+        return counselResponseDto;
     }
 
     @Override
-    public List<CounselDto> saveCounsel(CounselDto counselDto) {
+    public List<CounselResponseDto> saveCounsel(CounselDto counselDto) {
         Counsel counsel = counselDto.toEntity();
         Customer customer = customerRepository.getById(counselDto.getCustomerId());
         counsel.setCustomer(customer);
@@ -47,16 +52,19 @@ public class CounselServiceImpl implements CounselService {
         counselRepository.save(counsel);
 
 
-        return counselRepository.findAllByCustomer(customer).stream().map(counsel1 -> wrapCounselDto(counsel1)).collect(Collectors.toList());
+        return counselRepository.findAllByCustomer(customer).stream()
+                .map(counsel1 -> wrapCounselResponseDto(counsel1)).collect(Collectors.toList());
     }
     @Override
-    public List<CounselDto> findAll() {
-        return counselRepository.findAll().stream().map(counsel -> wrapCounselDto(counsel)).collect(Collectors.toList());
+    public List<CounselResponseDto> findAll() {
+        return counselRepository.findAll().stream()
+                .map(counsel -> wrapCounselResponseDto(counsel)).collect(Collectors.toList());
     }
 
     @Override
-    public List<CounselDto> findAllByUsername(String username) {
-        return counselRepository.findAllByUser(userRepository.findByUsername(username).orElseThrow(()-> new FindException(DatabaseErrorCode.USER_NOT_FOUND.name()))).stream().map(counsel -> wrapCounselDto(counsel)).collect(Collectors.toList());
+    public List<CounselResponseDto> findAllByUsername(String username) {
+        return counselRepository.findAllByUser(userRepository.findByUsername(username).orElseThrow(()-> new FindException(DatabaseErrorCode.USER_NOT_FOUND.name()))).stream()
+                .map(counsel -> wrapCounselResponseDto(counsel)).collect(Collectors.toList());
     }
 
     @Override
@@ -97,7 +105,7 @@ public class CounselServiceImpl implements CounselService {
     }
 
     @Override
-    public List<CounselDto> updateCounsel(long counselId, CounselUpdateDto counselUpdateDto) {
+    public List<CounselResponseDto> updateCounsel(long counselId, CounselUpdateDto counselUpdateDto) {
         Counsel originalCounsel = counselRepository.findById(counselId)
                 .orElseThrow(()->
                         new FindException(DatabaseErrorCode.CUSTOMER_NOT_FOUND.name()));
@@ -117,21 +125,21 @@ public class CounselServiceImpl implements CounselService {
             log.info("Counsel Update Failed");
         }
         return counselRepository.findAllByCustomer(customer)
-                .stream().map(counsel1 -> wrapCounselDto(counsel1))
+                .stream().map(counsel -> wrapCounselResponseDto(counsel))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<CounselDto> deleteCounsel(long counselId) {
+    public List<CounselResponseDto> deleteCounsel(long counselId) {
         Customer customer = counselRepository.findById(counselId).orElseThrow().getCustomer();
         try{
             counselRepository.delete(counselRepository.findById(counselId).orElseThrow(()-> new FindException(DatabaseErrorCode.COUNSEL_NOT_FOUND.name())));
-            return counselRepository.findAllByCustomer(customer).stream().map(counsel1 -> wrapCounselDto(counsel1)).collect(Collectors.toList());
+            return counselRepository.findAllByCustomer(customer).stream().map(counsel -> wrapCounselResponseDto(counsel)).collect(Collectors.toList());
 
         } catch(Exception e){
             log.info("Counsel Delete Failed");
         }
-        return counselRepository.findAllByCustomer(customer).stream().map(counsel1 -> wrapCounselDto(counsel1)).collect(Collectors.toList());
+        return counselRepository.findAllByCustomer(customer).stream().map(counsel -> wrapCounselResponseDto(counsel)).collect(Collectors.toList());
     }
 
 }

@@ -28,7 +28,7 @@ public class Product {
     @Id
     @Column(name = "product_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "product_name")
     @NotNull
@@ -36,7 +36,7 @@ public class Product {
 
     @Column(name = "product_price")
     @NotNull
-    private int price;
+    private Long price;
 
     @OneToMany(mappedBy = "product")
     private List<Order> orders = new ArrayList<>();

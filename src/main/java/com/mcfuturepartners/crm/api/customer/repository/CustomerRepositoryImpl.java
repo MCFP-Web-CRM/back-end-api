@@ -9,8 +9,12 @@ import com.mcfuturepartners.crm.api.order.entity.QOrder;
 import com.mcfuturepartners.crm.api.user.entity.QUser;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryFactory;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.ObjectUtils;
@@ -28,7 +32,7 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
     }
 
     @Override
-    public List<Customer> search(CustomerSearch customerSearch){
+    public Page<Customer> search(CustomerSearch customerSearch, Pageable pageable){
 
         QCustomer customer = QCustomer.customer;
 
@@ -56,10 +60,10 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
         if(!ObjectUtils.isEmpty(customerSearch.getManagerId())){
             booleanBuilder.and(customer.manager.id.eq(customerSearch.getManagerId()));
         }
-        return queryFactory
-                .selectFrom(customer)
-                .where(booleanBuilder)
-                .fetch();
+        JPQLQuery<Customer> query =  queryFactory.selectFrom(customer).where(booleanBuilder);
+        long totalCount = query.fetchCount();
+        List<Customer> results = getQuerydsl().applyPagination(pageable, query).fetch();
+        return new PageImpl<>(results,pageable,totalCount);
     }
 
 }
