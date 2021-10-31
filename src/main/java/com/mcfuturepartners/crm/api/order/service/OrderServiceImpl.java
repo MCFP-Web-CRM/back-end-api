@@ -38,11 +38,13 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public List<OrderResponseDto> saveOrder(OrderDto orderDto) {
         Customer customer = customerRepository.getById(orderDto.getCustomerId());
+        Product product = productRepository.findById(orderDto.getProductId()).get();
         try{
             orderRepository.save(Order.builder()
                     .customer(customerRepository.findById(orderDto.getCustomerId()).get())
                     .user(userRepository.findByUsername(orderDto.getUsername()).get())
-                    .product(productRepository.findById(orderDto.getProductId()).get())
+                    .product(product)
+                            .price(product.getPrice())
                             .regDate(LocalDateTime.now())
                     .build());
 
@@ -86,7 +88,7 @@ public class OrderServiceImpl implements OrderService{
                                         .atStartOfDay())
                         .stream()
                         .map(order -> order.getProduct().getPrice())
-                        .reduce(0,Integer::sum))
+                        .reduce(0L,Long::sum))
                 .build();
     }
 }

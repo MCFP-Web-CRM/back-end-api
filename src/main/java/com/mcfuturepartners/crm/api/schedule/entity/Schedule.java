@@ -38,8 +38,4 @@ public class Schedule {
     @Column(name="IS_PUBLIC")
     private Boolean isPublic;
 
-    public Schedule openSchedule(Boolean isPublic){
-        this.isPublic = isPublic;
-        return this;
-    }
 }

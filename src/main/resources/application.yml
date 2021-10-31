@@ -2,7 +2,10 @@ spring:
   h2:
     console:
       enabled: true
-
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://${spring.datasource.env}:3306/mcfuturepartners?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC

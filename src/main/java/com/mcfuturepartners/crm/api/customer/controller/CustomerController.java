@@ -15,14 +15,19 @@ import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,13 +45,14 @@ public class CustomerController {
     @GetMapping
     @ApiOperation(value = "고객 조회 api", notes = "고객 조회 api, 다중 검색 조건(query string)으로 검색 가능")
     public ResponseEntity<List<CustomerResponseDto>> getCustomerList(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
-                                                                     @RequestParam(value = "customer-category") @Nullable String customerCategory,
-                                                                     @RequestParam(value = "product-name") @Nullable String productName,
-                                                                     @RequestParam(value = "funnel-id") @Nullable Long funnelId,
-                                                                     @RequestParam(value = "manager-id") @Nullable Long managerId,
-                                                                     @RequestParam(value = "start-date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Nullable LocalDate startDate,
-                                                                     @RequestParam(value = "end-date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Nullable LocalDate endDate,
-                                                                     @RequestParam(value = "counsel-keyword") @Nullable String counselKeyword){
+                                          @RequestParam(value = "customer-category") @Nullable String customerCategory,
+                                          @RequestParam(value = "product-name") @Nullable String productName,
+                                          @RequestParam(value = "funnel-id") @Nullable Long funnelId,
+                                          @RequestParam(value = "manager-id") @Nullable Long managerId,
+                                          @RequestParam(value = "start-date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Nullable LocalDate startDate,
+                                          @RequestParam(value = "end-date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Nullable LocalDate endDate,
+                                          @RequestParam(value = "counsel-keyword") @Nullable String counselKeyword,
+                                          Pageable pageable){
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
@@ -60,7 +66,7 @@ public class CustomerController {
                         .startDate(startDate)
                         .endDate(endDate)
                         .counselKeyword(counselKeyword)
-                        .build());
+                        .build(),pageable);
 
         if(tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())){
             return new ResponseEntity<>(listCustomer, HttpStatus.OK);
@@ -124,17 +130,18 @@ public class CustomerController {
     @DeleteMapping(path="{customer-id}")
     @ApiOperation(value = "고객 삭제 api", notes = "고객 삭제 api")
     public ResponseEntity<String> deleteCustomer(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
-                                                 @PathVariable("customer-id") long customerId){
+                                                 @PathVariable("customer-id") long customerId) {
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
 
-        if(tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())||customerService.findCustomerIfManager(customerId,username)){
+        if (tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString()) || customerService.findCustomerIfManager(customerId, username)) {
 
             customerService.deleteCustomer(customerId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        return new ResponseEntity<>( HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
+
 }

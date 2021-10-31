@@ -3,6 +3,7 @@ package com.mcfuturepartners.crm.api.counsel.controller;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.mcfuturepartners.crm.api.counsel.dto.CounselDto;
+import com.mcfuturepartners.crm.api.counsel.dto.CounselResponseDto;
 import com.mcfuturepartners.crm.api.counsel.dto.CounselUpdateDto;
 import com.mcfuturepartners.crm.api.counsel.entity.Counsel;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
@@ -34,7 +35,7 @@ public class CounselController {
 
     @PostMapping
     @ApiOperation(value = "상담 저장", notes = "고객 상담 저장 api")
-    public ResponseEntity<List<CounselDto>> saveCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken, @RequestBody CounselDto counselDto){
+    public ResponseEntity<List<CounselResponseDto>> saveCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken, @RequestBody CounselDto counselDto){
         String token = bearerToken.replace("Bearer ","");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
@@ -46,7 +47,7 @@ public class CounselController {
     //bearerToken 권한 확인하고, ADMIN 권한이면 전체 갖다주기. USER면 본인 해당 부분만 갖다주기
     @GetMapping
     @ApiOperation(value = "상담 내역 전체 조회", notes = "현재 customer 도메인으로 상담 내용 데이터를 받아서 사용하지 않음")
-    public ResponseEntity<List<CounselDto>> getCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken){
+    public ResponseEntity<List<CounselResponseDto>> getCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken){
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
@@ -88,7 +89,7 @@ public class CounselController {
 
     @PutMapping(path = "/{counsel-id}")
     @ApiOperation(value = "상담 수정 데이터", notes = "상담 수정 데이터. PathVariable = counsel-id, 사원 username 필수")
-    public ResponseEntity<List<CounselDto>> updateCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
+    public ResponseEntity<List<CounselResponseDto>> updateCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
                                                           @PathVariable(value = "counsel-id") long counselId,
                                                           @RequestBody CounselUpdateDto counselUpdateDto){
         String token = bearerToken.replace("Bearer ", "");
@@ -105,7 +106,7 @@ public class CounselController {
     }
     @DeleteMapping(path = "/{counsel-id}")
     @ApiOperation(value = "상담 삭제 데이터", notes = "상담 삭제 데이터. PathVariable = counsel-id, 사원 username 필수 / Response로 삭제 반영한 상담 데이터 제공")
-    public ResponseEntity<List<CounselDto>> deleteCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
+    public ResponseEntity<List<CounselResponseDto>> deleteCounsel(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
                                                           @PathVariable(value = "counsel-id") long counselId){
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);

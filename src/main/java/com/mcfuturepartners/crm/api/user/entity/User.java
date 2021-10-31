@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.department.entity.Department;
 import com.mcfuturepartners.crm.api.order.entity.Order;
+import com.mcfuturepartners.crm.api.schedule.entity.Schedule;
 import lombok.*;
 
 import javax.persistence.*;
@@ -44,6 +45,9 @@ public class User {
     private Department department;
 
     @OneToMany(mappedBy = "user")
+    private List<Schedule> schedules = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
     private List<Order> orders = new ArrayList<>();
 
     @OneToMany(mappedBy = "manager")
@@ -64,6 +68,11 @@ public class User {
         this.department = department;
         if(!department.getUsers().contains(this)){
             department.addUser(this);
+        }
+    }
+    public void eraseAllSchedules(){
+        if(schedules.size() != 0){
+            schedules.removeAll(schedules);
         }
     }
 }
