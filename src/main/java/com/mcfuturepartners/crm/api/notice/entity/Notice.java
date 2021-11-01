@@ -38,7 +38,7 @@ public class Notice {
         regDate = LocalDateTime.now();
         return this;
     }
-    public Notice modifyUpdated(Notice notice){
+    public Notice updateModified(Notice notice){
         if(ObjectUtils.isEmpty(notice.title)&&ObjectUtils.isEmpty(notice.contents)){
             return this;
         }

@@ -52,7 +52,7 @@ public class ProductServiceImpl implements ProductService {
                                 .product(modelMapper.map(product, ProductDto.class))
                                 .amount(product.getTotalRevenueAfter(startOfMonth))
                                 .build()
-                ).collect(Collectors.toList())).build());
+                ).sorted((o1, o2) -> (int) (o2.getAmount() - o1.getAmount())).collect(Collectors.toList())).build());
 
         productMonthlyDailyRevenueList.add(ProductRevenueResponseDto.builder().unit("dailyRevenue").productRevenueList(
                 productList.stream().map(product ->
@@ -60,7 +60,7 @@ public class ProductServiceImpl implements ProductService {
                                 .product(modelMapper.map(product,ProductDto.class))
                                 .amount(product.getTotalRevenueAfter(startOfDay))
                                 .build()
-                ).collect(Collectors.toList())).build());
+                ).sorted((o1, o2) -> (int) (o2.getAmount() - o1.getAmount())).collect(Collectors.toList())).build());
 
         return productMonthlyDailyRevenueList;
     }

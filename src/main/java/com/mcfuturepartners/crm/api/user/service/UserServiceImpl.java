@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
                         .user(modelMapper.map(user,UserResponseDto.class))
                         .amount(user.getTotalRevenueAfter(startOfMonth))
                         .build()
-        ).collect(Collectors.toList())).build());
+        ).sorted((o1, o2) -> (int) (o2.getAmount() - o1.getAmount())).collect(Collectors.toList())).build());
 
         userMonthlyDailyRevenueList.add(UserRevenueResponseDto.builder().unit("dailyRevenue").userRevenueList(
                 userList.stream().map(user ->
@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
                                 .user(modelMapper.map(user,UserResponseDto.class))
                                 .amount(user.getTotalRevenueAfter(startOfDay))
                                 .build()
-                ).collect(Collectors.toList())).build());
+                ).sorted((o1, o2) -> (int) (o2.getAmount() - o1.getAmount())).collect(Collectors.toList())).build());
 
         return userMonthlyDailyRevenueList;
     }

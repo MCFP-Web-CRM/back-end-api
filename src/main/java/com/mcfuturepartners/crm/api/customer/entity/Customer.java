@@ -83,7 +83,7 @@ public class Customer {
     @OneToMany(mappedBy = "customer")
     private List<Counsel> counsels = new ArrayList<>();
 
-    public Customer modifyUpdated(CustomerUpdateDto customerUpdateDto){
+    public Customer updateModified(CustomerUpdateDto customerUpdateDto){
         if(StringUtils.hasText(customerUpdateDto.getPhone())){
             this.phone = customerUpdateDto.getBirth();
         }

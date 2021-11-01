@@ -1,14 +1,18 @@
 package com.mcfuturepartners.crm.api.schedule.service;
 
-import com.mcfuturepartners.crm.api.schedule.dto.ScheduleRegister;
-import com.mcfuturepartners.crm.api.schedule.dto.ScheduleUpdate;
+import com.mcfuturepartners.crm.api.schedule.dto.*;
 import com.mcfuturepartners.crm.api.schedule.entity.Schedule;
+import org.apache.tomcat.jni.Local;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 public interface ScheduleService {
-    List<Schedule> getAllSchedule();
-    Schedule getSchedule(Long scheduleId);
-    List<Schedule> saveSchedule(ScheduleRegister scheduleRegister);
-    List<Schedule> updateSchedule(Long scheduleId, ScheduleUpdate scheduleUpdate);
+    List<List<ScheduleResponse>> getAllSchedule();
+    List<UserScheduleResponse> getScheduleInBetween(ScheduleGet scheduleGet);
+    ScheduleResponse getSchedule(Long scheduleId);
+    ScheduleResponse saveSchedule(ScheduleRegister scheduleRegister);
+    ScheduleResponse updateSchedule(Long scheduleId, ScheduleUpdate scheduleUpdate);
+    void deleteSchedule(Long scheduleId);
 }
