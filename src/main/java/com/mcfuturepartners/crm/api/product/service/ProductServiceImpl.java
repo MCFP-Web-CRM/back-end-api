@@ -4,7 +4,7 @@ package com.mcfuturepartners.crm.api.product.service;
 import com.mcfuturepartners.crm.api.product.dto.ProductDto;
 import com.mcfuturepartners.crm.api.product.dto.ProductRevenueDto;
 import com.mcfuturepartners.crm.api.product.entity.Product;
-import com.mcfuturepartners.crm.api.product.entity.ProductRevenue;
+import com.mcfuturepartners.crm.api.product.dto.ProductRevenueResponseDto;
 import com.mcfuturepartners.crm.api.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +15,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,8 +39,30 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductRevenue> findAllProductRevenue() {
-        return productRepository.findAll().stream().map(product -> ProductRevenueDto.salesRevenue(product)).collect(Collectors.toList());
+    public List<ProductRevenueResponseDto> findAllProductRevenue() {
+        List<Product> productList = productRepository.findAll();
+        LocalDateTime startOfMonth = LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonthValue(), 1).atStartOfDay();
+        LocalDateTime startOfDay = LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonthValue(), LocalDateTime.now().getDayOfMonth()).atStartOfDay();
+
+        List<ProductRevenueResponseDto> productMonthlyDailyRevenueList = new ArrayList<>();
+
+        productMonthlyDailyRevenueList.add(ProductRevenueResponseDto.builder().unit("monthlyRevenue").productRevenueList(
+                productList.stream().map(product ->
+                        ProductRevenueDto.builder()
+                                .product(modelMapper.map(product, ProductDto.class))
+                                .amount(product.getTotalRevenueAfter(startOfMonth))
+                                .build()
+                ).collect(Collectors.toList())).build());
+
+        productMonthlyDailyRevenueList.add(ProductRevenueResponseDto.builder().unit("dailyRevenue").productRevenueList(
+                productList.stream().map(product ->
+                        ProductRevenueDto.builder()
+                                .product(modelMapper.map(product,ProductDto.class))
+                                .amount(product.getTotalRevenueAfter(startOfDay))
+                                .build()
+                ).collect(Collectors.toList())).build());
+
+        return productMonthlyDailyRevenueList;
     }
 
     @Override

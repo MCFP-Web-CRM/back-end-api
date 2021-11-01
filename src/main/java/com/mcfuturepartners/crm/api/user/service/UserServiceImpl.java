@@ -3,10 +3,9 @@ package com.mcfuturepartners.crm.api.user.service;
 import com.mcfuturepartners.crm.api.department.dto.DepartmentResponseDto;
 import com.mcfuturepartners.crm.api.exception.DatabaseErrorCode;
 import com.mcfuturepartners.crm.api.exception.FindException;
-import com.mcfuturepartners.crm.api.user.dto.UserDto;
-import com.mcfuturepartners.crm.api.user.dto.UserLoginResponseDto;
-import com.mcfuturepartners.crm.api.user.dto.UserResponseDto;
-import com.mcfuturepartners.crm.api.user.dto.UserRevenueDto;
+import com.mcfuturepartners.crm.api.order.entity.Order;
+import com.mcfuturepartners.crm.api.order.repository.OrderRepository;
+import com.mcfuturepartners.crm.api.user.dto.*;
 import com.mcfuturepartners.crm.api.user.entity.Authority;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
@@ -23,6 +22,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final DepartmentRepository departmentRepository;
+    private final OrderRepository orderRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder encoder;
     private final TokenProvider provider;
@@ -87,8 +90,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserRevenue> getAllUserRevenue() {
-        return userRepository.findAll().stream().map(user -> UserRevenueDto.salesRevenue(user)).collect(Collectors.toList());
+    public List<UserRevenueResponseDto> getAllUserRevenue() {
+
+        List<User> userList = userRepository.findAll();
+        LocalDateTime startOfMonth = LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonthValue(), 1).atStartOfDay();
+        LocalDateTime startOfDay = LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonthValue(), LocalDateTime.now().getDayOfMonth()).atStartOfDay();
+
+        List<UserRevenueResponseDto> userMonthlyDailyRevenueList = new ArrayList<>();
+
+        userMonthlyDailyRevenueList.add(UserRevenueResponseDto.builder().unit("monthlyRevenue").userRevenueList(
+                userList.stream().map(user ->
+                UserRevenueDto.builder()
+                        .user(modelMapper.map(user,UserResponseDto.class))
+                        .amount(user.getTotalRevenueAfter(startOfMonth))
+                        .build()
+        ).collect(Collectors.toList())).build());
+
+        userMonthlyDailyRevenueList.add(UserRevenueResponseDto.builder().unit("dailyRevenue").userRevenueList(
+                userList.stream().map(user ->
+                        UserRevenueDto.builder()
+                                .user(modelMapper.map(user,UserResponseDto.class))
+                                .amount(user.getTotalRevenueAfter(startOfDay))
+                                .build()
+                ).collect(Collectors.toList())).build());
+
+        return userMonthlyDailyRevenueList;
     }
 
     @Override

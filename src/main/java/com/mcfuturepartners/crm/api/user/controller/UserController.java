@@ -2,11 +2,8 @@ package com.mcfuturepartners.crm.api.user.controller;
 
 import com.mcfuturepartners.crm.api.department.repository.DepartmentRepository;
 import com.mcfuturepartners.crm.api.department.service.DepartmentService;
-import com.mcfuturepartners.crm.api.user.dto.RequestLogin;
-import com.mcfuturepartners.crm.api.user.dto.UserDto;
+import com.mcfuturepartners.crm.api.user.dto.*;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
-import com.mcfuturepartners.crm.api.user.dto.UserLoginResponseDto;
-import com.mcfuturepartners.crm.api.user.dto.UserResponseDto;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.exception.ErrorCode;
 import com.mcfuturepartners.crm.api.user.entity.UserRevenue;
@@ -72,11 +69,10 @@ public class UserController {
         return new ResponseEntity<>(userService.getUserById(userId),HttpStatus.OK);
     }
 
-    @GetMapping(path = "/{userid}/revenue")
-    @ApiOperation(value = "사원별 매출 확인 api", notes = "사원별 매출 확인 api / 1개월치 호출 가능 / 로직 수정 중")
-    public ResponseEntity<List<UserRevenue>> getUserRevenue(@PathVariable("userid") Long userId){
+    @GetMapping(path = "/revenue")
+    @ApiOperation(value = "전체 사원 매출 조회 api", notes = "이번달, 오늘 전체 사원 revenue")
+    public ResponseEntity<List<UserRevenueResponseDto>> getUserRevenue(){
         return new ResponseEntity<>(userService.getAllUserRevenue(),HttpStatus.OK);
     }
-
 
 }

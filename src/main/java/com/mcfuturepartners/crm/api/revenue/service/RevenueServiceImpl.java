@@ -62,11 +62,13 @@ public class RevenueServiceImpl implements RevenueService{
     @Override
     public List<List<UserMonthlyRevenue>> getUsersLatestRevenueByMonth(UserMonthlyRequest userMonthlyRequest) {
         List<User> userList = userRepository.findAllById(userMonthlyRequest.getUserIds());
+
         List<List<UserMonthlyRevenue>> userRevenues = new ArrayList<>();
 
-        List<UserMonthlyRevenue> userMonthlyRevenue = new ArrayList<>();
 
         for(User user : userList){
+            List<UserMonthlyRevenue> userMonthlyRevenue = new ArrayList<>();
+            log.info(user.getUsername()+"  "+userList.size());
             LocalDateTime startDate = LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(), 1).atStartOfDay();
             LocalDateTime endDate = LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(), LocalDate.now().lengthOfMonth()).atTime(23,59,59,99);
 
@@ -81,6 +83,7 @@ public class RevenueServiceImpl implements RevenueService{
                 startDate = startDate.minusMonths(1);
                 endDate = endDate.minusMonths(1);
             }
+
             userRevenues.add(userMonthlyRevenue);
         }
 
@@ -92,9 +95,9 @@ public class RevenueServiceImpl implements RevenueService{
         List<Product> productList = productRepository.findAllById(productMonthlyRequest.getProductIds());
         List<List<ProductMonthlyRevenue>> productRevenues = new ArrayList<>();
 
-         List<ProductMonthlyRevenue> productMonthlyRevenues = new ArrayList<>();
-
         for(Product product : productList){
+            List<ProductMonthlyRevenue> productMonthlyRevenues = new ArrayList<>();
+
             LocalDateTime startDate = LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(), 1).atStartOfDay();
             LocalDateTime endDate = LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(), LocalDate.now().lengthOfMonth()).atTime(23,59,59,99);
 
