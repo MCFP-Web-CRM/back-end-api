@@ -35,7 +35,7 @@ public class NoticeServiceImpl implements NoticeService{
     @Override
     public Notice updateNotice(Long noticeId, Notice notice) {
         Notice originalNotice = noticeRepository.findById(noticeId).orElseThrow(()-> new FindException("NOTICE "+ErrorCode.RESOURCE_NOT_FOUND.getMsg()));
-        return noticeRepository.save(originalNotice.modifyUpdated(notice));
+        return noticeRepository.save(originalNotice.updateModified(notice));
     }
 
     @Override
