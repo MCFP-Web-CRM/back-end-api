@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -24,7 +25,7 @@ public class NoticeServiceImpl implements NoticeService{
     }
 
     public List<Notice> getAllNotices(){
-        return noticeRepository.findAll();
+        return noticeRepository.findAll().stream().sorted((o1,o2)->o2.getRegDate().compareTo(o1.getRegDate())).collect(Collectors.toList());
     }
 
     public Notice getNotice(Long noticeId){

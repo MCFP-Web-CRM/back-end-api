@@ -1,10 +1,8 @@
 package com.mcfuturepartners.crm.api.customer.service;
 
-import com.mcfuturepartners.crm.api.customer.dto.CustomerRegisterDto;
-import com.mcfuturepartners.crm.api.customer.dto.CustomerResponseDto;
-import com.mcfuturepartners.crm.api.customer.dto.CustomerSearch;
-import com.mcfuturepartners.crm.api.customer.dto.CustomerUpdateDto;
+import com.mcfuturepartners.crm.api.customer.dto.*;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
+import com.mcfuturepartners.crm.api.customer.entity.CustomerStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,4 +18,6 @@ public interface CustomerService {
     List<Customer> selectCustomer(Map<String,String> map);
     String updateCustomer(CustomerUpdateDto customerUpdateDto);
     String deleteCustomer(Long id);
+    List<CustomerStatusCountDto> getDailyCustomerStatus();
+    List<CustomerFunnelCountDto> getDailyFunnelCount();
 }

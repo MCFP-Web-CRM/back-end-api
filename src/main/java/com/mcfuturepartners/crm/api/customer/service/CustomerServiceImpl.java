@@ -5,19 +5,20 @@ import com.mcfuturepartners.crm.api.category.entity.Category;
 import com.mcfuturepartners.crm.api.category.entity.QCategory;
 import com.mcfuturepartners.crm.api.category.repository.CategoryRepository;
 import com.mcfuturepartners.crm.api.counsel.dto.CounselDto;
+import com.mcfuturepartners.crm.api.counsel.entity.Counsel;
+import com.mcfuturepartners.crm.api.counsel.entity.CounselStatus;
 import com.mcfuturepartners.crm.api.counsel.entity.QCounsel;
 import com.mcfuturepartners.crm.api.counsel.repository.CounselRepository;
-import com.mcfuturepartners.crm.api.customer.dto.CustomerRegisterDto;
-import com.mcfuturepartners.crm.api.customer.dto.CustomerResponseDto;
-import com.mcfuturepartners.crm.api.customer.dto.CustomerSearch;
-import com.mcfuturepartners.crm.api.customer.dto.CustomerUpdateDto;
+import com.mcfuturepartners.crm.api.customer.dto.*;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
+import com.mcfuturepartners.crm.api.customer.entity.CustomerStatus;
 import com.mcfuturepartners.crm.api.customer.entity.QCustomer;
 import com.mcfuturepartners.crm.api.customer.repository.CustomerRepository;
 import com.mcfuturepartners.crm.api.customer.repository.CustomerRepositoryImpl;
 import com.mcfuturepartners.crm.api.exception.DatabaseErrorCode;
 import com.mcfuturepartners.crm.api.exception.FindException;
 import com.mcfuturepartners.crm.api.funnel.dto.FunnelResponseDto;
+import com.mcfuturepartners.crm.api.funnel.entity.Funnel;
 import com.mcfuturepartners.crm.api.funnel.repository.FunnelRepository;
 import com.mcfuturepartners.crm.api.order.dto.OrderDto;
 import com.mcfuturepartners.crm.api.order.dto.OrderResponseDto;
@@ -44,7 +45,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 
 import javax.validation.constraints.Null;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -178,5 +182,52 @@ public class CustomerServiceImpl implements CustomerService {
         } catch (Exception e) {
             throw e;
         }
+    }
+
+    @Override
+    public List<CustomerStatusCountDto> getDailyCustomerStatus() {
+        List<CustomerStatusCountDto> dailyCustomerStatus = new ArrayList<>();
+        LocalDateTime todayDate = LocalDate.of(LocalDate.now().getYear(),LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()).atStartOfDay();
+
+        dailyCustomerStatus.add(CustomerStatusCountDto.builder().customerStatus(CustomerStatus.NEWLY_ESTABILSHED)
+                .count((int) customerRepository.findByRegDateIsAfter(todayDate).stream().count()).build());
+
+        dailyCustomerStatus.add(CustomerStatusCountDto.builder().customerStatus(CustomerStatus.SUCCESSFUL)
+                .count((int)qCustomerRepository.findCustomersWithOrderToday(todayDate).stream().count()).build());
+
+        List<Customer> customersWithCounselToday = qCustomerRepository.findCustomersWithCounselToday(todayDate);
+        CustomerStatusCountDto failedCustomer =  CustomerStatusCountDto.builder().customerStatus(CustomerStatus.FAILED).count(0).build();
+        CustomerStatusCountDto onHoldCustomer =  CustomerStatusCountDto.builder().customerStatus(CustomerStatus.ON_HOLD).count(0).build();
+        CustomerStatusCountDto inProgressCustomer =  CustomerStatusCountDto.builder().customerStatus(CustomerStatus.IN_PROGRESS).count(0).build();
+
+        for(Customer customer : customersWithCounselToday){
+            if(customer.getCounsels().get(customer.getCounsels().size()-1).getStatus().equals(CounselStatus.REFUSAL)){
+                log.info(customer.getCounsels().get(customer.getCounsels().size()-1).getId()+" "+customer.getCounsels().get(customer.getCounsels().size()-1).getStatus().name());
+                failedCustomer.setCount(failedCustomer.getCount()+1);
+            }
+            else if(customer.getCounsels().get(customer.getCounsels().size()-1).getStatus().equals(CounselStatus.ABSENCE)||customer.getCounsels().get(customer.getCounsels().size()-1).getStatus().equals(CounselStatus.LONG_TERM_ABSENCE)){
+                log.info(customer.getCounsels().get(customer.getCounsels().size()-1).getId()+" "+customer.getCounsels().get(customer.getCounsels().size()-1).getStatus().name());
+                onHoldCustomer.setCount(onHoldCustomer.getCount()+1);
+            }
+            else {
+                log.info(customer.getCounsels().get(customer.getCounsels().size()-1).getId()+" "+customer.getCounsels().get(customer.getCounsels().size()-1).getStatus().name());
+                inProgressCustomer.setCount(inProgressCustomer.getCount()+1);
+            }
+        }
+        dailyCustomerStatus.add(failedCustomer);
+        dailyCustomerStatus.add(onHoldCustomer);
+        dailyCustomerStatus.add(inProgressCustomer);
+
+        return dailyCustomerStatus;
+    }
+
+    @Override
+    public List<CustomerFunnelCountDto> getDailyFunnelCount() {
+        List<Funnel> funnelList = funnelRepository.findAll();
+        LocalDateTime todayDate = LocalDate.of(LocalDate.now().getYear(),LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()).atStartOfDay();
+
+        return funnelList.stream().map(funnel ->
+                CustomerFunnelCountDto.builder().funnel(modelMapper.map(funnel,FunnelResponseDto.class))
+                        .count(qCustomerRepository.countCustomersByFunnel(todayDate,funnel)).build()).collect(Collectors.toList());
     }
 }

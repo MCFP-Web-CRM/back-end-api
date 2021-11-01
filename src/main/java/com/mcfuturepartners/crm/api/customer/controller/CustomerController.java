@@ -2,10 +2,7 @@ package com.mcfuturepartners.crm.api.customer.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.mcfuturepartners.crm.api.customer.dto.CustomerRegisterDto;
-import com.mcfuturepartners.crm.api.customer.dto.CustomerResponseDto;
-import com.mcfuturepartners.crm.api.customer.dto.CustomerSearch;
-import com.mcfuturepartners.crm.api.customer.dto.CustomerUpdateDto;
+import com.mcfuturepartners.crm.api.customer.dto.*;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.customer.service.CustomerService;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
@@ -143,5 +140,14 @@ public class CustomerController {
 
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-
+    @GetMapping(path = "/status")
+    @ApiOperation(value = "당일 고객 변화 상태", notes = "고객추가, 상담, 결제추가를 바탕으로 당일 변화된 고객의 상태를 체크")
+    public ResponseEntity<List<CustomerStatusCountDto>> getDailyCustomerStatus(){
+        return new ResponseEntity<>(customerService.getDailyCustomerStatus(),HttpStatus.OK);
+    }
+    @GetMapping(path = "/funnel")
+    @ApiOperation(value = "당일 고객 유입경로 통계", notes = "당일 추가된 고객들의 유입 경로에 대한 통계 제공")
+    public ResponseEntity<List<CustomerFunnelCountDto>> getDailyCustomerFunnel(){
+        return new ResponseEntity<>(customerService.getDailyFunnelCount(),HttpStatus.OK);
+    }
 }
