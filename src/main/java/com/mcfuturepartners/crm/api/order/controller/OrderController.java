@@ -53,9 +53,4 @@ public class OrderController {
                 .orderId(orderId).build()), HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping(path = "/revenue")
-    @ApiOperation(value = "상품별 수익률 api", notes = "전체 수익률 api")
-    public ResponseEntity<OrderRevenue> getCurrentRevenue(){
-        return new ResponseEntity<>(orderService.getTotalRevenue(),HttpStatus.OK);
-    }
 }

@@ -25,7 +25,7 @@ public class NoticeServiceImpl implements NoticeService{
     }
 
     public List<Notice> getAllNotices(){
-        return noticeRepository.findAll().stream().sorted((o1,o2)->o2.getRegDate().compareTo(o1.getRegDate())).collect(Collectors.toList());
+        return noticeRepository.findAll().stream().filter(notice -> notice.getRegDate() != null).sorted((o1,o2)->o2.getRegDate().compareTo(o1.getRegDate())).collect(Collectors.toList());
     }
 
     public Notice getNotice(Long noticeId){

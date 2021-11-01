@@ -41,4 +41,9 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<Order> orders = new ArrayList<>();
 
+    public Long getTotalRevenueAfter(LocalDateTime startTime){
+        return this.getOrders().stream()
+                .filter(order -> order.getRegDate().isAfter(startTime))
+                .map(order -> order.getPrice()).reduce(0L,Long::sum);
+    }
 }

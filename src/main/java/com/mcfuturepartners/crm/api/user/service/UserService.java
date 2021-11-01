@@ -3,6 +3,7 @@ package com.mcfuturepartners.crm.api.user.service;
 import com.mcfuturepartners.crm.api.user.dto.UserDto;
 import com.mcfuturepartners.crm.api.user.dto.UserLoginResponseDto;
 import com.mcfuturepartners.crm.api.user.dto.UserResponseDto;
+import com.mcfuturepartners.crm.api.user.dto.UserRevenueResponseDto;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.user.entity.UserRevenue;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,6 @@ public interface UserService {
     UserLoginResponseDto signin(User user);
     String deleteUser(long id);
     List<UserResponseDto> getAllUsers();
-    List<UserRevenue> getAllUserRevenue();
+    List<UserRevenueResponseDto> getAllUserRevenue();
     UserResponseDto getUserById(long id);
 }

@@ -9,6 +9,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -74,5 +75,11 @@ public class User {
         if(schedules.size() != 0){
             schedules.removeAll(schedules);
         }
+    }
+
+    public Long getTotalRevenueAfter(LocalDateTime startTime){
+        return this.getOrders().stream()
+                .filter(order -> order.getRegDate().isAfter(startTime))
+                .map(order -> order.getPrice()).reduce(0L,Long::sum);
     }
 }
