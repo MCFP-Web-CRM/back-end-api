@@ -5,6 +5,7 @@ import com.mcfuturepartners.crm.api.counsel.entity.QCounsel;
 import com.mcfuturepartners.crm.api.customer.dto.CustomerSearch;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.customer.entity.QCustomer;
+import com.mcfuturepartners.crm.api.funnel.entity.Funnel;
 import com.mcfuturepartners.crm.api.order.entity.QOrder;
 import com.mcfuturepartners.crm.api.user.entity.QUser;
 import com.querydsl.core.BooleanBuilder;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -65,5 +67,42 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
         List<Customer> results = getQuerydsl().applyPagination(pageable, query).fetch();
         return new PageImpl<>(results,pageable,totalCount);
     }
+
+    @Override
+    public List<Customer> findCustomersWithCounselToday(LocalDateTime localDateTime) {
+        QCustomer customer = QCustomer.customer;
+
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        booleanBuilder.and(customer.counsels.any().regDate.after(localDateTime));
+
+        return queryFactory.selectFrom(customer)
+                .where(booleanBuilder)
+                .fetch();
+    }
+    @Override
+    public List<Customer> findCustomersWithOrderToday(LocalDateTime localDateTime){
+        QCustomer customer = QCustomer.customer;
+
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        booleanBuilder.and(customer.orders.any().regDate.after(localDateTime));
+
+        return queryFactory.selectFrom(customer)
+                .where(booleanBuilder)
+                .fetch();
+    }
+
+    @Override
+    public Integer countCustomersByFunnel(LocalDateTime localDateTime, Funnel funnel) {
+        QCustomer customer = QCustomer.customer;
+
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        booleanBuilder.and(customer.regDate.after(localDateTime));
+        booleanBuilder.and(customer.funnel.funnelId.eq(funnel.getFunnelId()));
+
+        return (int) queryFactory.selectFrom(customer)
+                .where(booleanBuilder)
+                .fetchCount();
+    }
+
 
 }
