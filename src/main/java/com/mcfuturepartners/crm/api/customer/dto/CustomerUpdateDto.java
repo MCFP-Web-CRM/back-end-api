@@ -27,8 +27,8 @@ public class CustomerUpdateDto {
     private String phone;
     @ApiModelProperty(position = 5, example = "성별")
     private String sex;
-    @ApiModelProperty(position = 6, example = "유입 경로")
-    private Long funnel;
+    @ApiModelProperty(position = 6, example = "유입 경로 id")
+    private Long funnelId;
     @ApiModelProperty(position = 7, example = "고객 상태 그룹 id")
     private Long categoryId;
     @ApiModelProperty(position = 8, example = "담당 직원 id")

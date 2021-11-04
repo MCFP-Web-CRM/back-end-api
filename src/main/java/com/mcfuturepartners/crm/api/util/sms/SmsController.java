@@ -1,6 +1,8 @@
 package com.mcfuturepartners.crm.api.util.sms;
 
 import com.mcfuturepartners.crm.api.message.entity.SmsType;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
@@ -34,6 +36,7 @@ public class SmsController {
 
 
     @PostMapping("/sms")
+    @ApiOperation(value = "문자 메시지 전송 요청 api", notes = "문자 메시지 전송 요청 api")
     public ResponseEntity sendMessage(@RequestBody Sms sms) {
 
         String hostNameUrl = "https://sens.apigw.ntruss.com";           // 호스트 URL
