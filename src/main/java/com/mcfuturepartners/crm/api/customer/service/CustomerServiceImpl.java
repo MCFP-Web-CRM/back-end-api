@@ -27,6 +27,7 @@ import com.mcfuturepartners.crm.api.product.dto.ProductDto;
 import com.mcfuturepartners.crm.api.product.entity.Product;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
 import com.mcfuturepartners.crm.api.user.dto.UserResponseDto;
+import com.mcfuturepartners.crm.api.user.entity.Authority;
 import com.mcfuturepartners.crm.api.user.entity.QUser;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.user.repository.UserRepository;
@@ -35,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -68,9 +70,15 @@ public class CustomerServiceImpl implements CustomerService {
     private final TokenProvider tokenProvider;
 
     @Override
-    public List<CustomerResponseDto> searchCustomers(CustomerSearch customerSearch, Pageable pageable) {
-        log.info(qCustomerRepository.search(customerSearch,pageable).toString());
-        return qCustomerRepository.search(customerSearch,pageable).stream().map(customer -> {
+    public Page<CustomerResponseDto> searchCustomers(CustomerSearch customerSearch, Pageable pageable) {
+        User user = userRepository.findByUsername(customerSearch.getUsername()).get();
+
+        if(!customerSearch.getAuthority().contains(Authority.ADMIN.toString())){
+            customerSearch.setManagerId(user.getId());
+        }
+        Page<Customer> searchResult = qCustomerRepository.search(customerSearch,pageable);
+
+        return new PageImpl<>(searchResult.stream().map(customer -> {
                     CustomerResponseDto customerResponseDto = modelMapper.map(customer, CustomerResponseDto.class);
                     if (customer.getManager() != null)
                         customerResponseDto.setManager(modelMapper.map(customer.getManager(), UserResponseDto.class));
@@ -78,10 +86,9 @@ public class CustomerServiceImpl implements CustomerService {
                         customerResponseDto.setFunnel(modelMapper.map(customer.getFunnel(), FunnelResponseDto.class));
                     return customerResponseDto;
                 })
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()),pageable,searchResult.getTotalElements());
 
     }
-
     @Override
     public Boolean findCustomerIfManager(long customerId, String username) {
         Customer customer = customerRepository.findById(customerId)

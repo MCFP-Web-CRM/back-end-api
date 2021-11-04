@@ -41,7 +41,7 @@ public class CustomerController {
 
     @GetMapping
     @ApiOperation(value = "고객 조회 api", notes = "고객 조회 api, 다중 검색 조건(query string)으로 검색 가능")
-    public ResponseEntity<List<CustomerResponseDto>> getCustomerList(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
+    public ResponseEntity<Page<CustomerResponseDto>> getCustomerList(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
                                           @RequestParam(value = "customer-category") @Nullable String customerCategory,
                                           @RequestParam(value = "product-name") @Nullable String productName,
                                           @RequestParam(value = "funnel-id") @Nullable Long funnelId,
@@ -54,7 +54,8 @@ public class CustomerController {
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
 
-        List<CustomerResponseDto> listCustomer = customerService.searchCustomers(
+
+        Page<CustomerResponseDto> listCustomer = customerService.searchCustomers(
                 CustomerSearch.builder()
                         .categoryName(customerCategory)
                         .productName(productName)
@@ -63,16 +64,17 @@ public class CustomerController {
                         .startDate(startDate)
                         .endDate(endDate)
                         .counselKeyword(counselKeyword)
+                        .authority(tokenProvider.getAuthentication(token).getAuthorities().toString())
+                        .username(username)
                         .build(),pageable);
 
-        if(tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())){
-            return new ResponseEntity<>(listCustomer, HttpStatus.OK);
-        }
+        return new ResponseEntity<>(listCustomer, HttpStatus.OK);
 
-        return new ResponseEntity<>(listCustomer.stream()
+
+       /* return new ResponseEntity<>(listCustomer.stream()
                 .filter(customerResponseDto -> customerResponseDto
                                                 .getManager().getUsername().equals(username))
-                .collect(Collectors.toList()), HttpStatus.OK);
+                .collect(Collectors.toList()), HttpStatus.OK);*/
     }
     @GetMapping(path = "/{customer-id}")
     @ApiOperation(value = "고객 상세 조회 api", notes = "고객 조회 api")
