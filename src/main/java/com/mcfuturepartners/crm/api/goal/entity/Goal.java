@@ -1,11 +1,17 @@
 package com.mcfuturepartners.crm.api.goal.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 @Data
 @Table(name = "goal")
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Goal {
     @Id
     @Column(name = "goal_id")

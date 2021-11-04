@@ -1,5 +1,6 @@
 package com.mcfuturepartners.crm.api.customer.dto;
 
+import com.mcfuturepartners.crm.api.user.entity.Authority;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,4 +20,6 @@ public class CustomerSearch {
     private LocalDate startDate;
     private LocalDate endDate;
     private String counselKeyword;
+    private String authority;
+    private String username;
 }

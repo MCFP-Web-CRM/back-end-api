@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface CustomerService {
-    List<CustomerResponseDto> searchCustomers(CustomerSearch customerSearch, Pageable pageable);
+    Page<CustomerResponseDto> searchCustomers(CustomerSearch customerSearch, Pageable pageable);
     CustomerResponseDto findCustomer(Long id);
     Boolean findCustomerIfManager(long counselId, String username);
     String saveAll(List<Customer> customerList);
