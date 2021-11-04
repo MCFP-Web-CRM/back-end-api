@@ -167,8 +167,11 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerRepository.findById(customerUpdateDto.getId()).orElseThrow(() -> new FindException(DatabaseErrorCode.CUSTOMER_NOT_FOUND.name()));
 
         customer.updateModified(customerUpdateDto);
-        customer.setCategory(category);
-        customer.setManager(user);
+
+        if(customerUpdateDto.getCategoryId() != null)
+            customer.setCategory(category);
+        if(customerUpdateDto.getManagerUserId() != null)
+            customer.setManager(user);
 
         try {
             customerRepository.save(customer);
