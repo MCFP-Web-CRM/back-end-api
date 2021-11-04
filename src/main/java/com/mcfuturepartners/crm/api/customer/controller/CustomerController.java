@@ -106,7 +106,7 @@ public class CustomerController {
         }
         return new ResponseEntity<>("saved",HttpStatus.OK);
     }
-    @PutMapping(path="{customer-id}")
+    @PutMapping(path="/{customer-id}")
     @ApiOperation(value = "고객 수정 api", notes = "고객 수정 api")
     public ResponseEntity<String> updateCustomer(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
                                                  @PathVariable("customer-id") long customerId,
@@ -126,7 +126,7 @@ public class CustomerController {
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
     }
-    @DeleteMapping(path="{customer-id}")
+    @DeleteMapping(path="/{customer-id}")
     @ApiOperation(value = "고객 삭제 api", notes = "고객 삭제 api")
     public ResponseEntity<String> deleteCustomer(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
                                                  @PathVariable("customer-id") long customerId) {

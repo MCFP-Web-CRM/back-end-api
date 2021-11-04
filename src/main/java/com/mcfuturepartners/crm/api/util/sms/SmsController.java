@@ -2,12 +2,15 @@ package com.mcfuturepartners.crm.api.util.sms;
 
 import com.mcfuturepartners.crm.api.message.entity.SmsType;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -19,7 +22,9 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.List;
-
+@RestController
+@RequestMapping("/util")
+@RequiredArgsConstructor
 public class SmsController {
 
     private static final String FROM="01095510270";//발신번호
@@ -29,7 +34,7 @@ public class SmsController {
 
 
     @PostMapping("/sms")
-    public ResponseEntity sendMessage(@RequestBody @NonNull List<String> receiverPhone, @RequestBody @NonNull String contents ) {
+    public ResponseEntity sendMessage(@RequestBody Sms sms) {
 
         String hostNameUrl = "https://sens.apigw.ntruss.com";           // 호스트 URL
         String requestUrl= "/sms/v2/services/";                         // 요청 URL
@@ -40,13 +45,11 @@ public class SmsController {
         requestUrl += serviceId + requestUrlType;
         String apiUrl = hostNameUrl + requestUrl;
         SmsType smsType;
-        if(contents.length()>80){
+        if(sms.getContent().length()>80){
             smsType = SmsType.LMS;
         }else{
             smsType = SmsType.SMS;
         }
-        System.out.println("timestamp = " + timestamp);
-        System.out.println("smsType = " + smsType.getCode());
         // JSON 을 활용한 body data 생성
         JSONObject bodyJson = new JSONObject();
         JSONArray toArr = new JSONArray();
@@ -56,17 +59,16 @@ public class SmsController {
         bodyJson.put("countryCode","82");       // 국가 전화번호
         bodyJson.put("from",FROM);              // 발신번호 * 사전에 인증/등록된 번호만 사용할 수 있습니다.
         bodyJson.put("subject","");             // 메시지 제목 * LMS Type에서만 사용할 수 있습니다.
-        bodyJson.put("content",contents);              // 메시지 내용 * Type별로 최대 byte 제한이 다릅니다.* SMS: 80byte / LMS: 2000byte
+        bodyJson.put("content",sms.getContent());              // 메시지 내용 * Type별로 최대 byte 제한이 다릅니다.* SMS: 80byte / LMS: 2000byte
         bodyJson.put("messages", toArr);
-        System.out.println("receiverPhone = " + receiverPhone.size());
-        if(receiverPhone.size()==0){
+        if(sms.getReceiverPhone().size()==0){
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }else{
-            for(int i=0; i<receiverPhone.size(); i++) {
+            for(int i=0; i<sms.getReceiverPhone().size(); i++) {
                 JSONObject toJson = new JSONObject();
                 toJson.put("subject","");                           // 메시지 제목 * LMS Type에서만 사용할 수 있습니다.
-                toJson.put("content",contents);                // 메시지 내용 * Type별로 최대 byte 제한이 다릅니다.* SMS: 80byte / LMS: 2000byte
-                toJson.put("to",receiverPhone.get(i).toString());       // 수신번호 목록  * 최대 1000개까지 한번에 전송할 수 있습니다.
+                toJson.put("content",sms.getContent());                // 메시지 내용 * Type별로 최대 byte 제한이 다릅니다.* SMS: 80byte / LMS: 2000byte
+                toJson.put("to",sms.getReceiverPhone().get(i).toString());       // 수신번호 목록  * 최대 1000개까지 한번에 전송할 수 있습니다.
                 toArr.add(toJson);
             }
         }
@@ -84,7 +86,6 @@ public class SmsController {
             con.setRequestProperty("x-ncp-apigw-timestamp", timestamp);
             con.setRequestProperty("x-ncp-iam-access-key", accessKey);
             con.setRequestProperty("x-ncp-apigw-signature-v2", makeSignature(requestUrl, timestamp, method, accessKey, secretKey));
-//            con.setRequestProperty("x-ncp-apigw-signature-v2", makeSignature(apiUrl, timestamp, method, accessKey, secretKey));
             con.setRequestMethod(method);
             con.setDoOutput(true);
             DataOutputStream wr = new DataOutputStream(con.getOutputStream());
