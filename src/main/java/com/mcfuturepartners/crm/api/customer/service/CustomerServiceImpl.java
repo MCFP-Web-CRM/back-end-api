@@ -162,16 +162,18 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public String updateCustomer(CustomerUpdateDto customerUpdateDto) {
 
-        User user = userRepository.findById(customerUpdateDto.getManagerUserId()).orElseThrow(() -> new FindException(DatabaseErrorCode.USER_NOT_FOUND.name()));
-        Category category = categoryRepository.findById(customerUpdateDto.getCategoryId()).get();
         Customer customer = customerRepository.findById(customerUpdateDto.getId()).orElseThrow(() -> new FindException(DatabaseErrorCode.CUSTOMER_NOT_FOUND.name()));
-
         customer.updateModified(customerUpdateDto);
 
-        if(customerUpdateDto.getCategoryId() != null)
+        if(customerUpdateDto.getCategoryId() != null){
+            Category category = categoryRepository.findById(customerUpdateDto.getCategoryId()).get();
             customer.setCategory(category);
-        if(customerUpdateDto.getManagerUserId() != null)
+        }
+
+        if(customerUpdateDto.getManagerUserId() != null){
+            User user = userRepository.findById(customerUpdateDto.getManagerUserId()).orElseThrow(() -> new FindException(DatabaseErrorCode.USER_NOT_FOUND.name()));
             customer.setManager(user);
+        }
 
         try {
             customerRepository.save(customer);
