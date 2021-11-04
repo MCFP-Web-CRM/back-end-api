@@ -41,7 +41,11 @@ public class MessageServiceImpl implements MessageService{
     @Override
     public List<MessageDto> getSavedMessages(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(()-> new FindException("유저 정보 " + ErrorCode.RESOURCE_NOT_FOUND.getMsg()));
-        return user.getMessages().stream().map(message -> modelMapper.map(message,MessageDto.class)).collect(Collectors.toList());
+        return user.getMessages().stream().map(message -> {
+            MessageDto messageDto = modelMapper.map(message,MessageDto.class);
+            messageDto.setUsername(message.getUser().getUsername());
+            return messageDto;
+        }).collect(Collectors.toList());
 
     }
 

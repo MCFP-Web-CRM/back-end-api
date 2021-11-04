@@ -6,6 +6,7 @@ import com.mcfuturepartners.crm.api.message.dto.MessageDto;
 import com.mcfuturepartners.crm.api.message.entity.Message;
 import com.mcfuturepartners.crm.api.message.entity.SmsType;
 import com.mcfuturepartners.crm.api.message.service.MessageService;
+import io.swagger.annotations.ApiOperation;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,13 +29,14 @@ import java.util.Base64;
 import java.util.List;
 
 @RestController
-@RequestMapping("/SMS")
+@RequestMapping("/message")
 @RequiredArgsConstructor
 @Slf4j
 public class MessageController {
     private final MessageService messageService;
 
-    @GetMapping("/message")
+    @GetMapping
+    @ApiOperation(value = "저장된 메시지 호출 api", notes = "사용자가 저장한 메시지를 호출해주는 api")
     public ResponseEntity<List<MessageDto>> getSavedMessages(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken){
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
@@ -50,7 +52,8 @@ public class MessageController {
         return new ResponseEntity<>(messages,HttpStatus.OK);
     }
 
-    @PostMapping(value = "/message")
+    @PostMapping
+    @ApiOperation(value = "문자 메시지 내용 저장 api", notes = "사용자가 작성한 메시지를 저장해주는 api")
     public ResponseEntity<List<MessageDto>> saveMessage(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
                                                      @RequestBody MessageDto messageDto){
         String token = bearerToken.replace("Bearer ", "");
@@ -68,13 +71,17 @@ public class MessageController {
         return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 
-    @PutMapping
+    @PutMapping(path = "/{message-id}")
+    @ApiOperation(value = "문자 메시지 내용 수정 api", notes = "문자 메시지 내용 수정 api")
     public ResponseEntity<List<MessageDto>> updateMessage(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
-                                                       @RequestBody MessageDto messageDto) {
+                                                       @RequestBody MessageDto messageDto,
+                                                          @PathVariable(name = "message-id") Long messageId) {
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
         messageDto.setUsername(username);
+        messageDto.setMessageId(messageId);
+
         List<MessageDto> messages;
         try{
             messages = messageService.updateSavedMessage(messageDto);
@@ -85,7 +92,8 @@ public class MessageController {
         return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 
-    @DeleteMapping(path = "{message-id}")
+    @DeleteMapping(path = "/{message-id}")
+    @ApiOperation(value = "문자 메시지 내용 삭제 api", notes = "문자 메시지 내용 삭제 api")
     public ResponseEntity<List<MessageDto>> deleteMessage(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
                                                        @PathVariable(value = "message-id") Long messageId){
         String token = bearerToken.replace("Bearer ", "");

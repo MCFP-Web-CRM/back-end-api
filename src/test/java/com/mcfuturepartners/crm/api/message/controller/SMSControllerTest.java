@@ -18,17 +18,4 @@ class SMSControllerTest {
     @Autowired
     MessageController smsController;
 
-    @Test
-    void send(){
-        //given
-        List<String> phone= new ArrayList<>();
-        phone.add("01023367918");
-        String content = "테스트문자입니다.";
-        //when
-        ResponseEntity responseEntity = smsController.sendMessage(phone, content);
-
-        //then
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-    }
 }
