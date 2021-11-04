@@ -3,6 +3,7 @@ package com.mcfuturepartners.crm.api.user.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.department.entity.Department;
+import com.mcfuturepartners.crm.api.message.entity.Message;
 import com.mcfuturepartners.crm.api.order.entity.Order;
 import com.mcfuturepartners.crm.api.schedule.entity.Schedule;
 import lombok.*;
@@ -53,6 +54,9 @@ public class User {
 
     @OneToMany(mappedBy = "manager")
     private List<Customer> customers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Message> messages = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
