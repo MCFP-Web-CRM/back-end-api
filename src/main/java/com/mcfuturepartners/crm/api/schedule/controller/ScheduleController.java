@@ -76,9 +76,9 @@ public class ScheduleController {
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
         ScheduleResponse scheduleResponse;
-
+        String authority = tokenProvider.getAuthentication(token).getAuthorities().toString();
         try{
-            scheduleResponse = scheduleService.getSchedule(scheduleId,username);
+            scheduleResponse = scheduleService.getSchedule(scheduleId,username,authority);
 
         } catch (AuthorizationException authorizationException){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

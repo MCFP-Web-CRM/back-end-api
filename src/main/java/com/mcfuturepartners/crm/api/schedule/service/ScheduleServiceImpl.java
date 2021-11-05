@@ -76,9 +76,9 @@ public class ScheduleServiceImpl implements ScheduleService{
     }
 
     @Override
-    public ScheduleResponse getSchedule(Long scheduleId, String username) {
+    public ScheduleResponse getSchedule(Long scheduleId, String username, String authority) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new FindException("스케줄 ID Not found"+ErrorCode.RESOURCE_NOT_FOUND.getMsg()));
-        if(!schedule.getUser().getUsername().equals(username)){
+        if(!authority.contains("ADMIN")&&!schedule.getUser().getUsername().equals(username)){
             if(!schedule.getIsPublic()){
                 throw new AuthorizationException("조회 권한 없음");
             }
