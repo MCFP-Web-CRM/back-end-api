@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -31,7 +33,7 @@ public class CounselDto {
        return Counsel.builder()
                .status(Arrays.stream(CounselStatus.values()).filter(counselStatus -> counselStatus.getStatus().equals(status)).findFirst().get())
                 .contents(contents)
-                .regDate(LocalDateTime.now())
+                .regDate(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime())
                 .build();
     }
 

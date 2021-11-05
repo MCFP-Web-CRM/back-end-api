@@ -12,6 +12,8 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 @Entity
 @Data
@@ -35,7 +37,7 @@ public class Notice {
     private String contents;
 
     public Notice writeNow(){
-        regDate = LocalDateTime.now();
+        regDate = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
         return this;
     }
     public Notice updateModified(Notice notice){

@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,8 +43,8 @@ public class RevenueServiceImpl implements RevenueService{
     public List<Revenue> getCompanyLatestRevenueByMonth(Integer month) {
         List<Revenue> revenueList = new ArrayList<>(month);
 
-        LocalDateTime startDate = LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(), 1).atStartOfDay();
-        LocalDateTime endDate = LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(), LocalDate.now().lengthOfMonth()).atTime(23,59,59,99);
+        LocalDateTime startDate = LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonth(), 1).atStartOfDay();
+        LocalDateTime endDate = LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonth(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate().getDayOfMonth()).atTime(23,59,59,99);
 
         for(int i = 0 ; i < month ; i ++){
 
@@ -69,8 +71,8 @@ public class RevenueServiceImpl implements RevenueService{
         for(User user : userList){
             List<UserMonthlyRevenue> userMonthlyRevenue = new ArrayList<>();
             log.info(user.getUsername()+"  "+userList.size());
-            LocalDateTime startDate = LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(), 1).atStartOfDay();
-            LocalDateTime endDate = LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(), LocalDate.now().lengthOfMonth()).atTime(23,59,59,99);
+            LocalDateTime startDate = LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonth(), 1).atStartOfDay();
+            LocalDateTime endDate = LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonth(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate().getDayOfMonth()).atTime(23,59,59,99);
 
             for(int period = 0 ; period < userMonthlyRequest.getMonth() ; period ++){
 
@@ -98,8 +100,8 @@ public class RevenueServiceImpl implements RevenueService{
         for(Product product : productList){
             List<ProductMonthlyRevenue> productMonthlyRevenues = new ArrayList<>();
 
-            LocalDateTime startDate = LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(), 1).atStartOfDay();
-            LocalDateTime endDate = LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(), LocalDate.now().lengthOfMonth()).atTime(23,59,59,99);
+            LocalDateTime startDate = LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonth(), 1).atStartOfDay();
+            LocalDateTime endDate = LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonth(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate().getDayOfMonth()).atTime(23,59,59,99);
 
             for(int period = 0 ; period < productMonthlyRequest.getMonth() ; period ++){
                 productMonthlyRevenues.add(ProductMonthlyRevenue.builder().product(modelMapper.map(product, ProductDto.class))

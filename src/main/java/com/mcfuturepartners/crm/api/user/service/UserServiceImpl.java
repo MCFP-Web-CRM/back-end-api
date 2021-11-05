@@ -23,6 +23,8 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -127,8 +129,8 @@ public class UserServiceImpl implements UserService {
     public List<UserRevenueResponseDto> getAllUserRevenue() {
 
         List<User> userList = userRepository.findAll();
-        LocalDateTime startOfMonth = LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonthValue(), 1).atStartOfDay();
-        LocalDateTime startOfDay = LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonthValue(), LocalDateTime.now().getDayOfMonth()).atStartOfDay();
+        LocalDateTime startOfMonth = LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonthValue(), 1).atStartOfDay();
+        LocalDateTime startOfDay = LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonthValue(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getDayOfMonth()).atStartOfDay();
 
         List<UserRevenueResponseDto> userMonthlyDailyRevenueList = new ArrayList<>();
 
