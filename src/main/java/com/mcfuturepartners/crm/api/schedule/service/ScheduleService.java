@@ -9,10 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface ScheduleService {
-    List<List<ScheduleResponse>> getAllSchedule();
+    List<UserScheduleResponse> getAllSchedulesInBetween(ScheduleGet scheduleGet);
     List<UserScheduleResponse> getScheduleInBetween(ScheduleGet scheduleGet);
-    ScheduleResponse getSchedule(Long scheduleId);
+    ScheduleResponse getSchedule(Long scheduleId, String username);
     ScheduleResponse saveSchedule(ScheduleRegister scheduleRegister);
     ScheduleResponse updateSchedule(Long scheduleId, ScheduleUpdate scheduleUpdate);
-    void deleteSchedule(Long scheduleId);
+    void deleteSchedule(Long scheduleId, String username);
 }
