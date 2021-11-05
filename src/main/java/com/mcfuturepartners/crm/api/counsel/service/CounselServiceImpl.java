@@ -8,6 +8,7 @@ import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.customer.repository.CustomerRepository;
 import com.mcfuturepartners.crm.api.counsel.repository.CounselRepository;
 import com.mcfuturepartners.crm.api.exception.DatabaseErrorCode;
+import com.mcfuturepartners.crm.api.exception.ErrorCode;
 import com.mcfuturepartners.crm.api.exception.FindException;
 import com.mcfuturepartners.crm.api.user.dto.UserResponseDto;
 import com.mcfuturepartners.crm.api.user.entity.User;
@@ -17,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +38,9 @@ public class CounselServiceImpl implements CounselService {
     @Override
     public CounselResponseDto wrapCounselResponseDto(Counsel counsel) {
         CounselResponseDto counselResponseDto = modelMapper.map(counsel, CounselResponseDto.class);
-        counselResponseDto.setUser(modelMapper.map(counsel.getUser(), UserResponseDto.class));
+        if(!ObjectUtils.isEmpty(counsel.getUser())){
+            counselResponseDto.setUser(modelMapper.map(counsel.getUser(), UserResponseDto.class));
+        }
         return counselResponseDto;
     }
 
@@ -90,6 +95,7 @@ public class CounselServiceImpl implements CounselService {
                 .orElseThrow(()->
                         new FindException(DatabaseErrorCode.CUSTOMER_NOT_FOUND.name()))
                 .getCustomer();
+        log.info(username);
         User user = userRepository.findByUsername(username)
                 .orElseThrow(()->
                         new FindException(DatabaseErrorCode.USER_NOT_FOUND.name()));
@@ -106,36 +112,29 @@ public class CounselServiceImpl implements CounselService {
                 .orElseThrow(()->
                         new FindException(DatabaseErrorCode.CUSTOMER_NOT_FOUND.name()));
 
-        Customer customer = originalCounsel.getCustomer();
-
-        Counsel updatedCounsel = counselUpdateDto.toEntity();
-
-        updatedCounsel.setRegDate(originalCounsel.getRegDate());
-        updatedCounsel.setCustomer(customer);
-        updatedCounsel.setId(counselId);
-        updatedCounsel.setUser(userRepository.getByUsername(counselUpdateDto.getUsername()));
-
         try{
-            counselRepository.save(updatedCounsel);
+            counselRepository.save(originalCounsel.updateModified(counselUpdateDto.toEntity()));
         } catch (Exception e){
             log.info("Counsel Update Failed");
+            throw e;
         }
-        return counselRepository.findAllByCustomer(customer)
+
+        return counselRepository.findAllByCustomer(originalCounsel.getCustomer())
                 .stream().map(counsel -> wrapCounselResponseDto(counsel))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<CounselResponseDto> deleteCounsel(long counselId) {
-        Customer customer = counselRepository.findById(counselId).orElseThrow().getCustomer();
-        try{
-            counselRepository.delete(counselRepository.findById(counselId).orElseThrow(()-> new FindException(DatabaseErrorCode.COUNSEL_NOT_FOUND.name())));
-            return counselRepository.findAllByCustomer(customer).stream().map(counsel -> wrapCounselResponseDto(counsel)).collect(Collectors.toList());
+        Counsel counsel = counselRepository.findById(counselId).orElseThrow(()->new FindException("Counsel "+ErrorCode.RESOURCE_NOT_FOUND.getMsg()));
+        Customer customer = counsel.getCustomer();
 
+        try{
+            counselRepository.delete(counsel);
         } catch(Exception e){
-            log.info("Counsel Delete Failed");
+            throw e;
         }
-        return counselRepository.findAllByCustomer(customer).stream().map(counsel -> wrapCounselResponseDto(counsel)).collect(Collectors.toList());
+        return counselRepository.findAllByCustomer(customer).stream().map(counsel1 -> wrapCounselResponseDto(counsel)).collect(Collectors.toList());
     }
 
 }

@@ -8,6 +8,7 @@ import com.mcfuturepartners.crm.api.counsel.dto.CounselUpdateDto;
 import com.mcfuturepartners.crm.api.counsel.entity.Counsel;
 import com.mcfuturepartners.crm.api.customer.service.CustomerService;
 import com.mcfuturepartners.crm.api.counsel.service.CounselService;
+import com.mcfuturepartners.crm.api.exception.FindException;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
 import com.mcfuturepartners.crm.api.user.entity.Authority;
 import com.mcfuturepartners.crm.api.user.repository.UserRepository;
@@ -93,11 +94,19 @@ public class CounselController {
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
-
-        counselUpdateDto.setUsername(username);
-
-        if(counselService.findCustomerIfManager(counselId,username)||tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())){
-            return new ResponseEntity<>(counselService.updateCounsel(counselId, counselUpdateDto),HttpStatus.OK);
+        log.info(username);
+        if(tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())||counselService.findCustomerIfManager(counselId,username)){
+           List<CounselResponseDto> counselResponseDtos ;
+            try{
+               counselResponseDtos = counselService.updateCounsel(counselId, counselUpdateDto);
+           }catch (FindException findException){
+                findException.printStackTrace();
+               return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+           }catch (Exception e){
+                e.printStackTrace();
+               return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+           }
+           return new ResponseEntity<>(counselResponseDtos,HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
@@ -110,8 +119,16 @@ public class CounselController {
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
 
-        if(counselService.findCustomerIfManager(counselId,username) || tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())){
-            return new ResponseEntity<>(counselService.deleteCounsel(counselId),HttpStatus.OK);
+        if(tokenProvider.getAuthentication(token).getAuthorities().toString().contains(Authority.ADMIN.toString())||counselService.findCustomerIfManager(counselId,username) ){
+           List<CounselResponseDto> counselResponseDtos;
+            try{
+               counselResponseDtos = counselService.deleteCounsel(counselId);
+           } catch (FindException findException){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            } catch (Exception e){
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            return new ResponseEntity<>(counselResponseDtos,HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }

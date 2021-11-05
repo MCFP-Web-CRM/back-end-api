@@ -1,6 +1,8 @@
 package com.mcfuturepartners.crm.api.product.service;
 
 
+import com.mcfuturepartners.crm.api.exception.ErrorCode;
+import com.mcfuturepartners.crm.api.exception.FindException;
 import com.mcfuturepartners.crm.api.product.dto.ProductDto;
 import com.mcfuturepartners.crm.api.product.dto.ProductRevenueDto;
 import com.mcfuturepartners.crm.api.product.entity.Product;
@@ -97,8 +99,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public String deleteProduct(Long id) {
+        Product product = productRepository.findById(id).orElseThrow(()-> new FindException("Product "+ ErrorCode.RESOURCE_NOT_FOUND.getMsg()));
+        product.removeConnectionWithOrders();
+
         try {
-            productRepository.delete(productRepository.findById(id).get());
+            productRepository.delete(product);
             return "successfully done";
         } catch (Exception e){
             throw e;

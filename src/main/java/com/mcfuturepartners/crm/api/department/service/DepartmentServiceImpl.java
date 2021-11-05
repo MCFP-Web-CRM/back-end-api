@@ -4,6 +4,8 @@ import com.mcfuturepartners.crm.api.department.dto.DepartmentDto;
 import com.mcfuturepartners.crm.api.department.dto.DepartmentResponseDto;
 import com.mcfuturepartners.crm.api.department.entity.Department;
 import com.mcfuturepartners.crm.api.department.repository.DepartmentRepository;
+import com.mcfuturepartners.crm.api.exception.ErrorCode;
+import com.mcfuturepartners.crm.api.exception.FindException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,9 @@ public class DepartmentServiceImpl implements DepartmentService{
 
     @Override
     public List<DepartmentResponseDto> deleteDepartment(Long departmentId) {
+        Department department = departmentRepository.findById(departmentId).orElseThrow(()->new FindException("Department "+ ErrorCode.RESOURCE_NOT_FOUND));
+        department.removeConnectionWithUser();
+
         departmentRepository.deleteById(departmentId);
         return getAllDepartments();
     }

@@ -41,9 +41,16 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<Order> orders = new ArrayList<>();
 
-    public Long getTotalRevenueAfter(LocalDateTime startTime){
+    public void removeConnectionWithOrders(){
+        if(orders.size() != 0 ){
+            orders.stream().forEach(order -> order.setProduct(null));
+        }
+    }
+
+    public Long getTotalRevenueAfter(LocalDateTime startTime) {
         return this.getOrders().stream()
                 .filter(order -> order.getRegDate().isAfter(startTime))
-                .map(order -> order.getPrice()).reduce(0L,Long::sum);
+                .map(order -> order.getPrice()).reduce(0L, Long::sum);
     }
+
 }

@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -49,4 +51,17 @@ public class Counsel {
     @Column(name = "regdate")
     @NotNull
     private LocalDateTime regDate;
+
+    public Counsel updateModified(Counsel updatedCounsel){
+        if(StringUtils.hasText(updatedCounsel.contents)){
+            this.setContents(updatedCounsel.contents);
+        }
+        if(!ObjectUtils.isEmpty(updatedCounsel.status)){
+            this.setStatus(updatedCounsel.status);
+        }
+        if(!ObjectUtils.isEmpty(updatedCounsel.user)){
+            this.setUser(updatedCounsel.user);
+        }
+        return this;
+    }
 }

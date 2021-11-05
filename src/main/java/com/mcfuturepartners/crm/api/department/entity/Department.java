@@ -35,4 +35,9 @@ public class Department {
             user.setDepartment(this);
         }
     }
+    public void removeConnectionWithUser(){
+        if(users.size() != 0){
+            users.stream().forEach(user -> user.setDepartment(null));
+        }
+    }
 }

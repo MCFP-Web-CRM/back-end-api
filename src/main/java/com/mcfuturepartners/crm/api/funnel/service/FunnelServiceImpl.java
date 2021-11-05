@@ -1,5 +1,7 @@
 package com.mcfuturepartners.crm.api.funnel.service;
 
+import com.mcfuturepartners.crm.api.exception.ErrorCode;
+import com.mcfuturepartners.crm.api.exception.FindException;
 import com.mcfuturepartners.crm.api.funnel.dto.FunnelCreateDto;
 import com.mcfuturepartners.crm.api.funnel.dto.FunnelResponseDto;
 import com.mcfuturepartners.crm.api.funnel.entity.Funnel;
@@ -34,6 +36,9 @@ public class FunnelServiceImpl implements FunnelService{
     @Transactional
     @Override
     public List<FunnelResponseDto> deleteFunnel(Long id) {
+        Funnel funnel = funnelRepository.findById(id).orElseThrow(()->new FindException("Funnel "+ ErrorCode.RESOURCE_NOT_FOUND.getMsg()));
+        funnel.removeConnectionWithCustomers();
+
         funnelRepository.deleteById(id);
         return getFunnelList();
     }

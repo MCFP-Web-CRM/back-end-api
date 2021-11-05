@@ -37,7 +37,6 @@ public class RevenueController {
     @ApiOperation(value = "사원별 매출 조회", notes = "month=6(변경 가능) querystring으로 원하는 달만큼 가져올 수 있고, user-id=1,2,3 이런식으로 원하는 id를 추가해주면 그 사원의 매출을 가져올 수 있음")
     public ResponseEntity<List<List<UserMonthlyRevenue>>> getUserRevenue(@RequestParam("month")Integer month,
                                                                          @RequestParam("user-id") List<Long> userIds){
-
         return new ResponseEntity<>(revenueService.getUsersLatestRevenueByMonth(UserMonthlyRequest.builder().month(month).userIds(userIds).build()), HttpStatus.OK);
     }
     @GetMapping(path = "/product")

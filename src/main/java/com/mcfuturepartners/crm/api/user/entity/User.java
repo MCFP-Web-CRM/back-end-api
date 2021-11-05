@@ -1,12 +1,14 @@
 package com.mcfuturepartners.crm.api.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mcfuturepartners.crm.api.counsel.entity.Counsel;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.department.entity.Department;
 import com.mcfuturepartners.crm.api.message.entity.Message;
 import com.mcfuturepartners.crm.api.order.entity.Order;
 import com.mcfuturepartners.crm.api.schedule.entity.Schedule;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -22,6 +25,7 @@ import java.util.Set;
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
+@Slf4j
 public class User {
     @Id
     @Column(name = "user_id")
@@ -46,7 +50,7 @@ public class User {
     @JoinColumn(name="department_id")
     private Department department;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedules = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
@@ -55,8 +59,11 @@ public class User {
     @OneToMany(mappedBy = "manager")
     private List<Customer> customers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Counsel> counsels = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
@@ -75,14 +82,41 @@ public class User {
             department.addUser(this);
         }
     }
+    public void eraseConnectionFromUser(){
+        //eraseAllSchedules();
+        removeUserFromCustomers();
+        removeUserFromOrders();
+        eraseAllMessages();
+        removeUserFromCounsels();
+    }
     public void eraseAllSchedules(){
         if(schedules.size() != 0){
-            schedules.removeAll(schedules);
+            for(Schedule schedule : this.getSchedules()){
+                log.info("hihi");
+                schedules.remove(schedule);
+                log.info(schedules.toString()+"");
+            }
+            //schedules.stream().peek(schedule -> schedule.setUser(null)).collect(Collectors.toList()).removeAll(schedules);
+        }
+    }
+    public void removeUserFromCounsels(){
+        if(counsels.size() != 0){
+            counsels.stream().forEach(counsel -> counsel.setUser(null));
+        }
+    }
+    public void removeUserFromCustomers(){
+        if(customers.size() != 0){
+            customers.stream().forEach(customer -> customer.setManager(null));
         }
     }
     public void removeUserFromOrders(){
         if(orders.size() != 0){
-
+            orders.stream().forEach(order -> order.setUser(null));
+        }
+    }
+    public void eraseAllMessages(){
+        if(messages.size() != 0){
+            messages.stream().peek(message -> message.setUser(null)).collect(Collectors.toList()).removeAll(messages);
         }
     }
     public User updateModified(User modifiedUser){
