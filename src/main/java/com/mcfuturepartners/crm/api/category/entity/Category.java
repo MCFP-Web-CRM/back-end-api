@@ -1,6 +1,7 @@
 package com.mcfuturepartners.crm.api.category.entity;
 
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
+import com.mcfuturepartners.crm.api.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,7 +28,13 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private List<Customer> customers = new ArrayList<>();
+    public void addCustomer(Customer customer){
+        this.customers.add(customer);
 
+        if(customer.getCategory() != this){
+            customer.setCategory(this);
+        }
+    }
     public void removeConnectionWithCustomers(){
         if(customers.size() != 0){
             customers.stream().forEach(customer -> customer.setCategory(null));

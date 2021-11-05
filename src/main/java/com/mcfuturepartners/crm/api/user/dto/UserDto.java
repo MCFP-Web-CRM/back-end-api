@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data @Component
+@Data
 @NoArgsConstructor
 public class UserDto {
     @ApiModelProperty(position = 0, example = "사원 등록 시 필요없음") private Long id;

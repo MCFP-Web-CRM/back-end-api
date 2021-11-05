@@ -19,4 +19,5 @@ public interface UserService {
     List<UserResponseDto> getAllUsers();
     List<UserRevenueResponseDto> getAllUserRevenue();
     UserResponseDto getUserById(long id);
+    UserResponseDto updateUser(Long userId, UserDto userDto);
 }

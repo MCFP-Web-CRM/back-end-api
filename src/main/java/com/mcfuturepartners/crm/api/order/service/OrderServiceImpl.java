@@ -2,6 +2,7 @@ package com.mcfuturepartners.crm.api.order.service;
 
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.customer.repository.CustomerRepository;
+import com.mcfuturepartners.crm.api.exception.AuthorizationException;
 import com.mcfuturepartners.crm.api.exception.ErrorCode;
 import com.mcfuturepartners.crm.api.order.dto.OrderCancelDto;
 import com.mcfuturepartners.crm.api.order.dto.OrderDto;
@@ -39,6 +40,17 @@ public class OrderServiceImpl implements OrderService{
     public List<OrderResponseDto> saveOrder(OrderDto orderDto) {
         Customer customer = customerRepository.getById(orderDto.getCustomerId());
         Product product = productRepository.findById(orderDto.getProductId()).get();
+
+        if(!orderDto.getAuthorities().contains("ADMIN")){
+            if(!customer.getManager().getUsername().equals(orderDto.getUsername())){
+                throw new AuthorizationException("Not the manager");
+            }
+        }
+
+        if(customer.getOrders().stream().filter(order -> order.getProduct().equals(product)).count() != 0){
+            return null;
+        }
+
         try{
             orderRepository.save(Order.builder()
                     .customer(customerRepository.findById(orderDto.getCustomerId()).get())

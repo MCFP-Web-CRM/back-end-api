@@ -23,7 +23,6 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     public String createCategory(CategoryDto categoryDto) {
         try{
-            log.info(categoryDto.toEntity().toString());
             categoryRepository.save(categoryDto.toEntity());
             return "save successful";
         }catch(Exception e){
