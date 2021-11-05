@@ -80,7 +80,17 @@ public class User {
             schedules.removeAll(schedules);
         }
     }
+    public void removeUserFromOrders(){
+        if(orders.size() != 0){
 
+        }
+    }
+    public User updateModified(User modifiedUser){
+
+
+
+        return this;
+    }
     public Long getTotalRevenueAfter(LocalDateTime startTime){
         return this.getOrders().stream()
                 .filter(order -> order.getRegDate().isAfter(startTime))
