@@ -98,8 +98,10 @@ public class CustomerServiceImpl implements CustomerService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() ->
                         new FindException(DatabaseErrorCode.USER_NOT_FOUND.name()));
-
-        if (ObjectUtils.isEmpty(customer.getManager()) || customer.getManager().getUsername().equals(user.getUsername()))
+        if(ObjectUtils.isEmpty(customer.getManager())){
+            return false;
+        }
+        if (customer.getManager().getUsername().equals(user.getUsername()))
             return true;
 
         return false;
