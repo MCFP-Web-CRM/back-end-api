@@ -1,16 +1,13 @@
 package com.mcfuturepartners.crm.api.user.service;
 
 import com.mcfuturepartners.crm.api.department.dto.DepartmentResponseDto;
-import com.mcfuturepartners.crm.api.exception.DatabaseErrorCode;
-import com.mcfuturepartners.crm.api.exception.FindException;
+import com.mcfuturepartners.crm.api.exception.*;
 import com.mcfuturepartners.crm.api.order.entity.Order;
 import com.mcfuturepartners.crm.api.order.repository.OrderRepository;
 import com.mcfuturepartners.crm.api.user.dto.*;
 import com.mcfuturepartners.crm.api.user.entity.Authority;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
-import com.mcfuturepartners.crm.api.exception.ErrorCode;
-import com.mcfuturepartners.crm.api.exception.LoginException;
 import com.mcfuturepartners.crm.api.user.entity.UserRevenue;
 import com.mcfuturepartners.crm.api.department.repository.DepartmentRepository;
 import com.mcfuturepartners.crm.api.user.repository.UserRepository;
@@ -21,6 +18,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,7 +34,6 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final DepartmentRepository departmentRepository;
-    private final OrderRepository orderRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder encoder;
     private final TokenProvider provider;
@@ -54,6 +52,39 @@ public class UserServiceImpl implements UserService {
         }
         return ErrorCode.USER_ALREADY_EXISTS.getMsg();
     }
+    @Override
+    public UserResponseDto updateUser(Long userId,UserDto userDto) {
+        User user = userRepository.findById(userId).orElseThrow(()->new FindException("USER "+ErrorCode.RESOURCE_NOT_FOUND));
+
+        //if not admin or user itself, unauthorized error
+        if(!userDto.getAuthority().contains("ADMIN")&&!userDto.getUsername().equals(user.getUsername())){
+            throw new AuthorizationException("UNAUTHORIZED");
+        }
+        User modifiedUser = userDto.toEntity();
+
+        //changing password
+        if(StringUtils.hasText(modifiedUser.getPassword())){
+            modifiedUser.setPassword(encoder.encode(modifiedUser.getPassword()));
+        }
+
+        //if new department
+        if(!ObjectUtils.isEmpty(userDto.getDepartmentId())){
+            modifiedUser.setDepartment(departmentRepository.findById(userDto.getDepartmentId()).orElseThrow(()-> new FindException("Department "+ErrorCode.RESOURCE_NOT_FOUND)));
+        }
+
+        try{
+            user = userRepository.save(user.updateModified(modifiedUser));
+        } catch (Exception e){
+            throw e;
+        }
+        UserResponseDto userResponseDto = modelMapper.map(user,UserResponseDto.class);
+
+        if(!ObjectUtils.isEmpty(user.getDepartment())){
+            userResponseDto.setDepartment(modelMapper.map(user.getDepartment(),DepartmentResponseDto.class));
+        }
+        return userResponseDto;
+    }
+
     @Override
     public UserLoginResponseDto signin(User user) throws LoginException{
         UserLoginResponseDto userLoginResponseDto = new UserLoginResponseDto();
@@ -128,4 +159,6 @@ public class UserServiceImpl implements UserService {
             return userResponseDto;
         }).orElseThrow(()-> new FindException(DatabaseErrorCode.USER_NOT_FOUND.name()));
     }
+
+
 }

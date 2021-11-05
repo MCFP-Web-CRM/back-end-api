@@ -1,6 +1,7 @@
 package com.mcfuturepartners.crm.api.order.dto;
 
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,4 +14,5 @@ public class OrderDto {
     @ApiModelProperty(position = 1, example = "고객 id") private long customerId;
     @ApiModelProperty(position = 2, example = "상품 id") private long productId;
     @ApiModelProperty(position = 3, example = "사원 username / 필요 없음") private String username;
+    @ApiModelProperty(position = 3, example = "사원 권한 / 필요 없음") private String authorities;
 }

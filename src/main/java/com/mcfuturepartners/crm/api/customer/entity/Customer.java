@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.mcfuturepartners.crm.api.category.entity.Category;
 import com.mcfuturepartners.crm.api.counsel.entity.Counsel;
 import com.mcfuturepartners.crm.api.customer.dto.CustomerUpdateDto;
+import com.mcfuturepartners.crm.api.department.entity.Department;
 import com.mcfuturepartners.crm.api.funnel.entity.Funnel;
 import com.mcfuturepartners.crm.api.order.entity.Order;
 import com.mcfuturepartners.crm.api.user.entity.User;
@@ -81,14 +82,29 @@ public class Customer {
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Counsel> counsels = new ArrayList<>();
-
+    public void setCategory(Category category){
+        if(this.category != null){
+            this.category.getCustomers().remove(this);
+        }
+        this.category = category;
+        if(!category.getCustomers().contains(this)){
+            category.addCustomer(this);
+        }
+    }
+    public void setFunnel(Funnel funnel){
+        if(this.funnel != null){
+            this.funnel.getCustomers().remove(this);
+        }
+        this.funnel = funnel;
+        if(!funnel.getCustomers().contains(this)){
+            funnel.addCustomer(this);
+        }
+    }
     public void removeOrdersFromCustomer(){
         if(orders.size() != 0){
             orders.stream().forEach(order -> order.setCustomer(null));
         }
     }
-
-
     public Customer updateModified(CustomerUpdateDto customerUpdateDto){
         if(StringUtils.hasText(customerUpdateDto.getPhone())){
             this.phone = customerUpdateDto.getBirth();

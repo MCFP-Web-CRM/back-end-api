@@ -1,7 +1,10 @@
 package com.mcfuturepartners.crm.api.user.controller;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.mcfuturepartners.crm.api.department.repository.DepartmentRepository;
 import com.mcfuturepartners.crm.api.department.service.DepartmentService;
+import com.mcfuturepartners.crm.api.exception.AuthorizationException;
 import com.mcfuturepartners.crm.api.user.dto.*;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
 import com.mcfuturepartners.crm.api.user.entity.User;
@@ -20,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -78,7 +82,26 @@ public class UserController {
 
     @PutMapping(path = "/{userid}")
     @ApiOperation(value = "",notes = "")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable("userid") Long userId){
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<UserResponseDto> updateUser(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
+                                                      @PathVariable("userid") Long userId,
+                                                      @RequestBody UserDto userDto){
+        String token = bearerToken.replace("Bearer ","");
+        DecodedJWT decodedJWT = JWT.decode(token);
+        String username = decodedJWT.getSubject();
+        UserResponseDto userResponseDto;
+
+        userDto.setUsername(username);
+        if(!StringUtils.hasText(userDto.getAuthority())){
+            userDto.setAuthority(tokenProvider.getAuthentication(token).getAuthorities().toString());
+        }
+
+        try{
+            userResponseDto = userService.updateUser(userId,userDto);
+        }catch (AuthorizationException authorizationException){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(userResponseDto,HttpStatus.OK);
     }
 }

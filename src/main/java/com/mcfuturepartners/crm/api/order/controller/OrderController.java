@@ -2,18 +2,22 @@ package com.mcfuturepartners.crm.api.order.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.mcfuturepartners.crm.api.exception.AuthorizationException;
 import com.mcfuturepartners.crm.api.order.dto.OrderCancelDto;
 import com.mcfuturepartners.crm.api.order.dto.OrderDto;
 import com.mcfuturepartners.crm.api.order.dto.OrderResponseDto;
+import com.mcfuturepartners.crm.api.order.entity.Order;
 import com.mcfuturepartners.crm.api.order.entity.OrderRevenue;
 import com.mcfuturepartners.crm.api.order.service.OrderService;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
 import com.mcfuturepartners.crm.api.user.entity.Authority;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,10 +37,23 @@ public class OrderController {
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
-
         orderDto.setUsername(username);
+        orderDto.setAuthorities(tokenProvider.getAuthentication(token).getAuthorities().toString());
+        List<OrderResponseDto> orderResponseDtos;
+        try{
+            orderResponseDtos = orderService.saveOrder(orderDto);
+        } catch (AuthorizationException authorizationException){
 
-        return new ResponseEntity<>(orderService.saveOrder(orderDto),HttpStatus.CREATED);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        if(ObjectUtils.isEmpty(orderResponseDtos)){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(orderResponseDtos,HttpStatus.CREATED);
 
     }
     @DeleteMapping(path = "/{order-id}")
@@ -47,10 +64,19 @@ public class OrderController {
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
 
-        return new ResponseEntity<>(orderService.deleteOrder(OrderCancelDto.builder()
-                .authorities(tokenProvider.getAuthentication(token).getAuthorities().toString())
-                .username(username)
-                .orderId(orderId).build()), HttpStatus.NO_CONTENT);
+        List<OrderResponseDto> orderResponseDtos;
+
+        try{
+            orderResponseDtos = orderService.deleteOrder(OrderCancelDto.builder()
+                    .authorities(tokenProvider.getAuthentication(token).getAuthorities().toString())
+                    .username(username)
+                    .orderId(orderId).build());
+        } catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(orderResponseDtos, HttpStatus.NO_CONTENT);
     }
 
 }

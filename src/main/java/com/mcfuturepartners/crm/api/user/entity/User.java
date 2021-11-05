@@ -9,6 +9,8 @@ import com.mcfuturepartners.crm.api.order.entity.Order;
 import com.mcfuturepartners.crm.api.schedule.entity.Schedule;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -83,22 +85,11 @@ public class User {
         }
     }
     public void eraseConnectionFromUser(){
-        //eraseAllSchedules();
         removeUserFromCustomers();
         removeUserFromOrders();
-        eraseAllMessages();
         removeUserFromCounsels();
     }
-    public void eraseAllSchedules(){
-        if(schedules.size() != 0){
-            for(Schedule schedule : this.getSchedules()){
-                log.info("hihi");
-                schedules.remove(schedule);
-                log.info(schedules.toString()+"");
-            }
-            //schedules.stream().peek(schedule -> schedule.setUser(null)).collect(Collectors.toList()).removeAll(schedules);
-        }
-    }
+
     public void removeUserFromCounsels(){
         if(counsels.size() != 0){
             counsels.stream().forEach(counsel -> counsel.setUser(null));
@@ -114,15 +105,19 @@ public class User {
             orders.stream().forEach(order -> order.setUser(null));
         }
     }
-    public void eraseAllMessages(){
-        if(messages.size() != 0){
-            messages.stream().peek(message -> message.setUser(null)).collect(Collectors.toList()).removeAll(messages);
-        }
-    }
     public User updateModified(User modifiedUser){
-
-
-
+        if(StringUtils.hasText(modifiedUser.getName())){
+            this.setName(modifiedUser.getName());
+        }
+        if(StringUtils.hasText(modifiedUser.getPassword())){
+            this.setPassword(modifiedUser.getPassword());
+        }
+        if(StringUtils.hasText(modifiedUser.getPhone())){
+            this.setPhone(modifiedUser.getPhone());
+        }
+        if(!ObjectUtils.isEmpty(modifiedUser.getDepartment())){
+            this.setDepartment(modifiedUser.getDepartment());
+        }
         return this;
     }
     public Long getTotalRevenueAfter(LocalDateTime startTime){

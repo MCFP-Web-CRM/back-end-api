@@ -16,6 +16,7 @@ import com.mcfuturepartners.crm.api.customer.entity.QCustomer;
 import com.mcfuturepartners.crm.api.customer.repository.CustomerRepository;
 import com.mcfuturepartners.crm.api.customer.repository.CustomerRepositoryImpl;
 import com.mcfuturepartners.crm.api.exception.DatabaseErrorCode;
+import com.mcfuturepartners.crm.api.exception.ErrorCode;
 import com.mcfuturepartners.crm.api.exception.FindException;
 import com.mcfuturepartners.crm.api.funnel.dto.FunnelResponseDto;
 import com.mcfuturepartners.crm.api.funnel.entity.Funnel;
@@ -166,8 +167,13 @@ public class CustomerServiceImpl implements CustomerService {
         customer.updateModified(customerUpdateDto);
 
         if(customerUpdateDto.getCategoryId() != null){
-            Category category = categoryRepository.findById(customerUpdateDto.getCategoryId()).get();
+            Category category = categoryRepository.findById(customerUpdateDto.getCategoryId()).orElseThrow(()->new FindException("Category "+ ErrorCode.RESOURCE_NOT_FOUND));
             customer.setCategory(category);
+        }
+
+        if(customerUpdateDto.getFunnelId() != null){
+            Funnel funnel = funnelRepository.findById(customerUpdateDto.getFunnelId()).orElseThrow(()->new FindException("Funnel " + ErrorCode.RESOURCE_NOT_FOUND));
+            customer.setFunnel(funnel);
         }
 
         if(customerUpdateDto.getManagerUserId() != null){
@@ -186,8 +192,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public String deleteCustomer(Long id) {
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new FindException(DatabaseErrorCode.CUSTOMER_NOT_FOUND.name()));
-        counselRepository.deleteAll(customer.getCounsels());
-        orderRepository.deleteAll(customer.getOrders());
+        customer.removeOrdersFromCustomer();
         try {
             customerRepository.delete(customer);
             return "successfully done";
