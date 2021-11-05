@@ -23,6 +23,8 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,7 +59,7 @@ public class OrderServiceImpl implements OrderService{
                     .user(userRepository.findByUsername(orderDto.getUsername()).get())
                     .product(product)
                             .price(product.getPrice())
-                            .regDate(LocalDateTime.now())
+                            .regDate(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime())
                     .build());
 
             return orderRepository.findAllByCustomer(customer).stream().map(order->{
@@ -94,8 +96,8 @@ public class OrderServiceImpl implements OrderService{
     public OrderRevenue getTotalRevenue() {
         return OrderRevenue.builder().currentRevenue(
                 orderRepository.findAllByRegDateIsAfter
-                                (LocalDate.of(LocalDateTime.now().getYear(),
-                                        LocalDateTime.now().getMonthValue(),
+                                (LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(),
+                                                ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonthValue(),
                                         1)
                                         .atStartOfDay())
                         .stream()

@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +32,7 @@ public class GoalServiceImpl implements GoalService{
     public List<Goal> getCompanyLatestGoalByMonth(Integer month) {
         List<Goal> goalList = new ArrayList<>(month);
 
-        LocalDateTime date = LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(), 1).atStartOfDay();
+        LocalDateTime date = LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonth(), 1).atStartOfDay();
 
         for(int i = 0 ; i < month ; i ++){
             goalList.add(goalRepository.findGoalByYearAndMonth(

@@ -15,6 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -41,7 +43,7 @@ public class CustomerRegisterDto {
                     .email(email)
                     .birth(birth)
                     .sex(sex)
-                    .regDate(LocalDateTime.now())
+                    .regDate(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime())
                     .build();
         }
 }

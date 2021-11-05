@@ -17,6 +17,8 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,8 +45,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductRevenueResponseDto> findAllProductRevenue() {
         List<Product> productList = productRepository.findAll();
-        LocalDateTime startOfMonth = LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonthValue(), 1).atStartOfDay();
-        LocalDateTime startOfDay = LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonthValue(), LocalDateTime.now().getDayOfMonth()).atStartOfDay();
+        log.info(LocalDateTime.now().toString()+" " + ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().toString());
+        LocalDateTime startOfMonth = LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonthValue(), 1).atStartOfDay();
+        LocalDateTime startOfDay = LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonthValue(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getDayOfMonth()).atStartOfDay();
 
         List<ProductRevenueResponseDto> productMonthlyDailyRevenueList = new ArrayList<>();
 
