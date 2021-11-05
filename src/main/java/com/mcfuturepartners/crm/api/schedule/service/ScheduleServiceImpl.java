@@ -1,6 +1,7 @@
 package com.mcfuturepartners.crm.api.schedule.service;
 
 import com.mcfuturepartners.crm.api.customer.repository.CustomerRepositoryImpl;
+import com.mcfuturepartners.crm.api.exception.AuthorizationException;
 import com.mcfuturepartners.crm.api.exception.DatabaseErrorCode;
 import com.mcfuturepartners.crm.api.exception.ErrorCode;
 import com.mcfuturepartners.crm.api.exception.FindException;
@@ -32,8 +33,19 @@ public class ScheduleServiceImpl implements ScheduleService{
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     @Override
-    public List<List<ScheduleResponse>> getAllSchedule() {
-        return null;
+    public List<UserScheduleResponse> getAllSchedulesInBetween(ScheduleGet scheduleGet) {
+        List<Schedule> calendarSchedule = qScheduleRepository.findAllByStartDateOrEndDateIsBetween(scheduleGet.getCalendarStartDate(),scheduleGet.getCalendarEndDate());
+        List<User> userList = userRepository.findAll();
+        List<UserScheduleResponse> availableSchedule = new ArrayList<>();
+
+        availableSchedule.addAll(userList.stream().map(user -> UserScheduleResponse.builder()
+                .user(modelMapper.map(user,UserResponseDto.class))
+                .scheduleList(calendarSchedule.stream()
+                        .filter(schedule -> schedule.getUser().getUsername().equals(user.getUsername()))
+                        .map(schedule -> modelMapper.map(schedule,ScheduleResponse.class))
+                        .collect(Collectors.toList())).build()).collect(Collectors.toList()));
+
+        return availableSchedule;
     }
 
     @Override
@@ -64,8 +76,14 @@ public class ScheduleServiceImpl implements ScheduleService{
     }
 
     @Override
-    public ScheduleResponse getSchedule(Long scheduleId) {
-        return modelMapper.map(scheduleRepository.findById(scheduleId).orElseThrow(()->new FindException("스케줄 ID 안찾아짐"+ErrorCode.RESOURCE_NOT_FOUND.getMsg())),ScheduleResponse.class);
+    public ScheduleResponse getSchedule(Long scheduleId, String username) {
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new FindException("스케줄 ID Not found"+ErrorCode.RESOURCE_NOT_FOUND.getMsg()));
+        if(!schedule.getUser().getUsername().equals(username)){
+            if(!schedule.getIsPublic()){
+                throw new AuthorizationException("조회 권한 없음");
+            }
+        }
+        return modelMapper.map(schedule,ScheduleResponse.class);
     }
 
     @Override
@@ -78,12 +96,20 @@ public class ScheduleServiceImpl implements ScheduleService{
 
     @Override
     public ScheduleResponse updateSchedule(Long scheduleId, ScheduleUpdate scheduleUpdate) {
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new FindException("스케줄 ID 안찾아짐"+ErrorCode.RESOURCE_NOT_FOUND.getMsg()));
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()->new FindException("스케줄 ID Not found"+ErrorCode.RESOURCE_NOT_FOUND.getMsg()));
+        if(!schedule.getUser().getUsername().equals(scheduleUpdate.getUsername())){
+            throw new AuthorizationException("수정 권한 없음");
+        }
+
         return modelMapper.map(scheduleRepository.save(schedule.updateModified(scheduleUpdate)),ScheduleResponse.class);
     }
 
     @Override
-    public void deleteSchedule(Long scheduleId) {
+    public void deleteSchedule(Long scheduleId, String username) {
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(()-> new FindException("스케줄 ID Not found"+ErrorCode.RESOURCE_NOT_FOUND.getMsg()));
+        if(!schedule.getUser().getUsername().equals(username)){
+            throw new AuthorizationException("삭제 권한 없음");
+        }
         try{
             scheduleRepository.deleteById(scheduleId);
         }catch (Exception e){

@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 @Data
 public class ScheduleUpdate {
+    @ApiModelProperty(position = 0, example = "스케줄 id 필요 없음") private Long schedulId;
 
     @ApiModelProperty(position = 1, example = "제목 필수 X") private String title;
 
@@ -25,4 +26,5 @@ public class ScheduleUpdate {
 
     @ApiModelProperty(position = 5, example = "일정 공개여부 필수 X")private Boolean isPublic;
 
+    @ApiModelProperty(position = 6, example = "사용자 username. 요청 시 넣지 않아도 됨") private String username;
 }
