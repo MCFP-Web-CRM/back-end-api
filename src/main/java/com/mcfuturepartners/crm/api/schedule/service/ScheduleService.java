@@ -11,7 +11,7 @@ import java.util.List;
 public interface ScheduleService {
     List<UserScheduleResponse> getAllSchedulesInBetween(ScheduleGet scheduleGet);
     List<UserScheduleResponse> getScheduleInBetween(ScheduleGet scheduleGet);
-    ScheduleResponse getSchedule(Long scheduleId, String username);
+    ScheduleResponse getSchedule(Long scheduleId, String username, String authority);
     ScheduleResponse saveSchedule(ScheduleRegister scheduleRegister);
     ScheduleResponse updateSchedule(Long scheduleId, ScheduleUpdate scheduleUpdate);
     void deleteSchedule(Long scheduleId, String username);
