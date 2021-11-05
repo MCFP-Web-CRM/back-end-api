@@ -27,4 +27,10 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private List<Customer> customers = new ArrayList<>();
+
+    public void removeConnectionWithCustomers(){
+        if(customers.size() != 0){
+            customers.stream().forEach(customer -> customer.setCategory(null));
+        }
+    }
 }

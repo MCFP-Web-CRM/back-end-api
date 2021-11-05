@@ -39,14 +39,14 @@ public class Notice {
         return this;
     }
     public Notice updateModified(Notice notice){
-        if(ObjectUtils.isEmpty(notice.title)&&ObjectUtils.isEmpty(notice.contents)){
+        if(ObjectUtils.isEmpty(notice.getTitle())&&ObjectUtils.isEmpty(notice.getContents())){
             return this;
         }
-        if(!ObjectUtils.isEmpty(notice.title)){
-            this.title = title;
+        if(!ObjectUtils.isEmpty(notice.getTitle())){
+            this.title = notice.getTitle();
         }
-        if(ObjectUtils.isEmpty(notice.contents)){
-            this.contents = contents;
+        if(!ObjectUtils.isEmpty(notice.getContents())){
+            this.contents = notice.getContents();
         }
         return writeNow();
     }

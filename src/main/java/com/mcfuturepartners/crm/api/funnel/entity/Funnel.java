@@ -27,4 +27,10 @@ public class Funnel {
 
     @OneToMany(mappedBy = "funnel")
     private List<Customer> customers;
+
+    public void removeConnectionWithCustomers(){
+        if(customers.size() != 0){
+            customers.stream().forEach(null);
+        }
+    }
 }

@@ -18,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -75,4 +76,9 @@ public class UserController {
         return new ResponseEntity<>(userService.getAllUserRevenue(),HttpStatus.OK);
     }
 
+    @PutMapping(path = "/{userid}")
+    @ApiOperation(value = "",notes = "")
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable("userid") Long userId){
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

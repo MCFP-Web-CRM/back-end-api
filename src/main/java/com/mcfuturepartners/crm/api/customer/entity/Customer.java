@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -64,7 +65,6 @@ public class Customer {
     @JoinColumn(name = "category_id")
     private Category category;
 
-
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
@@ -76,12 +76,18 @@ public class Customer {
     @JoinColumn(name = "funnel_id")
     private Funnel funnel;
 
-
     @OneToMany(mappedBy = "customer")
     private List<Order> orders = new ArrayList<>();
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Counsel> counsels = new ArrayList<>();
+
+    public void removeOrdersFromCustomer(){
+        if(orders.size() != 0){
+            orders.stream().forEach(order -> order.setCustomer(null));
+        }
+    }
+
 
     public Customer updateModified(CustomerUpdateDto customerUpdateDto){
         if(StringUtils.hasText(customerUpdateDto.getPhone())){
@@ -101,4 +107,6 @@ public class Customer {
         }
         return this;
     }
+
+
 }
