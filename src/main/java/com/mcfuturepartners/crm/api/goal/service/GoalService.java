@@ -7,7 +7,8 @@ import java.util.List;
 
 public interface GoalService {
     Goal setMonthlyGoal(Goal goal);
-
+    Goal updateMonthlyGoal(Long goalId, Goal goal);
+    void deleteMonthlyGoal(Long goalId);
     List<Goal> getCompanyLatestGoalByMonth(Integer month);
 
 }

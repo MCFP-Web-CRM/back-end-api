@@ -3,7 +3,11 @@ package com.mcfuturepartners.crm.api.admin.user;
 import com.mcfuturepartners.crm.api.department.repository.DepartmentRepository;
 import com.mcfuturepartners.crm.api.department.service.DepartmentService;
 import com.mcfuturepartners.crm.api.exception.ErrorCode;
+import com.mcfuturepartners.crm.api.exception.FindException;
+import com.mcfuturepartners.crm.api.exception.LoginException;
 import com.mcfuturepartners.crm.api.user.dto.UserDto;
+import com.mcfuturepartners.crm.api.user.dto.UserResponseDto;
+import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.user.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +25,23 @@ public class AdminUserController {
 
     @PostMapping
     @ApiOperation(value = "사원 계정 추가", notes = "부서가 지정되지 않았을 경우 null로 지정")
-    public ResponseEntity<String> signup(@RequestBody UserDto userDto){
+    public ResponseEntity<UserResponseDto> signup(@RequestBody UserDto userDto){
         //service레이어에서 처리할 수 있도록 처리
-        userDto.setDepartment(departmentRepository.findById(userDto.getDepartmentId()).orElse(null));
-        if(userService.signup(userDto).equals(ErrorCode.USER_ALREADY_EXISTS.getMsg())){
-            return ResponseEntity.badRequest().body(ErrorCode.USER_ALREADY_EXISTS.getMsg());
+        UserResponseDto userResponseDto;
+
+        try{
+            userResponseDto = userService.signup(userDto);
+        }catch (FindException findException){
+            findException.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }catch(LoginException loginException){
+            loginException.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>("User Register Succeeded", HttpStatus.CREATED);
+
+        return new ResponseEntity<>(userResponseDto, HttpStatus.CREATED);
     }
 
     @DeleteMapping(path = "/{userid}")

@@ -18,7 +18,16 @@ public class AdminCategoryController {
     @PostMapping
     @ApiOperation(value = "고객 그룹 추가", notes = "(예외 처리 필요)")
     public ResponseEntity<String> createCustomerCategory(@RequestBody CategoryDto categoryDto){
-        return new ResponseEntity<>(categoryService.createCategory(categoryDto), HttpStatus.CREATED);
+        try{
+            categoryService.createCategory(categoryDto);
+        }catch (FindException findException){
+            findException.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
     @DeleteMapping(path = "/{category-id}")
     @ApiOperation(value = "고객 그룹 추가", notes = "(예외 처리 필요)")

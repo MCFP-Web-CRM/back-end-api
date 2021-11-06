@@ -33,13 +33,28 @@ public class FunnelServiceImpl implements FunnelService{
         return getFunnelList();
     }
 
+    @Override
+    public List<FunnelResponseDto> updateFunnel(Long funnelId, FunnelCreateDto funnelCreateDto) {
+        Funnel funnel = funnelRepository.findById(funnelId).orElseThrow(()->new FindException("Funnel "+ErrorCode.RESOURCE_NOT_FOUND));
+        funnel.setFunnelName(funnelCreateDto.getFunnelName());
+        funnelRepository.save(funnel);
+        return getFunnelList();
+    }
+
+
     @Transactional
     @Override
     public List<FunnelResponseDto> deleteFunnel(Long id) {
         Funnel funnel = funnelRepository.findById(id).orElseThrow(()->new FindException("Funnel "+ ErrorCode.RESOURCE_NOT_FOUND.getMsg()));
         funnel.removeConnectionWithCustomers();
+        funnelRepository.save(funnel);
 
-        funnelRepository.deleteById(id);
+        try{
+            funnelRepository.deleteById(id);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
+        }
         return getFunnelList();
     }
 }

@@ -7,6 +7,7 @@ import com.mcfuturepartners.crm.api.department.dto.DepartmentResponseDto;
 import com.mcfuturepartners.crm.api.department.entity.Department;
 import com.mcfuturepartners.crm.api.department.repository.DepartmentRepository;
 import com.mcfuturepartners.crm.api.department.service.DepartmentService;
+import com.mcfuturepartners.crm.api.exception.FindException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiModelProperty;
@@ -40,17 +41,28 @@ public class AdminController {
     @PutMapping(value = "/{department-id}")
     @ApiOperation(value = "부서명 수정", notes = "부서명 수정(추가 구현 필요)")
     @ApiImplicitParam(name = "departmentId", value = "부서 ID", required = true)
-    public ResponseEntity<String> updateDepartment(@PathVariable long departmentId){
-     return new ResponseEntity<String>("department modified", HttpStatus.OK);
+    public ResponseEntity<String> updateDepartment(@PathVariable(name = "department-id") Long departmentId,
+                                                   @RequestBody DepartmentDto departmentDto){
+        try{
+            departmentService.updateDepartment(departmentId, departmentDto);
+        }catch(FindException findException) {
+            findException.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<String>("department modified", HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{department-id}")
     @ApiOperation(value = "부서 삭제", notes = "부서 삭제")
     @ApiImplicitParam(name = "departmentId", value = "부서 ID", required = true)
-    public ResponseEntity<String> deleteDepartment(@PathVariable Long departmentId){
+    public ResponseEntity<String> deleteDepartment(@PathVariable(name = "department-id") Long departmentId){
         try{
             departmentService.deleteDepartment(departmentId);
-        }catch(Exception e){
+        }catch(FindException findException){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch(Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

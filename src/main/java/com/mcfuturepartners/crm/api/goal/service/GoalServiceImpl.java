@@ -1,5 +1,7 @@
 package com.mcfuturepartners.crm.api.goal.service;
 
+import com.mcfuturepartners.crm.api.exception.ErrorCode;
+import com.mcfuturepartners.crm.api.exception.FindException;
 import com.mcfuturepartners.crm.api.goal.entity.Goal;
 import com.mcfuturepartners.crm.api.goal.repository.GoalRepository;
 import com.mcfuturepartners.crm.api.revenue.entity.Revenue;
@@ -23,9 +25,41 @@ public class GoalServiceImpl implements GoalService{
     @Override
     public Goal setMonthlyGoal(Goal goal) {
         if(goalRepository.existsByYearAndMonth(goal.getYear(), goal.getMonth())){
+            throw new FindException("Already Exists");
+        }
+
+        try{
+            goal=goalRepository.save(goal);
+        }catch(Exception e){
+            throw e;
+        }
+        return goal;
+    }
+
+    @Override
+    public Goal updateMonthlyGoal(Long goalId, Goal goal) {
+        Goal originalGoal = goalRepository.findById(goalId).orElseThrow(()-> new FindException("Goal "+ ErrorCode.RESOURCE_NOT_FOUND.getMsg()));
+        if(!originalGoal.getYear().equals(goal.getYear())||!originalGoal.getMonth().equals(goal.getMonth())){
             return null;
         }
-        return goalRepository.save(goal);
+        originalGoal.updateModified(goal);
+
+        try{
+            originalGoal = goalRepository.save(originalGoal);
+        }catch (Exception e){
+            throw e;
+        }
+
+        return originalGoal;
+    }
+
+    @Override
+    public void deleteMonthlyGoal(Long goalId) {
+        try{
+            goalRepository.deleteById(goalId);
+        } catch(Exception e){
+            throw e;
+        }
     }
 
     @Override

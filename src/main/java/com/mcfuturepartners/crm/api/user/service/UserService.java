@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Component
 public interface UserService {
-    String signup(UserDto userDto);
+    UserResponseDto signup(UserDto userDto);
     UserLoginResponseDto signin(User user);
     String deleteUser(long id);
     List<UserResponseDto> getAllUsers();

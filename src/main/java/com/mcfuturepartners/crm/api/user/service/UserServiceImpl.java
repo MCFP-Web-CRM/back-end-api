@@ -41,18 +41,25 @@ public class UserServiceImpl implements UserService {
     private final TokenProvider provider;
 
     @Override
-    public String signup(UserDto userDto) {
+    public UserResponseDto signup(UserDto userDto) {
         User user = userDto.toEntity();
+        if(!ObjectUtils.isEmpty(userDto.getDepartmentId())){
+            user.setDepartment(departmentRepository.findById(userDto.getDepartmentId()).orElseThrow(()->new FindException("DEPARTMENT "+ErrorCode.RESOURCE_NOT_FOUND)));
+        }
+
         if(!userRepository.existsByUsername(user.getUsername())){
             user.setPassword(encoder.encode(user.getPassword()));
+            try{
+                user = userRepository.save(user);
 
-            userRepository.save(user);
+            }catch (Exception e){
+                throw e;
+            }
 
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
-                    = new UsernamePasswordAuthenticationToken(user.getUsername(),"",user.getAuthorities());
-            return provider.createToken(usernamePasswordAuthenticationToken);
+            return modelMapper.map(user,UserResponseDto.class);
+
         }
-        return ErrorCode.USER_ALREADY_EXISTS.getMsg();
+        throw new LoginException(ErrorCode.USER_ALREADY_EXISTS.getMsg());
     }
     @Override
     public UserResponseDto updateUser(Long userId,UserDto userDto) {
@@ -120,7 +127,9 @@ public class UserServiceImpl implements UserService {
     public List<UserResponseDto> getAllUsers() {
         return userRepository.findAll().stream().map(user -> {
             UserResponseDto userResponseDto = modelMapper.map(user, UserResponseDto.class);
-            userResponseDto.setDepartment(modelMapper.map(user.getDepartment(), DepartmentResponseDto.class));
+            if(!ObjectUtils.isEmpty(user.getDepartment())){
+                userResponseDto.setDepartment(modelMapper.map(user.getDepartment(), DepartmentResponseDto.class));
+            }
             return userResponseDto;
         }).collect(Collectors.toList());
     }
@@ -157,7 +166,9 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto getUserById(long id)  {
         return userRepository.findById(id).map(user -> {
             UserResponseDto userResponseDto = modelMapper.map(user, UserResponseDto.class);
-            userResponseDto.setDepartment(modelMapper.map(user.getDepartment(), DepartmentResponseDto.class));
+            if(!ObjectUtils.isEmpty(user.getDepartment())){
+                userResponseDto.setDepartment(modelMapper.map(user.getDepartment(), DepartmentResponseDto.class));
+            }
             return userResponseDto;
         }).orElseThrow(()-> new FindException(DatabaseErrorCode.USER_NOT_FOUND.name()));
     }

@@ -92,10 +92,16 @@ public class Customer {
         }
     }
     public void setFunnel(Funnel funnel){
+        if(funnel == null) {
+            this.funnel = null;
+            return;
+        }
+
         if(this.funnel != null){
             this.funnel.getCustomers().remove(this);
         }
         this.funnel = funnel;
+
         if(!funnel.getCustomers().contains(this)){
             funnel.addCustomer(this);
         }
