@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -40,6 +42,16 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     private List<Order> orders = new ArrayList<>();
+
+    public Product updateModified(Product modifiedProduct){
+        if(StringUtils.hasText(modifiedProduct.getName())){
+            this.name = modifiedProduct.getName();
+        }
+        if(!ObjectUtils.isEmpty(modifiedProduct.getPrice())){
+            this.price = modifiedProduct.getPrice();
+        }
+        return this;
+    }
 
     public void removeConnectionWithOrders(){
         if(orders.size() != 0 ){

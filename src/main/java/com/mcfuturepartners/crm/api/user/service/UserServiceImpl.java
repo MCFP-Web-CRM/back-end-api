@@ -62,23 +62,42 @@ public class UserServiceImpl implements UserService {
         throw new LoginException(ErrorCode.USER_ALREADY_EXISTS.getMsg());
     }
     @Override
-    public UserResponseDto updateUser(Long userId,UserDto userDto) {
+    public UserResponseDto updateUser(Long userId,UserUpdateDto userUpdateDto) {
         User user = userRepository.findById(userId).orElseThrow(()->new FindException("USER "+ErrorCode.RESOURCE_NOT_FOUND));
 
         //if not admin or user itself, unauthorized error
-        if(!userDto.getAuthority().contains("ADMIN")&&!userDto.getUsername().equals(user.getUsername())){
+        if(!userUpdateDto.getUsername().equals(user.getUsername())){
             throw new AuthorizationException("UNAUTHORIZED");
         }
-        User modifiedUser = userDto.toEntity();
+        User modifiedUser = userUpdateDto.toEntity();
 
         //changing password
         if(StringUtils.hasText(modifiedUser.getPassword())){
             modifiedUser.setPassword(encoder.encode(modifiedUser.getPassword()));
         }
 
+        try{
+            user = userRepository.save(user.updateModified(modifiedUser));
+        } catch (Exception e){
+            throw e;
+        }
+        UserResponseDto userResponseDto = modelMapper.map(user,UserResponseDto.class);
+
+        if(!ObjectUtils.isEmpty(user.getDepartment())){
+            userResponseDto.setDepartment(modelMapper.map(user.getDepartment(),DepartmentResponseDto.class));
+        }
+        return userResponseDto;
+    }
+
+    @Override
+    public UserResponseDto updateUserByAdmin(Long userId, AdminUserUpdateDto adminUserUpdateDto) {
+        User user = userRepository.findById(userId).orElseThrow(()->new FindException("USER "+ErrorCode.RESOURCE_NOT_FOUND));
+
+        User modifiedUser = adminUserUpdateDto.toEntity();
+
         //if new department
-        if(!ObjectUtils.isEmpty(userDto.getDepartmentId())){
-            modifiedUser.setDepartment(departmentRepository.findById(userDto.getDepartmentId()).orElseThrow(()-> new FindException("Department "+ErrorCode.RESOURCE_NOT_FOUND)));
+        if(!ObjectUtils.isEmpty(adminUserUpdateDto.getDepartmentId())){
+            modifiedUser.setDepartment(departmentRepository.findById(adminUserUpdateDto.getDepartmentId()).orElseThrow(()-> new FindException("Department "+ErrorCode.RESOURCE_NOT_FOUND)));
         }
 
         try{
@@ -104,6 +123,7 @@ public class UserServiceImpl implements UserService {
                     :"Wrong Password");
             if(loginUser.getAuthorities().contains(Authority.ADMIN)) userLoginResponseDto.setAuthority("ADMIN");
             else userLoginResponseDto.setAuthority("USER");
+            userLoginResponseDto.setId(loginUser.getId());
             return userLoginResponseDto;
         } catch (Exception e){
             throw new LoginException();
