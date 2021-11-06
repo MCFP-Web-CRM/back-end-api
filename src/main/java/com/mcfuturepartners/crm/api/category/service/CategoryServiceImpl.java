@@ -24,7 +24,7 @@ public class CategoryServiceImpl implements CategoryService{
     private final ModelMapper modelMapper;
     @Override
     public String createCategory(CategoryDto categoryDto) {
-        if(StringUtils.hasText(categoryDto.getCategoryName())){
+        if(!StringUtils.hasText(categoryDto.getCategoryName())){
             throw new FindException("No Name");
         }
         try{
