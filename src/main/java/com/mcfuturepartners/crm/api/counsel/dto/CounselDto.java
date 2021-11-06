@@ -27,7 +27,8 @@ public class CounselDto {
     @ApiModelProperty(position = 2, example = "상담 상태") private String status;
     @ApiModelProperty(position = 3, example = "상담 내용") private String contents;
     @ApiModelProperty(position = 4, example = "상담사(영업사원) username") private String username;
-    @ApiModelProperty(position = 5, example = "")
+    @ApiModelProperty(position = 5, example = "상담사(영업사원) 이름") private String name;
+    @ApiModelProperty(position = 6, example = "상담 날짜") private LocalDateTime regDate;
 
     public Counsel toEntity(){
        return Counsel.builder()
