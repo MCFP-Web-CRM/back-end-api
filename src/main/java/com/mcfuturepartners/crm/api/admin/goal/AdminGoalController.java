@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/admin/goal")
@@ -24,6 +26,11 @@ public class AdminGoalController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(goal, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Goal>> getMonthlyGoal(@RequestParam(value = "year",required = false) Integer year){
+        return new ResponseEntity<>(goalService.findAllGoalsInYear(year),HttpStatus.OK);
     }
 
     @PutMapping(path = "/{goal-id}")

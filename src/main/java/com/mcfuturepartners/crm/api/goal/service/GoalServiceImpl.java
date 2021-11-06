@@ -6,14 +6,18 @@ import com.mcfuturepartners.crm.api.goal.entity.Goal;
 import com.mcfuturepartners.crm.api.goal.repository.GoalRepository;
 import com.mcfuturepartners.crm.api.revenue.entity.Revenue;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -21,6 +25,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GoalServiceImpl implements GoalService{
     private final GoalRepository goalRepository;
+
+    @Override
+    public List<Goal> findAllGoalsInYear(Integer year) {
+        if(ObjectUtils.isEmpty(year)){
+            return goalRepository.findAll(Sort.by(Sort.Direction.DESC, "year").and(Sort.by(Sort.Direction.DESC,"month")));
+
+        }
+        return goalRepository.findGoalByYear(year,Sort.by(Sort.Direction.DESC, "year").and(Sort.by(Sort.Direction.DESC,"month")));
+    }
 
     @Override
     public Goal setMonthlyGoal(Goal goal) {
