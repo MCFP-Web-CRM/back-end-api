@@ -20,6 +20,7 @@ public class ProductDto {
 
     public Product toEntity(){
         return Product.builder()
+                .id(id)
                 .name(name)
                 .price(price)
                 .build();

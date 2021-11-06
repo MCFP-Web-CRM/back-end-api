@@ -87,12 +87,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto updateProduct(Product product) {
+        Product originalProduct = productRepository.findById(product.getId()).orElseThrow(()->new FindException("Prodcut "+ErrorCode.RESOURCE_NOT_FOUND.getMsg()));
+
+
         try {
-            product = productRepository.save(productRepository.findById(product.getId()).orElseThrow(()->new FindException("Product "+ErrorCode.RESOURCE_NOT_FOUND)));
+            originalProduct = productRepository.save(originalProduct.updateModified(product));
         } catch (Exception e){
             throw e;
         }
-        return modelMapper.map(product,ProductDto.class);
+        return modelMapper.map(originalProduct,ProductDto.class);
     }
 
     @Override

@@ -9,21 +9,20 @@ import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
 import java.util.Set;
-
 @Data
 @NoArgsConstructor
-public class UserUpdateDto {
-    @ApiModelProperty(position = 1, example = "username / 필수 X 서버에서 처리") private String username;
-    @ApiModelProperty(position = 2, example = "사원 계정 비밀번호") private String password;
-    @ApiModelProperty(position = 3, example = "사원 명") private String name;
-    @ApiModelProperty(position = 4, example = "핸드폰 번호") private String phone;
+public class AdminUserUpdateDto {
+    @ApiModelProperty(position = 1, example = "사원 명") private String name;
+    @ApiModelProperty(position = 2, example = "핸드폰 번호") private String phone;
+    @ApiModelProperty(position = 3, example = "부서 ") private Long departmentId;
+    @ApiModelProperty(position = 4, example = "부서 / 수정 시 필요 없음")private Department department;
 
     public User toEntity(){
 
         return User.builder()
-                .password(password)
                 .name(name)
                 .phone(phone)
+                .department(department)
                 .build();
     }
 }

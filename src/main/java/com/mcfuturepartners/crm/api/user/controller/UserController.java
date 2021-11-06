@@ -84,19 +84,16 @@ public class UserController {
     @ApiOperation(value = "",notes = "")
     public ResponseEntity<UserResponseDto> updateUser(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
                                                       @PathVariable("userid") Long userId,
-                                                      @RequestBody UserDto userDto){
+                                                      @RequestBody UserUpdateDto userUpdateDto){
         String token = bearerToken.replace("Bearer ","");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
         UserResponseDto userResponseDto;
 
-        userDto.setUsername(username);
-        if(!StringUtils.hasText(userDto.getAuthority())){
-            userDto.setAuthority(tokenProvider.getAuthentication(token).getAuthorities().toString());
-        }
+        userUpdateDto.setUsername(username);
 
         try{
-            userResponseDto = userService.updateUser(userId,userDto);
+            userResponseDto = userService.updateUser(userId,userUpdateDto);
         }catch (AuthorizationException authorizationException){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } catch (Exception e){

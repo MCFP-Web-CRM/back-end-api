@@ -1,9 +1,6 @@
 package com.mcfuturepartners.crm.api.user.service;
 
-import com.mcfuturepartners.crm.api.user.dto.UserDto;
-import com.mcfuturepartners.crm.api.user.dto.UserLoginResponseDto;
-import com.mcfuturepartners.crm.api.user.dto.UserResponseDto;
-import com.mcfuturepartners.crm.api.user.dto.UserRevenueResponseDto;
+import com.mcfuturepartners.crm.api.user.dto.*;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.user.entity.UserRevenue;
 import org.springframework.stereotype.Component;
@@ -19,5 +16,7 @@ public interface UserService {
     List<UserResponseDto> getAllUsers();
     List<UserRevenueResponseDto> getAllUserRevenue();
     UserResponseDto getUserById(long id);
-    UserResponseDto updateUser(Long userId, UserDto userDto);
+    UserResponseDto updateUser(Long userId, UserUpdateDto userDto);
+    UserResponseDto updateUserByAdmin(Long userId, AdminUserUpdateDto userDto);
+
 }
