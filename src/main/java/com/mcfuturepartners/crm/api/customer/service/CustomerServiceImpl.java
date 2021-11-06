@@ -123,7 +123,12 @@ public class CustomerServiceImpl implements CustomerService {
         if(customer.getFunnel()!=null)
             customerResponseDto.setFunnel(modelMapper.map(customer.getFunnel(), FunnelResponseDto.class));
         if(customer.getCounsels()!=null)
-            customerResponseDto.setCounselList(customer.getCounsels().stream().map(counsel -> modelMapper.map(counsel, CounselDto.class)).collect(Collectors.toList()));
+            customerResponseDto.setCounselList(customer.getCounsels().stream().map(counsel ->{
+                CounselDto counselDto = modelMapper.map(counsel,CounselDto.class);
+                counselDto.setUsername(counsel.getUser().getUsername());
+                counselDto.setName(counsel.getUser().getName());
+                return counselDto;
+            }).collect(Collectors.toList()));
         if(customer.getOrders()!=null)
             customerResponseDto.setOrderList(customer.getOrders().stream().map(order -> {
                 OrderResponseDto orderResponseDto = modelMapper.map(order, OrderResponseDto.class);

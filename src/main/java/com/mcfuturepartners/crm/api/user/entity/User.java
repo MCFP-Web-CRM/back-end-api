@@ -7,6 +7,7 @@ import com.mcfuturepartners.crm.api.department.entity.Department;
 import com.mcfuturepartners.crm.api.message.entity.Message;
 import com.mcfuturepartners.crm.api.order.entity.Order;
 import com.mcfuturepartners.crm.api.schedule.entity.Schedule;
+import com.mcfuturepartners.crm.api.sms.entity.Sms;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ObjectUtils;
@@ -66,6 +67,9 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Counsel> counsels = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sender")
+    private List<Sms> sms = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
