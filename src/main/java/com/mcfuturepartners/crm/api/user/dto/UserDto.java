@@ -20,7 +20,7 @@ public class UserDto {
     @ApiModelProperty(position = 3, example = "사원 명") private String name;
     @ApiModelProperty(position = 4, example = "핸드폰 번호") private String phone;
     @ApiModelProperty(position = 5, example = "부서 ") private Long departmentId;
-    @ApiModelProperty(position = 6, example = "권한 / 사용자 추가 시 필요 없음") private String authority;
+    @ApiModelProperty(position = 6, example = "권한 / 사용자 추가 시 필요! USER, ADMIN 둘 중 하나") private String authority;
     @ApiModelProperty(position = 6, example = "부서 / 사용자 추가 시 필요 없음")private Department department;
 
     public User toEntity(){

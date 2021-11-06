@@ -30,11 +30,11 @@ public class AdminNoticeController {
         }
         return new ResponseEntity<>(originalNotice, HttpStatus.CREATED);
     }
-    @PutMapping(value = "{notice-id}")
+    @PutMapping(path = "/{notice-id}")
     @ApiOperation(value = "공지사항 수정", notes = "공지사항 수정 / 관리자 계정만 가능(현재는 url 막지 않아서 가능)")
     public ResponseEntity<Notice> updateNotice(@PathVariable(name = "notice-id") Long noticeId,
                                               @RequestBody Notice notice){
-        Notice updatedNotice = new Notice();
+        Notice updatedNotice;
         //stacktrace, 예외 처리 관련 테스트 update와 delete  비교
         try{
             updatedNotice = noticeService.updateNotice(noticeId,notice);
@@ -43,7 +43,7 @@ public class AdminNoticeController {
         }
         return new ResponseEntity<>(updatedNotice,HttpStatus.OK);
     }
-    @DeleteMapping(value = "{notice-id}")
+    @DeleteMapping(path = "/{notice-id}")
     @ApiOperation(value = "공지사항 삭제", notes = "공지사항 삭제 / 관리자 계정만 가능(현재는 url 막지 않아서 가능)")
     public ResponseEntity<Void> deleteNotice(@PathVariable(name = "notice-id") Long noticeId){
 

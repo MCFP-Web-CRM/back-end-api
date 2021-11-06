@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.util.ObjectUtils;
 
 import javax.persistence.*;
 @Data
@@ -26,5 +27,12 @@ public class Goal {
 
     @Column(name = "goal_revenue_amount")
     private Long revenueAmount;
+
+    public Goal updateModified(Goal modifiedGoal){
+        if(!ObjectUtils.isEmpty(modifiedGoal.getRevenueAmount())){
+            this.setRevenueAmount(modifiedGoal.getRevenueAmount());
+        }
+        return this;
+    }
 
 }

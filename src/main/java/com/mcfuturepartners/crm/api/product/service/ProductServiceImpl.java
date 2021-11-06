@@ -71,14 +71,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public String save(Product product) {
+    public ProductDto save(Product product) {
         try {
             Optional<Product> exist = productRepository.findByName(product.getName());
             if(exist.isPresent()){
-                return "product already exist";
+                throw new FindException("Product already exist");
             }else{
-                productRepository.save(product);
-                return "successfully done";
+                product = productRepository.save(product);
+                return modelMapper.map(product, ProductDto.class);
             }
         } catch(Exception e){
             throw e;
@@ -86,18 +86,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> selectProduct(Map<String, String> map) {
-        return null;
-    }
-
-    @Override
-    public String updateProduct(Product product) {
+    public ProductDto updateProduct(Product product) {
         try {
-            productRepository.save(productRepository.findById(product.getId()).get());
-            return "successfully done";
+            product = productRepository.save(productRepository.findById(product.getId()).orElseThrow(()->new FindException("Product "+ErrorCode.RESOURCE_NOT_FOUND)));
         } catch (Exception e){
             throw e;
         }
+        return modelMapper.map(product,ProductDto.class);
     }
 
     @Override

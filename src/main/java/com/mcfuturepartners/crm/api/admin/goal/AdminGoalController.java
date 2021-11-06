@@ -1,5 +1,6 @@
 package com.mcfuturepartners.crm.api.admin.goal;
 
+import com.mcfuturepartners.crm.api.exception.FindException;
 import com.mcfuturepartners.crm.api.goal.entity.Goal;
 import com.mcfuturepartners.crm.api.goal.service.GoalService;
 import lombok.RequiredArgsConstructor;
@@ -15,17 +16,42 @@ public class AdminGoalController {
 
     @PostMapping
     public ResponseEntity<Goal> setMonthlyGoal(@RequestBody Goal goal){
-        return new ResponseEntity<>(goalService.setMonthlyGoal(goal), HttpStatus.OK);
+        try {
+           goal = goalService.setMonthlyGoal(goal);
+        }catch (FindException findException){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(goal, HttpStatus.OK);
     }
 
-    @PutMapping(name = "/{goal-id}")
-    public ResponseEntity<String> updateMonthlyGoal(@RequestBody Goal goal,
-                                                    @PathVariable(name = "goal-id") Long goalId){
-        return new ResponseEntity<>("update Successful", HttpStatus.OK);
+    @PutMapping(path = "/{goal-id}")
+    public ResponseEntity<Goal> updateMonthlyGoal(@RequestBody Goal goal,
+                                                  @PathVariable(name = "goal-id") Long goalId){
+        try{
+            goal = goalService.updateMonthlyGoal(goalId, goal);
+            if(goal==null){
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }catch (FindException findException){
+            findException.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(goal, HttpStatus.OK);
     }
 
-    @DeleteMapping(name = "/{goal-id}")
+    @DeleteMapping(path = "/{goal-id}")
     public ResponseEntity<String> deleteMonthlyGoal(@PathVariable(name = "goal-id") Long goalId){
+
+        try{
+            goalService.deleteMonthlyGoal(goalId);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return new ResponseEntity<>("delete Successful", HttpStatus.OK);
     }
 }

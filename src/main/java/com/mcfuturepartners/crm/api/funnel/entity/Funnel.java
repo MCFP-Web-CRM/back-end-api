@@ -38,7 +38,7 @@ public class Funnel {
 
     public void removeConnectionWithCustomers(){
         if(customers.size() != 0){
-            customers.stream().forEach(null);
+            this.getCustomers().stream().forEach(customer -> customer.setFunnel(null));
         }
     }
 }

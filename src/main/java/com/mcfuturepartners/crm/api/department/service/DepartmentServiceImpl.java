@@ -38,9 +38,13 @@ public class DepartmentServiceImpl implements DepartmentService{
 
     @Override
     public List<DepartmentResponseDto> updateDepartment(Long departmentId, DepartmentDto departmentDto) {
-        Department department = departmentRepository.findById(departmentId).orElseThrow();
+        Department department = departmentRepository.findById(departmentId).orElseThrow(()->new FindException("Department"+ErrorCode.RESOURCE_NOT_FOUND));
         department.setName(departmentDto.getDepartmentName());
-
+        try{
+            departmentRepository.save(department);
+        }catch (Exception e){
+            throw e;
+        }
         return getAllDepartments();
     }
 

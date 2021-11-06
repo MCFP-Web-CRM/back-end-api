@@ -11,8 +11,7 @@ public interface ProductService {
     List<ProductDto> findAllProduct();
     Product findProduct(Long id);
     List<ProductRevenueResponseDto> findAllProductRevenue();
-    String save(Product product);
-    List<Product> selectProduct(Map<String,String> map);
-    String updateProduct(Product product);
+    ProductDto save(Product product);
+    ProductDto updateProduct(Product product);
     String deleteProduct(Long id);
 }

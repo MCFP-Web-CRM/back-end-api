@@ -7,9 +7,11 @@ import com.mcfuturepartners.crm.api.exception.ErrorCode;
 import com.mcfuturepartners.crm.api.exception.FindException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.util.StringUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +24,9 @@ public class CategoryServiceImpl implements CategoryService{
     private final ModelMapper modelMapper;
     @Override
     public String createCategory(CategoryDto categoryDto) {
+        if(StringUtils.hasText(categoryDto.getCategoryName())){
+            throw new FindException("No Name");
+        }
         try{
             categoryRepository.save(categoryDto.toEntity());
             return "save successful";
