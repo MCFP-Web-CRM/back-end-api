@@ -83,6 +83,10 @@ public class Customer {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Counsel> counsels = new ArrayList<>();
     public void setCategory(Category category){
+        if(category == null){
+            this.category = null;
+            return;
+        }
         if(this.category != null){
             this.category.getCustomers().remove(this);
         }
