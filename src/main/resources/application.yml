@@ -15,7 +15,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    properties:
     defer-datasource-initialization: true
 
 server:
