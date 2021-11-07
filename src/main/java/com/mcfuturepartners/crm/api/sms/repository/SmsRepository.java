@@ -11,8 +11,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface SmsRepository extends JpaRepository<Sms, Long> {
-    List<Sms> findAllBySenderAndSmsStatus(User sender, SmsStatus smsStatus,  Pageable pageable);
+    Page<Sms> findAllBySenderAndSmsStatus(User sender, SmsStatus smsStatus,  Pageable pageable);
     List<Sms> findAllBySenderAndSmsStatus(User sender, SmsStatus smsStatus);
-    List<Sms> findAllBySenderAndSmsStatusIsNot(User sender, SmsStatus smsStatus,  Pageable pageable);
+    Page<Sms> findAllBySenderAndSmsStatusIsNot(User sender, SmsStatus smsStatus,  Pageable pageable);
     List<Sms> findAllBySenderAndSmsStatusIsNot(User sender, SmsStatus smsStatus);
 }

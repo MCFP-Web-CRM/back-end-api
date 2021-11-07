@@ -5,6 +5,7 @@ import com.mcfuturepartners.crm.api.message.entity.Message;
 import com.mcfuturepartners.crm.api.sms.dto.*;
 import com.mcfuturepartners.crm.api.sms.entity.Sms;
 import com.mcfuturepartners.crm.api.sms.entity.SmsStatus;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
@@ -24,9 +25,9 @@ public interface SmsService {
 
     PhoneListDto getCategoryCustomerPhone (Long categoryId, CustomerSearch customerSearch);
 
-    List<SmsResponseDto> getReservedSms(String username, Pageable pageable);
+    Page<SmsResponseDto> getReservedSms(String username, Pageable pageable);
 
-    List<SmsResponseDto> getSmsWithoutReserved(String username, Pageable pageable);
+    Page<SmsResponseDto> getSmsWithoutReserved(String username, Pageable pageable);
 
     void deleteReservedSms(List<Long> smsIds,String username);
 

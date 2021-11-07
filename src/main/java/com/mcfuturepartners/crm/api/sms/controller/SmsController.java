@@ -87,12 +87,12 @@ public class SmsController {
 
     @GetMapping("/reservedSms")
     @ApiOperation(value = "현재 예약 중인 sms 조회", notes = "사원의 예약 중 sms 조회 api, 쿼리스트링으로 size, page, sort 보내야함. sort=sendTime,desc&sort=smsId,desc 꼭 추가!")
-    public ResponseEntity<List<SmsResponseDto>> getReservedSms(@RequestHeader(HttpHeaders.AUTHORIZATION) String bearerToken,
+    public ResponseEntity<Page<SmsResponseDto>> getReservedSms(@RequestHeader(HttpHeaders.AUTHORIZATION) String bearerToken,
                                                                Pageable pageable){
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
-        List<SmsResponseDto> smsResponseList;
+        Page<SmsResponseDto> smsResponseList;
 
         try{
             smsResponseList = smsService.getReservedSms(username,pageable);
@@ -105,12 +105,12 @@ public class SmsController {
 
     @GetMapping
     @ApiOperation(value = "발송 이력 조회", notes = "사원의 메시지 발송 이력 조회, 쿼리스트링으로 size, page, sort 보내야함. sort=sendTime,desc&sort=smsId,desc 꼭 추가!")
-    public ResponseEntity<List<SmsResponseDto>> getSmsRecords(@RequestHeader(HttpHeaders.AUTHORIZATION) String bearerToken,
+    public ResponseEntity<Page<SmsResponseDto>> getSmsRecords(@RequestHeader(HttpHeaders.AUTHORIZATION) String bearerToken,
                                                                       Pageable pageable){
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
-        List<SmsResponseDto> smsResponseList;
+        Page<SmsResponseDto> smsResponseList;
 
         try{
             smsResponseList = smsService.getSmsWithoutReserved(username,pageable);
@@ -133,7 +133,7 @@ public class SmsController {
         ResponseEntity responseEntity = null;
         SmsProcessDto smsProcessDto = smsService.createSmsProcessDto(smsDto);
 
-        if(!ObjectUtils.isEmpty(smsDto.getReservationTime())){
+        if(ObjectUtils.isEmpty(smsDto.getReservationTime())){
             responseEntity = smsRequestHandler.sendMessage(smsProcessDto);
         }
         smsService.saveAll(smsProcessDto,responseEntity);

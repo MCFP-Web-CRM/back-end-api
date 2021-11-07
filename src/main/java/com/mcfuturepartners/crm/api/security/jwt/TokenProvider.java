@@ -34,7 +34,6 @@ public class TokenProvider implements InitializingBean  {
     @Override
     public void afterPropertiesSet() throws Exception {
         securityKey = Base64.getEncoder().encodeToString(securityKey.getBytes());
-        log.info("securityKey : " + securityKey);
     }
 
     public String createToken(Authentication authentication){
@@ -43,7 +42,6 @@ public class TokenProvider implements InitializingBean  {
                 .collect(Collectors.joining(","));
         long now = (new Date()).getTime();
         Date validity = new Date(now + validityInMs);
-        log.info("login authority : " + authorities);
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
@@ -58,7 +56,6 @@ public class TokenProvider implements InitializingBean  {
                 .setSigningKey(securityKey)
                 .parseClaimsJws(token)
                 .getBody();
-        log.info("token validation" + claims.toString());
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
                         .map(SimpleGrantedAuthority::new)
