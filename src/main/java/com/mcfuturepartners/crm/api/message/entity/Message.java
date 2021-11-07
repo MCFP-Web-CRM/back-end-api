@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -23,7 +24,10 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long messageId;
 
-    @Column(name = "content")
+    @Column(name = "message_title")
+    private String title;
+
+    @Column(name = "message_content")
     private String content;
 
     @ManyToOne
@@ -31,6 +35,9 @@ public class Message {
     private User user;
 
     public Message updateModified(Message modifiedMessage){
+        if(StringUtils.hasText(modifiedMessage.getTitle())){
+            this.title = modifiedMessage.getTitle();
+        }
         if(StringUtils.hasText(modifiedMessage.getContent())){
             this.content = modifiedMessage.getContent();
         }

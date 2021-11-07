@@ -13,6 +13,7 @@ import java.util.List;
 
 public interface CustomCustomerRepository {
     Page<Customer> search(CustomerSearch customerSearch, Pageable pageable);
+    List<Customer> searchWithoutPageable(CustomerSearch customerSearch);
     List<Customer> findCustomersWithCounselToday(LocalDateTime localDateTime);
     List<Customer> findCustomersWithOrderToday(LocalDateTime localDateTime);
     Integer countCustomersByFunnel(LocalDateTime localDateTime, Funnel funnel);

@@ -2,6 +2,7 @@ package com.mcfuturepartners.crm.api.sms.entity;
 
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.department.entity.Department;
+import com.mcfuturepartners.crm.api.message.entity.Message;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,11 +26,9 @@ public class Sms {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long smsId;
 
-    @Column(name = "sms_title")
-    private String title;
-
-    @Column(name = "sms_contents")
-    private String contents;
+    @ManyToOne
+    @JoinColumn(name = "message_id")
+    private Message message;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "sms_status")
@@ -45,4 +44,5 @@ public class Sms {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User sender;
+
 }
