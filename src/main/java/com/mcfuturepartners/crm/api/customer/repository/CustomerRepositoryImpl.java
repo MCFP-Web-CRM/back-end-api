@@ -114,7 +114,7 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
                 .fetch();
     }
     @Override
-    public List<Customer> findCustomersWithOrderToday(LocalDateTime localDateTime){
+    public long countCustomersWithOrderToday(LocalDateTime localDateTime){
         QCustomer customer = QCustomer.customer;
 
         BooleanBuilder booleanBuilder = new BooleanBuilder();
@@ -122,7 +122,7 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
 
         return queryFactory.selectFrom(customer)
                 .where(booleanBuilder)
-                .fetch();
+                .fetchCount();
     }
 
     @Override

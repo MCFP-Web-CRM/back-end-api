@@ -210,13 +210,14 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<CustomerStatusCountDto> getDailyCustomerStatus() {
         List<CustomerStatusCountDto> dailyCustomerStatus = new ArrayList<>();
-        LocalDateTime todayDate = LocalDate.of(LocalDate.now().getYear(),LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()).atStartOfDay();
+        //zoned 추가
+        LocalDateTime todayDate = LocalDate.of(LocalDate.now().getYear(),LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()-1).atStartOfDay();
 
         dailyCustomerStatus.add(CustomerStatusCountDto.builder().customerStatus(CustomerStatus.NEWLY_ESTABILSHED)
-                .count((int) customerRepository.findByRegDateIsAfter(todayDate).stream().count()).build());
+                .count((int) customerRepository.countCustomerByRegDateIsAfter(todayDate)).build());
 
         dailyCustomerStatus.add(CustomerStatusCountDto.builder().customerStatus(CustomerStatus.SUCCESSFUL)
-                .count((int)qCustomerRepository.findCustomersWithOrderToday(todayDate).stream().count()).build());
+                .count((int)qCustomerRepository.countCustomersWithOrderToday(todayDate)).build());
 
         List<Customer> customersWithCounselToday = qCustomerRepository.findCustomersWithCounselToday(todayDate);
         CustomerStatusCountDto failedCustomer =  CustomerStatusCountDto.builder().customerStatus(CustomerStatus.FAILED).count(0).build();
@@ -225,15 +226,12 @@ public class CustomerServiceImpl implements CustomerService {
 
         for(Customer customer : customersWithCounselToday){
             if(customer.getCounsels().get(customer.getCounsels().size()-1).getStatus().equals(CounselStatus.REFUSAL)){
-                log.info(customer.getCounsels().get(customer.getCounsels().size()-1).getId()+" "+customer.getCounsels().get(customer.getCounsels().size()-1).getStatus().name());
                 failedCustomer.setCount(failedCustomer.getCount()+1);
             }
             else if(customer.getCounsels().get(customer.getCounsels().size()-1).getStatus().equals(CounselStatus.ABSENCE)||customer.getCounsels().get(customer.getCounsels().size()-1).getStatus().equals(CounselStatus.LONG_TERM_ABSENCE)){
-                log.info(customer.getCounsels().get(customer.getCounsels().size()-1).getId()+" "+customer.getCounsels().get(customer.getCounsels().size()-1).getStatus().name());
                 onHoldCustomer.setCount(onHoldCustomer.getCount()+1);
             }
             else {
-                log.info(customer.getCounsels().get(customer.getCounsels().size()-1).getId()+" "+customer.getCounsels().get(customer.getCounsels().size()-1).getStatus().name());
                 inProgressCustomer.setCount(inProgressCustomer.getCount()+1);
             }
         }
