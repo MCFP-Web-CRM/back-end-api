@@ -63,7 +63,7 @@ public class OrderServiceImpl implements OrderService{
                             .regDate(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime())
                     .build());
 
-            return orderRepository.findAllByCustomer(customer).stream().map(order->{
+            return orderRepository.findAllByCustomer(customer).stream().filter(order -> !ObjectUtils.isEmpty(order.getProduct())).map(order->{
                 OrderResponseDto orderResponseDto = modelMapper.map(order, OrderResponseDto.class);
                 orderResponseDto.setProduct(modelMapper.map(order.getProduct(), ProductDto.class));
                 return orderResponseDto;
@@ -82,7 +82,7 @@ public class OrderServiceImpl implements OrderService{
         }
         try{
             orderRepository.deleteById(orderCancelDto.getOrderId());
-            return orderRepository.findAllByCustomer(customer).stream().map(order->{
+            return orderRepository.findAllByCustomer(customer).stream().filter(order -> !ObjectUtils.isEmpty(order.getProduct())).map(order->{
                 OrderResponseDto orderResponseDto = modelMapper.map(order, OrderResponseDto.class);
                 orderResponseDto.setProduct(modelMapper.map(order.getProduct(), ProductDto.class));
                 return orderResponseDto;
