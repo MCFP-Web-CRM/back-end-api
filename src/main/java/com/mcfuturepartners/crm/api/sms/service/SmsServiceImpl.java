@@ -248,8 +248,6 @@ public class SmsServiceImpl implements SmsService{
                 tempIds.add(sms.getSmsId());
                 smsIds.put(sms.getMessage(),tempIds);
 
-                log.info(sms.getMessage().getMessageId()+"     "+receiverPhones.get(sms.getMessage()).toString());
-                log.info(sms.getMessage().getMessageId()+"     "+smsIds.get(sms.getMessage()).toString());
 
                 continue;
             }
@@ -265,7 +263,6 @@ public class SmsServiceImpl implements SmsService{
         for(Message message : receiverPhones.keySet()){
             smsProcessDtoList.add(SmsProcessDto.builder().message(message).smsIds(smsIds.get(message)).receiverPhone(receiverPhones.get(message)).build());
         }
-        log.info(smsProcessDtoList.size()+"");
 
         return smsProcessDtoList;
     }

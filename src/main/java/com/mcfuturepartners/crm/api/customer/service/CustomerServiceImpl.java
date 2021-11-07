@@ -64,11 +64,8 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepositoryImpl qCustomerRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
-    private final CounselRepository counselRepository;
-    private final OrderRepository orderRepository;
     private final ModelMapper modelMapper;
     private final FunnelRepository funnelRepository;
-    private final TokenProvider tokenProvider;
 
     @Override
     public Page<CustomerResponseDto> searchCustomers(CustomerSearch customerSearch, Pageable pageable) {
@@ -125,14 +122,20 @@ public class CustomerServiceImpl implements CustomerService {
         if(customer.getCounsels()!=null)
             customerResponseDto.setCounselList(customer.getCounsels().stream().map(counsel ->{
                 CounselDto counselDto = modelMapper.map(counsel,CounselDto.class);
-                counselDto.setUsername(counsel.getUser().getUsername());
-                counselDto.setName(counsel.getUser().getName());
+                if(!ObjectUtils.isEmpty(counsel.getUser())){
+                    counselDto.setUsername(counsel.getUser().getUsername());
+                    counselDto.setName(counsel.getUser().getName());
+                }
                 return counselDto;
             }).collect(Collectors.toList()));
         if(customer.getOrders()!=null)
             customerResponseDto.setOrderList(customer.getOrders().stream().map(order -> {
                 OrderResponseDto orderResponseDto = modelMapper.map(order, OrderResponseDto.class);
-                orderResponseDto.setProduct(modelMapper.map(order.getProduct(), ProductDto.class));
+
+                if(!ObjectUtils.isEmpty(order.getProduct())) {
+                    orderResponseDto.setProduct(modelMapper.map(order.getProduct(), ProductDto.class));
+                }
+
                 return orderResponseDto;
             }).collect(Collectors.toList()));
 
