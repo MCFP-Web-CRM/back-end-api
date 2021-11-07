@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Slf4j
+
 @Transactional
 @RequiredArgsConstructor
 public class RevenueServiceImpl implements RevenueService{
@@ -71,7 +71,6 @@ public class RevenueServiceImpl implements RevenueService{
 
         for(User user : userList){
             List<UserMonthlyRevenue> userMonthlyRevenue = new ArrayList<>();
-            log.info(user.getUsername()+"  "+userList.size());
             LocalDateTime startDate = LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonth(), 1).atStartOfDay();
             LocalDateTime endDate = LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonth(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate().getDayOfMonth()).atTime(23,59,59,99);
 

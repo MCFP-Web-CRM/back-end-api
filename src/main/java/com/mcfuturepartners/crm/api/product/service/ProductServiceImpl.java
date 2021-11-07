@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-@Slf4j
+
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
@@ -45,7 +45,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductRevenueResponseDto> findAllProductRevenue() {
         List<Product> productList = productRepository.findAll();
-        log.info(LocalDateTime.now().toString()+" " + ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().toString());
         LocalDateTime startOfMonth = LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonthValue(), 1).atStartOfDay();
         LocalDateTime startOfDay = LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonthValue(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getDayOfMonth()).atStartOfDay();
 

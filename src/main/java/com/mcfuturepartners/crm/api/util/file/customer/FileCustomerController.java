@@ -33,28 +33,23 @@ public class FileCustomerController {
         Workbook workbook = new XSSFWorkbook(customerDocument.getInputStream());
         Sheet worksheet = workbook.getSheetAt(0);
         for (int i = 1 ; i < worksheet.getPhysicalNumberOfRows(); i++){
-            Row row = worksheet.getRow(i);
-            //row.getCell(0).setCellType(CellType.STRING);
-            if(row==null) continue;
+            if(worksheet.getRow(i)==null) continue;
 
-            Cell c1 = row.getCell(0);
-            Cell c2 = row.getCell(1);
-
-            if(c1 == null || c1.getCellType() == CellType.BLANK){
+            if(worksheet.getRow(i).getCell(0) == null || worksheet.getRow(i).getCell(0).getCellType() == CellType.BLANK){
                 continue;
             }
-            if(c2 == null||c2.getCellType() == CellType.BLANK) {
-               c2.setCellValue("");
+            if(worksheet.getRow(0).getCell(1) == null||worksheet.getRow(0).getCell(1).getCellType() == CellType.BLANK) {
+                worksheet.getRow(0).getCell(1).setCellValue("");
             }
-            c1.setCellType(CellType.STRING);
-            c2.setCellType(CellType.STRING);
-            if(row.getCell(1).getStringCellValue().equals("미입력")||row.getCell(1).getStringCellValue().equals("익명")){
-                row.getCell(1).setCellValue("");
+            worksheet.getRow(i).getCell(0).setCellType(CellType.STRING);
+            worksheet.getRow(0).getCell(1).setCellType(CellType.STRING);
+            if(worksheet.getRow(i).getCell(1).getStringCellValue().equals("미입력")||worksheet.getRow(i).getCell(1).getStringCellValue().equals("익명")){
+                worksheet.getRow(i).getCell(1).setCellValue("");
             }
-            String phone = row.getCell(0).getStringCellValue().replace("-","");
-            String name = row.getCell(1).getStringCellValue();
-            customerList.add(Customer.builder().phone(phone).name(name).build());
+            customerList.add(Customer.builder().phone(worksheet.getRow(i).getCell(0).getStringCellValue().replace("-","")).name(worksheet.getRow(i).getCell(1).getStringCellValue()).build());
         }
+        customerService.saveAll(customerList);
+
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
