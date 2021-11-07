@@ -68,7 +68,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Counsel> counsels = new ArrayList<>();
 
-    @OneToMany(mappedBy = "sender")
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sms> sms = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)

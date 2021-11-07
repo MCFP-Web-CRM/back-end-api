@@ -40,7 +40,7 @@ public class CustomerController {
     private final TokenProvider tokenProvider;
 
     @GetMapping
-    @ApiOperation(value = "고객 조회 api", notes = "고객 조회 api, 다중 검색 조건(query string)으로 검색 가능")
+    @ApiOperation(value = "고객 조회 api", notes = "고객 조회 api, 다중 검색 조건(query string)으로 검색 가능 / sort=id,desc 쿼리스트링으로 넣어주면 가장 최신 고객부터 페이지처리")
     public ResponseEntity<Page<CustomerResponseDto>> getCustomerList(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
                                           @RequestParam(value = "customer-category") @Nullable String customerCategory,
                                           @RequestParam(value = "product-name") @Nullable String productName,
@@ -76,6 +76,7 @@ public class CustomerController {
                                                 .getManager().getUsername().equals(username))
                 .collect(Collectors.toList()), HttpStatus.OK);*/
     }
+
     @GetMapping(path = "/{customer-id}")
     @ApiOperation(value = "고객 상세 조회 api", notes = "고객 조회 api")
     public ResponseEntity<CustomerResponseDto> getCustomer(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,

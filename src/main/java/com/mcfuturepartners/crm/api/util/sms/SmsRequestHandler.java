@@ -1,9 +1,15 @@
 package com.mcfuturepartners.crm.api.util.sms;
 
+import com.mcfuturepartners.crm.api.message.dto.MessageDto;
 import com.mcfuturepartners.crm.api.message.entity.SmsType;
 import com.mcfuturepartners.crm.api.sms.dto.SmsDto;
+import com.mcfuturepartners.crm.api.sms.dto.SmsProcessDto;
+import com.mcfuturepartners.crm.api.sms.dto.SmsResponseDto;
+import com.mcfuturepartners.crm.api.sms.entity.Sms;
+import com.mcfuturepartners.crm.api.sms.service.SmsService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
@@ -23,26 +29,40 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class SmsRequestHandler {
-
+    private final SmsService smsService;
     private static final String FROM="01095510270";//발신번호
     private static final String accessKey = "lpGtYBhXdSdQQ4T7225w";                                     // 네이버 클라우드 플랫폼 회원에게 발급되는 개인 인증키
     private static final  String secretKey = "zupF8Pg54YvNHgNy6ciLhFNZyN4IHrmjs2cwQA3z";                // 2차 인증을 위해 서비스마다 할당되는 service secret
     private static final  String serviceId = "ncp:sms:kr:273955995903:mcfuturepartners";                        // 프로젝트에 할당된 SMS 서비스 ID
 
-    @Scheduled
+    @Scheduled(cron = "0 0/1 * * * ?")
     public ResponseEntity processReservedMessage(){
+
+        List<SmsProcessDto> reservedSms = smsService.findReservedSmsBeforeNow(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime());
+        log.info("scheduled process");
+        reservedSms.stream().forEach(smsProcessDto ->{
+            ResponseEntity responseEntity = sendMessage(smsProcessDto);
+            log.info(responseEntity.toString());
+            smsService.updateReservedSmsTo(smsProcessDto, responseEntity);
+        });
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
 
-    public ResponseEntity sendMessage(@RequestBody SmsDto sms) {
+    public ResponseEntity sendMessage(@RequestBody SmsProcessDto sms) {
 
         String hostNameUrl = "https://sens.apigw.ntruss.com";           // 호스트 URL
         String requestUrl= "/sms/v2/services/";                         // 요청 URL
@@ -53,7 +73,7 @@ public class SmsRequestHandler {
         requestUrl += serviceId + requestUrlType;
         String apiUrl = hostNameUrl + requestUrl;
         SmsType smsType;
-        if(sms.getContent().length()>80){
+        if(sms.getMessage().getContent().length()>80){
             smsType = SmsType.LMS;
         }else{
             smsType = SmsType.SMS;
@@ -67,7 +87,7 @@ public class SmsRequestHandler {
         bodyJson.put("countryCode","82");       // 국가 전화번호
         bodyJson.put("from",FROM);              // 발신번호 * 사전에 인증/등록된 번호만 사용할 수 있습니다.
         bodyJson.put("subject","");             // 메시지 제목 * LMS Type에서만 사용할 수 있습니다.
-        bodyJson.put("content",sms.getContent());              // 메시지 내용 * Type별로 최대 byte 제한이 다릅니다.* SMS: 80byte / LMS: 2000byte
+        bodyJson.put("content",sms.getMessage().getContent());              // 메시지 내용 * Type별로 최대 byte 제한이 다릅니다.* SMS: 80byte / LMS: 2000byte
         bodyJson.put("messages", toArr);
         if(sms.getReceiverPhone().size()==0){
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -75,7 +95,7 @@ public class SmsRequestHandler {
             for(int i=0; i<sms.getReceiverPhone().size(); i++) {
                 JSONObject toJson = new JSONObject();
                 toJson.put("subject","");                           // 메시지 제목 * LMS Type에서만 사용할 수 있습니다.
-                toJson.put("content",sms.getContent());                // 메시지 내용 * Type별로 최대 byte 제한이 다릅니다.* SMS: 80byte / LMS: 2000byte
+                toJson.put("content",sms.getMessage().getContent());                // 메시지 내용 * Type별로 최대 byte 제한이 다릅니다.* SMS: 80byte / LMS: 2000byte
                 toJson.put("to",sms.getReceiverPhone().get(i).toString());       // 수신번호 목록  * 최대 1000개까지 한번에 전송할 수 있습니다.
                 toArr.add(toJson);
             }
@@ -103,6 +123,8 @@ public class SmsRequestHandler {
             wr.close();
 
             int responseCode = con.getResponseCode();
+
+
             if(responseCode==202) { // 정상 호출
                 return new ResponseEntity(HttpStatus.OK);
             } else {  // 에러 발생

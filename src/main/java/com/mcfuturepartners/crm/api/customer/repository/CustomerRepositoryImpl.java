@@ -69,6 +69,40 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
     }
 
     @Override
+    public List<Customer> searchWithoutPageable(CustomerSearch customerSearch) {
+        QCustomer customer = QCustomer.customer;
+
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        if(StringUtils.hasText(customerSearch.getCategoryName())){
+            booleanBuilder.and(customer.category.name.eq(customerSearch.getCategoryName()));
+        }
+
+        if(!ObjectUtils.isEmpty(customerSearch.getFunnelId())){
+            booleanBuilder.and(customer.funnel.funnelId.eq(customerSearch.getFunnelId()));
+        }
+        if(StringUtils.hasText(customerSearch.getProductName())){
+            booleanBuilder.and(customer.orders.any().product.name.eq(customerSearch.getProductName()));
+        }
+        if(StringUtils.hasText(customerSearch.getCounselKeyword())){
+            booleanBuilder.and(customer.counsels.any().contents.contains(customerSearch.getCounselKeyword()));
+        }
+        if(!ObjectUtils.isEmpty(customerSearch.getStartDate())){
+            booleanBuilder.and(customer.counsels.any().regDate.after(customerSearch.getStartDate().atStartOfDay()));
+        }
+        if(!ObjectUtils.isEmpty(customerSearch.getEndDate())){
+            booleanBuilder.and(customer.counsels.any().regDate.before(customerSearch.getEndDate().atTime(23,59,59)));
+        }
+        if(!ObjectUtils.isEmpty(customerSearch.getManagerId())){
+            booleanBuilder.and(customer.manager.id.eq(customerSearch.getManagerId()));
+        }
+        JPQLQuery<Customer> query =  queryFactory.selectFrom(customer).where(booleanBuilder);
+
+
+        return query.fetch();
+    }
+
+    @Override
     public List<Customer> findCustomersWithCounselToday(LocalDateTime localDateTime) {
         QCustomer customer = QCustomer.customer;
 
