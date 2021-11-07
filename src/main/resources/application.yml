@@ -21,5 +21,4 @@ server:
   port: 8080
 logging:
   level:
-    org.hibernate.SQL: INFO    # Logger
     org.hibernate.type: trace   # Show Query Parameter
