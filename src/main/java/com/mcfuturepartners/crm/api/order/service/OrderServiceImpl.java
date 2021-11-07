@@ -50,7 +50,7 @@ public class OrderServiceImpl implements OrderService{
             }
         }
 
-        if(customer.getOrders().stream().filter(order -> order.getProduct().equals(product)).count() != 0){
+        if(customer.getOrders().stream().filter(order->!ObjectUtils.isEmpty(order.getProduct())).filter(order -> order.getProduct().equals(product)).count() != 0){
             return null;
         }
 
