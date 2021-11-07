@@ -129,13 +129,9 @@ public class CustomerServiceImpl implements CustomerService {
                 return counselDto;
             }).collect(Collectors.toList()));
         if(customer.getOrders()!=null)
-            customerResponseDto.setOrderList(customer.getOrders().stream().map(order -> {
+            customerResponseDto.setOrderList(customer.getOrders().stream().filter(order -> !ObjectUtils.isEmpty(order.getProduct())).map(order -> {
                 OrderResponseDto orderResponseDto = modelMapper.map(order, OrderResponseDto.class);
-
-                if(!ObjectUtils.isEmpty(order.getProduct())) {
-                    orderResponseDto.setProduct(modelMapper.map(order.getProduct(), ProductDto.class));
-                }
-
+                orderResponseDto.setProduct(modelMapper.map(order.getProduct(), ProductDto.class));
                 return orderResponseDto;
             }).collect(Collectors.toList()));
 

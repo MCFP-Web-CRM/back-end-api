@@ -65,9 +65,7 @@ public class OrderServiceImpl implements OrderService{
 
             return orderRepository.findAllByCustomer(customer).stream().map(order->{
                 OrderResponseDto orderResponseDto = modelMapper.map(order, OrderResponseDto.class);
-                if(!ObjectUtils.isEmpty(order.getProduct())){
-                    orderResponseDto.setProduct(modelMapper.map(order.getProduct(), ProductDto.class));
-                }
+                orderResponseDto.setProduct(modelMapper.map(order.getProduct(), ProductDto.class));
                 return orderResponseDto;
             }).collect(Collectors.toList());
         }catch(Exception e){
