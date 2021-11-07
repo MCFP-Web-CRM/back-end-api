@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Slf4j
 @RequiredArgsConstructor
 @Configuration
 public class TokenFilter extends OncePerRequestFilter {
@@ -26,15 +25,12 @@ public class TokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = tokenProvider.resolveToken(request);
-        log.info(token);
         try{
             if(token != null && tokenProvider.validateToken(token)){
                 Authentication auth = tokenProvider.getAuthentication(token);
-                log.info("set Authentication to security context for '{}', uri: {}", auth.getName(), request);
 
                 SecurityContextHolder.clearContext();
                 SecurityContextHolder.getContext().setAuthentication(auth);
-                log.info("set Authentication to security context for '{}', uri: {}", auth.getName(), request);
 
             }
         }catch(Exception e){

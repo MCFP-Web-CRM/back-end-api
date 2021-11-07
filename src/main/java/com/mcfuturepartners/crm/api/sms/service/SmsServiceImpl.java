@@ -47,7 +47,6 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@Slf4j
 @RequiredArgsConstructor
 public class SmsServiceImpl implements SmsService{
     private final SmsRepository smsRepository;
