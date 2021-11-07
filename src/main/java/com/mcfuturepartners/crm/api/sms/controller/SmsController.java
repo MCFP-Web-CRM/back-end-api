@@ -133,7 +133,7 @@ public class SmsController {
         ResponseEntity responseEntity = null;
         SmsProcessDto smsProcessDto = smsService.createSmsProcessDto(smsDto);
 
-        if(ObjectUtils.isEmpty(smsDto.getReservationTime())){
+        if(!ObjectUtils.isEmpty(smsDto.getReservationTime())){
             responseEntity = smsRequestHandler.sendMessage(smsProcessDto);
         }
         smsService.saveAll(smsProcessDto,responseEntity);
