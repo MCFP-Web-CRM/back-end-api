@@ -2,6 +2,7 @@ package com.mcfuturepartners.crm.api.util.file.customer;
 
 import com.mcfuturepartners.crm.api.customer.dto.CustomerRegisterDto;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
+import com.mcfuturepartners.crm.api.customer.repository.CustomerRepository;
 import com.mcfuturepartners.crm.api.customer.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class FileCustomerController {
-    private final CustomerService customerService;
+    private final CustomerRepository customerRepository;
 
     @RequestMapping(value = "/upload",method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<String> saveCustomer(@RequestPart MultipartFile customerDocument) throws IOException {
@@ -46,10 +47,8 @@ public class FileCustomerController {
             if(worksheet.getRow(i).getCell(1).getStringCellValue().equals("미입력")||worksheet.getRow(i).getCell(1).getStringCellValue().equals("익명")){
                 worksheet.getRow(i).getCell(1).setCellValue("");
             }
-            customerList.add(Customer.builder().phone(worksheet.getRow(i).getCell(0).getStringCellValue().replace("-","")).name(worksheet.getRow(i).getCell(1).getStringCellValue()).build());
+            customerRepository.save(Customer.builder().phone(worksheet.getRow(i).getCell(0).getStringCellValue().replace("-","")).name(worksheet.getRow(i).getCell(1).getStringCellValue()).build());
         }
-        customerService.saveAll(customerList);
-
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
