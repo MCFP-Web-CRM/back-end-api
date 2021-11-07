@@ -1,5 +1,6 @@
 package com.mcfuturepartners.crm.api.sms.dto;
 
+import com.mcfuturepartners.crm.api.customer.dto.CustomerResponseDto;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.message.dto.MessageDto;
 import com.mcfuturepartners.crm.api.message.entity.Message;
@@ -25,5 +26,7 @@ public class SmsResponseDto {
     private String senderName;
 
     private LocalDateTime sendTime;
+
+    private CustomerResponseDto customer;
 
 }
