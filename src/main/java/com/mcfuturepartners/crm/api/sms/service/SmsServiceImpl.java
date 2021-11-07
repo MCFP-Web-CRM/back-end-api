@@ -28,6 +28,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.xmlbeans.impl.xb.xsdschema.Attribute;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -101,23 +103,28 @@ public class SmsServiceImpl implements SmsService{
     }
 
     @Override
-    public List<SmsResponseDto> getReservedSms(String username, Pageable pageable) {
+    public Page<SmsResponseDto> getReservedSms(String username, Pageable pageable) {
         User user = userRepository.findByUsername(username).orElseThrow(()->new AuthorizationException("USER "+ ErrorCode.RESOURCE_NOT_FOUND));
-        return smsRepository.findAllBySenderAndSmsStatus(user,SmsStatus.RESERVED, pageable).stream().map(sms -> {
+        Page<Sms> searchResult =smsRepository.findAllBySenderAndSmsStatus(user,SmsStatus.RESERVED, pageable);
+
+        return new PageImpl<>(searchResult.stream().map(sms -> {
             SmsResponseDto smsResponseDto = modelMapper.map(sms,SmsResponseDto.class);
             smsResponseDto.setSenderName(sms.getSender().getName());
             return smsResponseDto;
-        }).collect(Collectors.toList());
+        }).collect(Collectors.toList()),pageable,searchResult.getTotalElements());
     }
 
     @Override
-    public List<SmsResponseDto> getSmsWithoutReserved(String username, Pageable pageable) {
+    public Page<SmsResponseDto> getSmsWithoutReserved(String username, Pageable pageable) {
         User user = userRepository.findByUsername(username).orElseThrow(()->new AuthorizationException("USER "+ ErrorCode.RESOURCE_NOT_FOUND));
-        return smsRepository.findAllBySenderAndSmsStatusIsNot(user,SmsStatus.RESERVED, pageable).stream().map(sms -> {
+        Page<Sms> searchResult = smsRepository.findAllBySenderAndSmsStatusIsNot(user,SmsStatus.RESERVED, pageable);
+
+
+        return new PageImpl<>(searchResult.stream().map(sms -> {
             SmsResponseDto smsResponseDto = modelMapper.map(sms,SmsResponseDto.class);
             smsResponseDto.setSenderName(sms.getSender().getName());
             return smsResponseDto;
-        }).collect(Collectors.toList());
+        }).collect(Collectors.toList()),pageable, searchResult.getTotalElements());
     }
 
 

@@ -16,13 +16,10 @@ spring:
     hibernate:
       ddl-auto: update
     defer-datasource-initialization: true
-    properties:
-      hibernate:
-        generate_statics: true
-
 
 server:
   port: 8080
 logging:
   level:
-    org.hibernate.stat: INFO
+    org.hibernate.SQL: debug    # Logger
+    org.hibernate.type: trace   # Show Query Parameter
