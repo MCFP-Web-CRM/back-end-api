@@ -78,7 +78,8 @@ public class RevenueServiceImpl implements RevenueService{
 
                 userMonthlyRevenue.add(UserMonthlyRevenue.builder().user(modelMapper.map(user, UserResponseDto.class))
                         .year(startDate.getYear()).month(startDate.getMonthValue()).amount(orderRepository.findAllByRegDateIsBetween(startDate,endDate).stream()
-                                .filter(order -> !ObjectUtils.isEmpty(order.getProduct())&&order.getUser().equals(user))
+                                .filter(order -> !ObjectUtils.isEmpty(order.getUser()))
+                                .filter(order->order.getUser().equals(user))
                                 .map(order -> order.getPrice())
                                 .reduce(0L,Long::sum)).build());
 
@@ -106,7 +107,8 @@ public class RevenueServiceImpl implements RevenueService{
             for(int period = 0 ; period < productMonthlyRequest.getMonth() ; period ++){
                 productMonthlyRevenues.add(ProductMonthlyRevenue.builder().product(modelMapper.map(product, ProductDto.class))
                         .year(startDate.getYear()).month(startDate.getMonthValue()).amount(orderRepository.findAllByRegDateIsBetween(startDate,endDate).stream()
-                                .filter(order -> !ObjectUtils.isEmpty(order.getProduct())&&order.getProduct().equals(product))
+                                .filter(order -> !ObjectUtils.isEmpty(order.getProduct()))
+                                .filter(order-> order.getProduct().equals(product))
                                 .map(order -> order.getPrice())
                                 .reduce(0L,Long::sum)).build());
 
