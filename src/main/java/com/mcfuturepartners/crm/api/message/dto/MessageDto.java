@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 @Data
 @Builder
@@ -18,7 +19,11 @@ public class MessageDto {
     @ApiModelProperty(position = 3, example = "사용자(요청자) 아이디. token 추출 후 서버에서 넣어주기 떄문에 필요 없음")private String username;
 
     public Message toEntity(){
+        if (!StringUtils.hasText(this.title)) {
+            this.title = "제목없음";
+        }
         return Message.builder()
+                .title(this.title)
                 .content(this.content)
                 .build();
     }

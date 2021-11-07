@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,14 +39,15 @@ public class MessageController {
 
     @GetMapping
     @ApiOperation(value = "저장된 메시지 호출 api", notes = "사용자가 저장한 메시지를 호출해주는 api")
-    public ResponseEntity<List<MessageDto>> getSavedMessages(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken){
+    public ResponseEntity<Page<MessageDto>> getSavedMessages(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
+                                                             Pageable pageable){
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
-        List<MessageDto> messages ;
+        Page<MessageDto> messages ;
 
         try{
-            messages = messageService.getSavedMessages(username);
+            messages = messageService.getSavedMessages(username,pageable);
         }catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -54,26 +57,26 @@ public class MessageController {
 
     @PostMapping
     @ApiOperation(value = "문자 메시지 내용 저장 api", notes = "사용자가 작성한 메시지를 저장해주는 api")
-    public ResponseEntity<List<MessageDto>> saveMessage(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
+    public ResponseEntity<MessageDto> saveMessage(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
                                                      @RequestBody MessageDto messageDto){
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
         messageDto.setUsername(username);
-        List<MessageDto> messages;
+        MessageDto message;
 
         try{
-            messages = messageService.saveMessage(messageDto);
+            message = messageService.saveMessage(messageDto);
         }catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(messages, HttpStatus.OK);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
     @PutMapping(path = "/{message-id}")
     @ApiOperation(value = "문자 메시지 내용 수정 api", notes = "문자 메시지 내용 수정 api")
-    public ResponseEntity<List<MessageDto>> updateMessage(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
+    public ResponseEntity<MessageDto> updateMessage(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
                                                        @RequestBody MessageDto messageDto,
                                                           @PathVariable(name = "message-id") Long messageId) {
         String token = bearerToken.replace("Bearer ", "");
@@ -82,31 +85,30 @@ public class MessageController {
         messageDto.setUsername(username);
         messageDto.setMessageId(messageId);
 
-        List<MessageDto> messages;
+        MessageDto message;
         try{
-            messages = messageService.updateSavedMessage(messageDto);
+            message = messageService.updateSavedMessage(messageDto);
         }catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(messages, HttpStatus.OK);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/{message-id}")
     @ApiOperation(value = "문자 메시지 내용 삭제 api", notes = "문자 메시지 내용 삭제 api")
-    public ResponseEntity<List<MessageDto>> deleteMessage(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
+    public ResponseEntity<Void> deleteMessage(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
                                                        @PathVariable(value = "message-id") Long messageId){
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
-        List<MessageDto> messages;
 
         try {
-            messages = messageService.deleteSavedMessage(MessageDto.builder().messageId(messageId).username(username).build());
+            messageService.deleteSavedMessage(MessageDto.builder().messageId(messageId).username(username).build());
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(messages, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

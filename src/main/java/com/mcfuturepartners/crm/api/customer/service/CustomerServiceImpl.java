@@ -211,7 +211,7 @@ public class CustomerServiceImpl implements CustomerService {
     public List<CustomerStatusCountDto> getDailyCustomerStatus() {
         List<CustomerStatusCountDto> dailyCustomerStatus = new ArrayList<>();
         //zoned 추가
-        LocalDateTime todayDate = LocalDate.of(LocalDate.now().getYear(),LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()-1).atStartOfDay();
+        LocalDateTime todayDate = LocalDate.of(LocalDate.now().getYear(),LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()).atStartOfDay();
 
         dailyCustomerStatus.add(CustomerStatusCountDto.builder().customerStatus(CustomerStatus.NEWLY_ESTABILSHED)
                 .count((int) customerRepository.countCustomerByRegDateIsAfter(todayDate)).build());
