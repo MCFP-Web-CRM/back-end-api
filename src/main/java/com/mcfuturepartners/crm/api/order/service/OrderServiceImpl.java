@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDate;
@@ -64,7 +65,9 @@ public class OrderServiceImpl implements OrderService{
 
             return orderRepository.findAllByCustomer(customer).stream().map(order->{
                 OrderResponseDto orderResponseDto = modelMapper.map(order, OrderResponseDto.class);
-                orderResponseDto.setProduct(modelMapper.map(order.getProduct(), ProductDto.class));
+                if(!ObjectUtils.isEmpty(order.getProduct())){
+                    orderResponseDto.setProduct(modelMapper.map(order.getProduct(), ProductDto.class));
+                }
                 return orderResponseDto;
             }).collect(Collectors.toList());
         }catch(Exception e){
