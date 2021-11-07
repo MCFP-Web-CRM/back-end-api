@@ -46,7 +46,7 @@ public class SmsRequestHandler {
     private static final  String secretKey = "zupF8Pg54YvNHgNy6ciLhFNZyN4IHrmjs2cwQA3z";                // 2차 인증을 위해 서비스마다 할당되는 service secret
     private static final  String serviceId = "ncp:sms:kr:273955995903:mcfuturepartners";                        // 프로젝트에 할당된 SMS 서비스 ID
 
-    //@Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0/1 * * * ?")
     public ResponseEntity processReservedMessage(){
 
         List<SmsProcessDto> reservedSms = smsService.findReservedSmsBeforeNow(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime());

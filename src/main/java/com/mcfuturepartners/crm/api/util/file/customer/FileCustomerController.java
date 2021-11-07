@@ -35,7 +35,6 @@ public class FileCustomerController {
         for (int i = 1 ; i < worksheet.getPhysicalNumberOfRows(); i++){
             Row row = worksheet.getRow(i);
             //row.getCell(0).setCellType(CellType.STRING);
-            log.info(Integer.toString(i));
             if(row==null) continue;
 
             Cell c1 = row.getCell(0);
@@ -44,7 +43,6 @@ public class FileCustomerController {
             if(c1 == null || c1.getCellType() == CellType.BLANK){
                 continue;
             }
-            log.info(c1.toString()+" "+c2.toString());
             if(c2 == null||c2.getCellType() == CellType.BLANK) {
                c2.setCellValue("");
             }
@@ -57,7 +55,6 @@ public class FileCustomerController {
             String name = row.getCell(1).getStringCellValue();
             customerList.add(Customer.builder().phone(phone).name(name).build());
         }
-        log.info(customerService.saveAll(customerList));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

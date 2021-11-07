@@ -44,6 +44,8 @@ public class UserController {
     @GetMapping(path="/hello")
     @ApiOperation(value = "준형이 안녕", notes = "살려줘")
     public ResponseEntity<String> getHello(){
+
+        log.info("hello");
         return ResponseEntity.ok().body("Hello");
     }
 
