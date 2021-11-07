@@ -50,6 +50,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import javax.validation.constraints.Null;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -211,7 +213,7 @@ public class CustomerServiceImpl implements CustomerService {
     public List<CustomerStatusCountDto> getDailyCustomerStatus() {
         List<CustomerStatusCountDto> dailyCustomerStatus = new ArrayList<>();
         //zoned 추가
-        LocalDateTime todayDate = LocalDate.of(LocalDate.now().getYear(),LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()).atStartOfDay();
+        LocalDateTime todayDate = LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonth(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate().getDayOfMonth()).atStartOfDay();
 
         dailyCustomerStatus.add(CustomerStatusCountDto.builder().customerStatus(CustomerStatus.NEWLY_ESTABILSHED)
                 .count((int) customerRepository.countCustomerByRegDateIsAfter(todayDate)).build());
