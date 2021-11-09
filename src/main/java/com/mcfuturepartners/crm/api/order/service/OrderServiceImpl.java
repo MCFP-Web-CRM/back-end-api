@@ -4,6 +4,7 @@ import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.customer.repository.CustomerRepository;
 import com.mcfuturepartners.crm.api.exception.AuthorizationException;
 import com.mcfuturepartners.crm.api.exception.ErrorCode;
+import com.mcfuturepartners.crm.api.exception.FindException;
 import com.mcfuturepartners.crm.api.order.dto.OrderCancelDto;
 import com.mcfuturepartners.crm.api.order.dto.OrderDto;
 import com.mcfuturepartners.crm.api.order.dto.OrderResponseDto;
@@ -13,6 +14,8 @@ import com.mcfuturepartners.crm.api.order.repository.OrderRepository;
 import com.mcfuturepartners.crm.api.product.dto.ProductDto;
 import com.mcfuturepartners.crm.api.product.entity.Product;
 import com.mcfuturepartners.crm.api.product.repository.ProductRepository;
+import com.mcfuturepartners.crm.api.refund.dto.RefundDto;
+import com.mcfuturepartners.crm.api.refund.dto.RefundResponseDto;
 import com.mcfuturepartners.crm.api.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,22 +53,25 @@ public class OrderServiceImpl implements OrderService{
             }
         }
 
-        if(customer.getOrders().stream().filter(order->!ObjectUtils.isEmpty(order.getProduct())).filter(order -> order.getProduct().equals(product)).count() != 0){
-            return null;
-        }
 
         try{
             orderRepository.save(Order.builder()
                     .customer(customerRepository.findById(orderDto.getCustomerId()).get())
                     .user(userRepository.findByUsername(orderDto.getUsername()).get())
                     .product(product)
-                            .price(product.getPrice())
+                            .price(orderDto.getPrice())
+                            .investmentAmount(orderDto.getInvestmentAmount())
                             .regDate(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime())
                     .build());
 
             return orderRepository.findAllByCustomer(customer).stream().filter(order -> !ObjectUtils.isEmpty(order.getProduct())).map(order->{
                 OrderResponseDto orderResponseDto = modelMapper.map(order, OrderResponseDto.class);
+                if(!ObjectUtils.isEmpty(order.getProduct())){
                 orderResponseDto.setProduct(modelMapper.map(order.getProduct(), ProductDto.class));
+                }
+                if(!ObjectUtils.isEmpty(order.getRefund())){
+                    orderResponseDto.setRefundDto(modelMapper.map(order.getRefund(), RefundResponseDto.class));
+                }
                 return orderResponseDto;
             }).collect(Collectors.toList());
         }catch(Exception e){
@@ -84,7 +90,12 @@ public class OrderServiceImpl implements OrderService{
             orderRepository.deleteById(orderCancelDto.getOrderId());
             return orderRepository.findAllByCustomer(customer).stream().filter(order -> !ObjectUtils.isEmpty(order.getProduct())).map(order->{
                 OrderResponseDto orderResponseDto = modelMapper.map(order, OrderResponseDto.class);
-                orderResponseDto.setProduct(modelMapper.map(order.getProduct(), ProductDto.class));
+                if(!ObjectUtils.isEmpty(order.getProduct())){
+                    orderResponseDto.setProduct(modelMapper.map(order.getProduct(), ProductDto.class));
+                }
+                if(!ObjectUtils.isEmpty(order.getRefund())){
+                    orderResponseDto.setRefundDto(modelMapper.map(order.getRefund(), RefundResponseDto.class));
+                }
                 return orderResponseDto;
             }).collect(Collectors.toList());
         }catch(Exception e){
@@ -93,17 +104,6 @@ public class OrderServiceImpl implements OrderService{
 
     }
 
-    @Override
-    public OrderRevenue getTotalRevenue() {
-        return OrderRevenue.builder().currentRevenue(
-                orderRepository.findAllByRegDateIsAfter
-                                (LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(),
-                                                ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonthValue(),
-                                        1)
-                                        .atStartOfDay())
-                        .stream()
-                        .map(order -> order.getProduct().getPrice())
-                        .reduce(0L,Long::sum))
-                .build();
-    }
+
+
 }

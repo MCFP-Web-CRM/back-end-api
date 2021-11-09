@@ -40,10 +40,15 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
 
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
+        if(StringUtils.hasText(customerSearch.getCustomerName())){
+            booleanBuilder.and(customer.name.eq(customerSearch.getCustomerName()));
+        }
+        if(StringUtils.hasText(customerSearch.getCustomerPhone())){
+            booleanBuilder.and(customer.phone.eq(customerSearch.getCustomerPhone()));
+        }
         if(StringUtils.hasText(customerSearch.getCategoryName())){
             booleanBuilder.and(customer.category.name.eq(customerSearch.getCategoryName()));
         }
-
         if(!ObjectUtils.isEmpty(customerSearch.getFunnelId())){
             booleanBuilder.and(customer.funnel.funnelId.eq(customerSearch.getFunnelId()));
         }

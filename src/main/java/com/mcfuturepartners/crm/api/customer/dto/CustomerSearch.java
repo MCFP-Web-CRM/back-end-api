@@ -13,6 +13,8 @@ import java.time.LocalDate;
 @Data
 @Builder
 public class CustomerSearch {
+    private String customerName;
+    private String customerPhone;
     private String categoryName;
     private String productName;
     private Long funnelId;
