@@ -57,22 +57,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                //.antMatchers("/message/**").hasAuthority("USER")
                //.antMatchers("/notice/**").hasAuthority("USER")
                //.antMatchers("/order/**").hasAuthority("USER")
-               //.antMatchers("/revenue/**").hasAuthority("USER")
-               //.antMatchers("/schedule/**").hasAuthority("USER")
+               //.antMatchers("/revenue/**","/schedule/**").hasAuthority("USER")
+              // .antMatchers("/schedule/**").hasAuthority("USER")
                //.antMatchers("/util/sms/**").hasAuthority("USER")
                //.antMatchers("/users/**").hasAuthority("USER")
                .anyRequest().authenticated();
        http.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
    }
-   /*@Bean
-   CorsConfigurationSource corsConfigurationSource(){
-      CorsConfiguration configuration = new CorsConfiguration();
-      configuration.setAllowedOrigins(Arrays.asList("*"));
-      configuration.setAllowedMethods(Arrays.asList("*"));
-      UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-      source.registerCorsConfiguration("/**", configuration);
-      return source;
-   }*/
 
 
 }
