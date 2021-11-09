@@ -26,6 +26,7 @@ import com.mcfuturepartners.crm.api.order.dto.OrderResponseDto;
 import com.mcfuturepartners.crm.api.order.repository.OrderRepository;
 import com.mcfuturepartners.crm.api.product.dto.ProductDto;
 import com.mcfuturepartners.crm.api.product.entity.Product;
+import com.mcfuturepartners.crm.api.refund.dto.RefundResponseDto;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
 import com.mcfuturepartners.crm.api.user.dto.UserResponseDto;
 import com.mcfuturepartners.crm.api.user.entity.Authority;
@@ -47,6 +48,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 
+import javax.persistence.OrderBy;
 import javax.validation.constraints.Null;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -129,13 +131,18 @@ public class CustomerServiceImpl implements CustomerService {
                     counselDto.setName(counsel.getUser().getName());
                 }
                 return counselDto;
-            }).collect(Collectors.toList()));
+            }).sorted((o1, o2) -> o2.getRegDate().compareTo(o1.getRegDate())).collect(Collectors.toList()));
         if(customer.getOrders()!=null)
             customerResponseDto.setOrderList(customer.getOrders().stream().filter(order -> !ObjectUtils.isEmpty(order.getProduct())).map(order -> {
                 OrderResponseDto orderResponseDto = modelMapper.map(order, OrderResponseDto.class);
-                orderResponseDto.setProduct(modelMapper.map(order.getProduct(), ProductDto.class));
+                if(!ObjectUtils.isEmpty(order.getProduct())){
+                    orderResponseDto.setProduct(modelMapper.map(order.getProduct(), ProductDto.class));
+                }
+                if(!ObjectUtils.isEmpty(order.getRefund())){
+                    orderResponseDto.setRefundDto(modelMapper.map(order.getRefund(), RefundResponseDto.class));
+                }
                 return orderResponseDto;
-            }).collect(Collectors.toList()));
+            }).sorted((o1, o2) -> o2.getRegDate().compareTo(o1.getRegDate())).collect(Collectors.toList()));
 
         return customerResponseDto;
     }

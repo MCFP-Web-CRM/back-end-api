@@ -80,6 +80,10 @@ public class User {
     private Set<Authority> authorities = new HashSet<>();
 
     public void setDepartment(Department department){
+        if(department == null) {
+            this.department = null;
+            return;
+        }
         if(this.department != null){
             this.department.getUsers().remove(this);
         }

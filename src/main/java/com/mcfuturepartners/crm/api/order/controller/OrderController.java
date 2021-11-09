@@ -11,6 +11,7 @@ import com.mcfuturepartners.crm.api.order.entity.OrderRevenue;
 import com.mcfuturepartners.crm.api.order.service.OrderService;
 import com.mcfuturepartners.crm.api.security.jwt.TokenProvider;
 import com.mcfuturepartners.crm.api.user.entity.Authority;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.weaver.ast.Or;
@@ -28,6 +29,18 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
     private final TokenProvider tokenProvider;
+/*
+
+    @GetMapping("/customer/{customer-id}")
+    @ApiOperation(value = "구독 조회 api", notes = "고객의 구독 전체 조회 api")
+    public ResponseEntity<List<OrderResponseDto>> getOrdrers(@RequestHeader(HttpHeaders.AUTHORIZATION) String bearerToken,
+                                                             @PathVariable(name = "customer-id") Long customerId){
+        String token = bearerToken.replace("Bearer ", "");
+        DecodedJWT decodedJWT = JWT.decode(token);
+        String username = decodedJWT.getSubject();
+
+    }
+*/
 
     @PostMapping
     @ApiOperation(value = "상품 구독 생성 api", notes = "상품 구독 생성 api")

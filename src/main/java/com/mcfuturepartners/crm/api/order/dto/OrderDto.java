@@ -13,6 +13,8 @@ public class OrderDto {
     @ApiModelProperty(position = 0, example = "구독 결제 id / 필요 없음") private Long id;
     @ApiModelProperty(position = 1, example = "고객 id") private long customerId;
     @ApiModelProperty(position = 2, example = "상품 id") private long productId;
-    @ApiModelProperty(position = 3, example = "사원 username / 필요 없음") private String username;
-    @ApiModelProperty(position = 3, example = "사원 권한 / 필요 없음") private String authorities;
+    @ApiModelProperty(position = 3, example = "상품 금액") private long price;
+    @ApiModelProperty(position = 4, example = "투자금액") private long investmentAmount;
+    @ApiModelProperty(position = 5, example = "사원 username / 필요 없음") private String username;
+    @ApiModelProperty(position = 6, example = "사원 권한 / 필요 없음") private String authorities;
 }

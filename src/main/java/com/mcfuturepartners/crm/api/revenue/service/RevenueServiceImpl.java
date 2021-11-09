@@ -53,7 +53,12 @@ public class RevenueServiceImpl implements RevenueService{
                     .year(startDate.getYear())
                     .month(startDate.getMonthValue())
                     .amount(orderRepository.findAllByRegDateIsBetween(startDate, endDate)
-                    .stream().map(order -> order.getPrice()).reduce(0L,Long::sum)).build());
+                    .stream().map(order ->{
+                                if(!ObjectUtils.isEmpty(order.getRefund())){
+                                    return order.getPrice()-order.getRefund().getRefundAmount();
+                                }
+                                return order.getPrice();
+                            } ).reduce(0L,Long::sum)).build());
 
             startDate = startDate.minusMonths(1);
             endDate = endDate.minusMonths(1);
@@ -80,7 +85,12 @@ public class RevenueServiceImpl implements RevenueService{
                         .year(startDate.getYear()).month(startDate.getMonthValue()).amount(orderRepository.findAllByRegDateIsBetween(startDate,endDate).stream()
                                 .filter(order -> !ObjectUtils.isEmpty(order.getUser()))
                                 .filter(order->order.getUser().equals(user))
-                                .map(order -> order.getPrice())
+                                .map(order ->{
+                                    if(!ObjectUtils.isEmpty(order.getRefund())){
+                                        return order.getPrice()-order.getRefund().getRefundAmount();
+                                    }
+                                    return order.getPrice();
+                                } )
                                 .reduce(0L,Long::sum)).build());
 
                 startDate = startDate.minusMonths(1);
@@ -109,7 +119,12 @@ public class RevenueServiceImpl implements RevenueService{
                         .year(startDate.getYear()).month(startDate.getMonthValue()).amount(orderRepository.findAllByRegDateIsBetween(startDate,endDate).stream()
                                 .filter(order -> !ObjectUtils.isEmpty(order.getProduct()))
                                 .filter(order-> order.getProduct().equals(product))
-                                .map(order -> order.getPrice())
+                                .map(order -> {
+                                    if(!ObjectUtils.isEmpty(order.getRefund())){
+                                        return order.getPrice()-order.getRefund().getRefundAmount();
+                                    }
+                                    return order.getPrice();
+                                } )
                                 .reduce(0L,Long::sum)).build());
 
                 startDate = startDate.minusMonths(1);

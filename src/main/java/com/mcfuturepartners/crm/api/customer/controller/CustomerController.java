@@ -42,6 +42,8 @@ public class CustomerController {
     @GetMapping
     @ApiOperation(value = "고객 조회 api", notes = "고객 조회 api, 다중 검색 조건(query string)으로 검색 가능 / sort=id,desc 쿼리스트링으로 넣어주면 가장 최신 고객부터 페이지처리")
     public ResponseEntity<Page<CustomerResponseDto>> getCustomerList(@RequestHeader(HttpHeaders.AUTHORIZATION)String bearerToken,
+                                          @RequestParam(value = "name") @Nullable String customerName,
+                                          @RequestParam(value = "phone") @Nullable String customerPhone,
                                           @RequestParam(value = "customer-category") @Nullable String customerCategory,
                                           @RequestParam(value = "product-name") @Nullable String productName,
                                           @RequestParam(value = "funnel-id") @Nullable Long funnelId,
@@ -57,6 +59,8 @@ public class CustomerController {
 
         Page<CustomerResponseDto> listCustomer = customerService.searchCustomers(
                 CustomerSearch.builder()
+                        .customerName(customerName)
+                        .customerPhone(customerPhone)
                         .categoryName(customerCategory)
                         .productName(productName)
                         .funnelId(funnelId)

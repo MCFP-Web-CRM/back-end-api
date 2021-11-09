@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
+import com.mcfuturepartners.crm.api.exception.RefundException;
 import com.mcfuturepartners.crm.api.product.entity.Product;
+import com.mcfuturepartners.crm.api.refund.entity.Refund;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +17,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.sql.Ref;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -41,8 +44,11 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @JoinColumn(name = "price")
+    @Column(name = "price")
     private Long price;
+
+    @Column(name = "investment_amount")
+    private Long investmentAmount;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -50,4 +56,18 @@ public class Order {
     @Column(name = "regdate")
     @NotNull
     private LocalDateTime regDate;
+
+    @OneToOne
+    @JoinColumn(name = "refund_id")
+    private Refund refund;
+
+    public Order setRefund(Refund refund){
+        if(this.refund!=null){
+            this.refund = refund;
+        }
+        if(this.price - refund.getRefundAmount() < 0){
+            throw new RefundException("Refund 가능한 금액이 아닙니다.");
+        }
+        return this;
+    }
 }
