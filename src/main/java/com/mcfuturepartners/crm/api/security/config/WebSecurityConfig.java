@@ -42,7 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
        http.cors();
        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
        http.authorizeRequests()
-               //.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+               .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                //.antMatchers("/swagger-ui.html").permitAll()
                //.antMatchers("/users/signin").permitAll()
                .antMatchers("/**").permitAll()
