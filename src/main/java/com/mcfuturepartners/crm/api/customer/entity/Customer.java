@@ -122,7 +122,7 @@ public class Customer {
     }
     public Customer updateModified(CustomerUpdateDto customerUpdateDto){
         if(StringUtils.hasText(customerUpdateDto.getPhone())){
-            this.phone = customerUpdateDto.getBirth();
+            this.phone = customerUpdateDto.getPhone();
         }
         if(StringUtils.hasText(customerUpdateDto.getName())){
             this.name = customerUpdateDto.getName();
