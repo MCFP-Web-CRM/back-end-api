@@ -45,6 +45,7 @@ public class Order {
     private User user;
 
     @Column(name = "price")
+    @NotNull
     private Long price;
 
     @Column(name = "investment_amount")

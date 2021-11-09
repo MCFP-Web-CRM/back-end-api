@@ -62,7 +62,12 @@ public class Product {
     public Long getTotalRevenueAfter(LocalDateTime startTime) {
         return this.getOrders().stream()
                 .filter(order -> order.getRegDate().isAfter(startTime))
-                .map(order -> order.getPrice()).reduce(0L, Long::sum);
+                .map(order ->{
+                    if(!ObjectUtils.isEmpty(order.getRefund())) {
+                        return order.getPrice() - order.getRefund().getRefundAmount();
+                    }
+                    return order.getPrice();
+                }).reduce(0L, Long::sum);
     }
 
 }
