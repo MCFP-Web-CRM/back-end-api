@@ -9,4 +9,5 @@ public class UserLoginResponseDto {
     private Long id;
     private String token;
     private String Authority;
+    private Long expiredTime;
 }

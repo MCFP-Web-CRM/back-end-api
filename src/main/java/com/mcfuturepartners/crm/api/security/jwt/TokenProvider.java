@@ -81,4 +81,7 @@ public class TokenProvider implements InitializingBean  {
             throw new Exception();
         }
     }
+    public Long getValidityTime(){
+        return validityInMs;
+    }
 }

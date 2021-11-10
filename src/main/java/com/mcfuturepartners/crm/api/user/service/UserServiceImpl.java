@@ -146,6 +146,12 @@ public class UserServiceImpl implements UserService {
     public List<UserResponseDto> getAllUsers() {
         return userRepository.findAll().stream().map(user -> {
             UserResponseDto userResponseDto = modelMapper.map(user, UserResponseDto.class);
+            if(user.getAuthorities().contains(Authority.ADMIN)){
+                userResponseDto.setAuthority("ADMIN");
+            }
+            else{
+                userResponseDto.setAuthority("USER");
+            }
             if(!ObjectUtils.isEmpty(user.getDepartment())){
                 userResponseDto.setDepartment(modelMapper.map(user.getDepartment(), DepartmentResponseDto.class));
             }
