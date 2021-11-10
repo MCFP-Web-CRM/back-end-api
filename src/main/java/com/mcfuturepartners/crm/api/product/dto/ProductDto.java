@@ -22,7 +22,6 @@ public class ProductDto {
         return Product.builder()
                 .id(id)
                 .name(name)
-                .price(price)
                 .build();
     }
 

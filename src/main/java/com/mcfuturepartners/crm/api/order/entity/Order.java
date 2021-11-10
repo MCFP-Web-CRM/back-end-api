@@ -62,13 +62,5 @@ public class Order {
     @JoinColumn(name = "refund_id")
     private Refund refund;
 
-    public Order setRefund(Refund refund){
-        if(this.refund!=null){
-            this.refund = refund;
-        }
-        if(this.price - refund.getRefundAmount() < 0){
-            throw new RefundException("Refund 가능한 금액이 아닙니다.");
-        }
-        return this;
-    }
+
 }

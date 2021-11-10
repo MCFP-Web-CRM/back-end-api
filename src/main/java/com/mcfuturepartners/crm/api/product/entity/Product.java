@@ -36,19 +36,12 @@ public class Product {
     @NotNull
     private String name;
 
-    @Column(name = "product_price")
-    @NotNull
-    private Long price;
-
     @OneToMany(mappedBy = "product")
     private List<Order> orders = new ArrayList<>();
 
     public Product updateModified(Product modifiedProduct){
         if(StringUtils.hasText(modifiedProduct.getName())){
             this.name = modifiedProduct.getName();
-        }
-        if(!ObjectUtils.isEmpty(modifiedProduct.getPrice())){
-            this.price = modifiedProduct.getPrice();
         }
         return this;
     }

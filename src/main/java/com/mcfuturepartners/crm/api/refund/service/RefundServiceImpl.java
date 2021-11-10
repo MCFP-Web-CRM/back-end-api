@@ -21,6 +21,7 @@ import org.springframework.util.ObjectUtils;
 public class RefundServiceImpl implements RefundService{
     private final RefundRepository refundRepository;
     private final OrderRepository orderRepository;
+
     @Override
     public void makeRefund(RefundDto refundDto) {
         Order order = orderRepository.findById(refundDto.getOrderId()).orElseThrow(()-> new FindException("Order "+ ErrorCode.RESOURCE_NOT_FOUND.getMsg()));
@@ -30,12 +31,7 @@ public class RefundServiceImpl implements RefundService{
             throw new RefundException("Already Refunded");
         }
 
-        try{
-            order.setRefund(refund);
-        }catch (RefundException refundException){
-            throw refundException;
-        }
-
+        order.setRefund(refund);
         try{
             refundRepository.save(refund);
         } catch (Exception e){
@@ -47,5 +43,6 @@ public class RefundServiceImpl implements RefundService{
         } catch (Exception e){
             throw e;
         }
+
     }
 }
