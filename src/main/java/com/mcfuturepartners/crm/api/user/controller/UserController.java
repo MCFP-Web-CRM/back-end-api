@@ -58,7 +58,7 @@ public class UserController {
         if(loginInfo.getToken() != "Wrong Password" && loginInfo.getToken() != null){
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add(TokenFilter.AUTHORIZATION_HEADER, "Bearer "+loginInfo.getToken());
-
+            loginInfo.setExpiredTime(tokenProvider.getValidityTime());
             return new ResponseEntity<>(loginInfo, httpHeaders, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

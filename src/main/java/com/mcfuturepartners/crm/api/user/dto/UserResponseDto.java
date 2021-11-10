@@ -15,4 +15,5 @@ public class UserResponseDto {
     @ApiModelProperty(position = 3) private String name;
     @ApiModelProperty(position = 4) private String phone;
     @ApiModelProperty(position = 5)private DepartmentResponseDto department;
+    @ApiModelProperty(position = 6) private String Authority;
 }
