@@ -43,9 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
        http.authorizeRequests()
                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-               .antMatchers("/swagger-ui.html").permitAll()
                .antMatchers("/users/signin").permitAll()
-               //.antMatchers("/**").permitAll()
                .antMatchers("/admin/**","/refund/**").hasAuthority("ADMIN")
                .antMatchers("/department/**").hasAuthority("USER")
                .antMatchers("/counsel/**").hasAuthority("USER")
@@ -57,8 +55,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                .antMatchers("/message/**").hasAuthority("USER")
                .antMatchers("/notice/**").hasAuthority("USER")
                .antMatchers("/order/**").hasAuthority("USER")
-               .antMatchers("/revenue/**","/schedule/**").hasAuthority("USER")
-              // .antMatchers("/schedule/**").hasAuthority("USER")
+               .antMatchers("/revenue/**").hasAuthority("USER")
+               .antMatchers("/schedule/**").hasAuthority("USER")
                .antMatchers("/util/sms/**").hasAuthority("USER")
                .antMatchers("/users/**").hasAuthority("USER")
                .anyRequest().authenticated();
