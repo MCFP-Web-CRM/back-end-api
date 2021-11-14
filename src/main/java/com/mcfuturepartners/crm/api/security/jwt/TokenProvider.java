@@ -29,7 +29,7 @@ public class TokenProvider implements InitializingBean  {
     private String securityKey;
 
     @Value("${security.jwt.token.expiration-length:3600000}")
-    private long validityInMs = 3600000; // 1h
+    private long validityInMs = 60000; // 1h
 
     @Override
     public void afterPropertiesSet() throws Exception {
