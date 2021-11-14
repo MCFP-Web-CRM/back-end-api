@@ -105,9 +105,8 @@ public class CustomerController {
         String username = decodedJWT.getSubject();
 
         customerRegisterDto.setManagerUsername(username);
-
-        if(customerService.save(customerRegisterDto).isEmpty()){
-            return new ResponseEntity<>("not found", HttpStatus.BAD_REQUEST);
+        if(customerService.save(customerRegisterDto).equals("customer already exists")){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>("saved",HttpStatus.OK);
     }
