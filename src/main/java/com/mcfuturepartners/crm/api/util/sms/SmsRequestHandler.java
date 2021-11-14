@@ -41,7 +41,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SmsRequestHandler {
     private final SmsService smsService;
-    private static final String FROM="01095510270";//발신번호
+    private static final String FROM="010";//발신번호
     private static final String accessKey = "lpGtYBhXdSdQQ4T7225w";                                     // 네이버 클라우드 플랫폼 회원에게 발급되는 개인 인증키
     private static final  String secretKey = "zupF8Pg54YvNHgNy6ciLhFNZyN4IHrmjs2cwQA3z";                // 2차 인증을 위해 서비스마다 할당되는 service secret
     private static final  String serviceId = "ncp:sms:kr:273955995903:mcfuturepartners";                        // 프로젝트에 할당된 SMS 서비스 ID
@@ -83,7 +83,7 @@ public class SmsRequestHandler {
         JSONArray toArr = new JSONArray();
 
         bodyJson.put("type", smsType.getCode());                // 메시지 Type (sms | lms)
-        bodyJson.put("contentType","COMM");         // 메시지 내용 Type (AD | COMM) * AD: 광고용, COMM: 일반용 (default: COMM) * 광고용 메시지 발송 시 불법 스팸 방지를 위한 정보통신망법 (제 50조)가 적용됩니다.
+        bodyJson.put("contentType","AD");         // 메시지 내용 Type (AD | COMM) * AD: 광고용, COMM: 일반용 (default: COMM) * 광고용 메시지 발송 시 불법 스팸 방지를 위한 정보통신망법 (제 50조)가 적용됩니다.
         bodyJson.put("countryCode","82");       // 국가 전화번호
         bodyJson.put("from",FROM);              // 발신번호 * 사전에 인증/등록된 번호만 사용할 수 있습니다.
         bodyJson.put("subject","");             // 메시지 제목 * LMS Type에서만 사용할 수 있습니다.
