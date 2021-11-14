@@ -28,7 +28,7 @@ public class TokenProvider implements InitializingBean  {
     @Value("${security.jwt.token.security-key:secret-key}")
     private String securityKey;
 
-    @Value("${security.jwt.token.expiration-length:3600000}")
+    @Value("${security.jwt.token.expiration-length:60000}")
     private long validityInMs = 60000; // 1h
 
     @Override
