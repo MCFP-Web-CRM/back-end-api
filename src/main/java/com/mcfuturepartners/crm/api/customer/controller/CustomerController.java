@@ -154,6 +154,6 @@ public class CustomerController {
     @GetMapping(path = "/funnel")
     @ApiOperation(value = "당일 고객 유입경로 통계", notes = "당일 추가된 고객들의 유입 경로에 대한 통계 제공")
     public ResponseEntity<List<CustomerFunnelCountDto>> getDailyCustomerFunnel(){
-        return new ResponseEntity<>(customerService.getDailyFunnelCount(),HttpStatus.OK);
+        return new ResponseEntity<>(customerService.getFunnelCount(),HttpStatus.OK);
     }
 }
