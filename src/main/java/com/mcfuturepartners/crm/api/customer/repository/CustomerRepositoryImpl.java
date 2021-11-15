@@ -131,11 +131,10 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
     }
 
     @Override
-    public Integer countCustomersByFunnel(LocalDateTime localDateTime, Funnel funnel) {
+    public Integer countCustomersByFunnel(Funnel funnel) {
         QCustomer customer = QCustomer.customer;
 
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-        booleanBuilder.and(customer.regDate.after(localDateTime));
         booleanBuilder.and(customer.funnel.funnelId.eq(funnel.getFunnelId()));
 
         return (int) queryFactory.selectFrom(customer)

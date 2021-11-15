@@ -16,5 +16,5 @@ public interface CustomCustomerRepository {
     List<Customer> searchWithoutPageable(CustomerSearch customerSearch);
     List<Customer> findCustomersWithCounselToday(LocalDateTime localDateTime);
     long countCustomersWithOrderToday(LocalDateTime localDateTime);
-    Integer countCustomersByFunnel(LocalDateTime localDateTime, Funnel funnel);
+    Integer countCustomersByFunnel(Funnel funnel);
 }

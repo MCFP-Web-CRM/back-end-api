@@ -19,5 +19,5 @@ public interface CustomerService {
     String updateCustomer(CustomerUpdateDto customerUpdateDto);
     String deleteCustomer(Long id);
     List<CustomerStatusCountDto> getDailyCustomerStatus();
-    List<CustomerFunnelCountDto> getDailyFunnelCount();
+    List<CustomerFunnelCountDto> getFunnelCount();
 }

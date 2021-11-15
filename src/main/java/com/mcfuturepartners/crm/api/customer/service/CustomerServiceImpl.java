@@ -252,12 +252,11 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<CustomerFunnelCountDto> getDailyFunnelCount() {
+    public List<CustomerFunnelCountDto> getFunnelCount() {
         List<Funnel> funnelList = funnelRepository.findAll();
-        LocalDateTime todayDate = LocalDate.of(LocalDate.now().getYear(),LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()).atStartOfDay();
 
         return funnelList.stream().map(funnel ->
                 CustomerFunnelCountDto.builder().funnel(modelMapper.map(funnel,FunnelResponseDto.class))
-                        .count(qCustomerRepository.countCustomersByFunnel(todayDate,funnel)).build()).collect(Collectors.toList());
+                        .count(qCustomerRepository.countCustomersByFunnel(funnel)).build()).collect(Collectors.toList());
     }
 }
