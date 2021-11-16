@@ -1,5 +1,6 @@
 package com.mcfuturepartners.crm.api.customer.service;
 
+import com.mcfuturepartners.crm.api.admin.customer.ManagerChangeDto;
 import com.mcfuturepartners.crm.api.customer.dto.*;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.customer.entity.CustomerStatus;
@@ -15,6 +16,7 @@ public interface CustomerService {
     Boolean findCustomerIfManager(long counselId, String username);
     String saveAll(List<Customer> customerList);
     String save(CustomerRegisterDto customerDto);
+    String changeAllCustomersManager(ManagerChangeDto managerChangeDto);
     List<Customer> selectCustomer(Map<String,String> map);
     String updateCustomer(CustomerUpdateDto customerUpdateDto);
     String deleteCustomer(Long id);

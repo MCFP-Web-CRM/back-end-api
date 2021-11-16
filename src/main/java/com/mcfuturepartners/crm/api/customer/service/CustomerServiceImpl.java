@@ -1,5 +1,6 @@
 package com.mcfuturepartners.crm.api.customer.service;
 
+import com.mcfuturepartners.crm.api.admin.customer.ManagerChangeDto;
 import com.mcfuturepartners.crm.api.category.dto.CategoryDto;
 import com.mcfuturepartners.crm.api.category.entity.Category;
 import com.mcfuturepartners.crm.api.category.entity.QCategory;
@@ -176,6 +177,19 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public String changeAllCustomersManager(ManagerChangeDto managerChangeDto) {
+        User oldManager = userRepository.findById(managerChangeDto.getOldManagerId()).orElseThrow(()-> new FindException("Old Manager"+ErrorCode.RESOURCE_NOT_FOUND));
+        User newManager = userRepository.findById(managerChangeDto.getNewManagerId()).orElseThrow(()-> new FindException("New Manager"+ErrorCode.RESOURCE_NOT_FOUND));
+
+        try{
+            customerRepository.saveAll(oldManager.getCustomers().stream().map(customer -> customer.changeManager(newManager)).collect(Collectors.toList()));
+        } catch (Exception e){
+            throw e;
+        }
+        return "Success";
+    }
+
+    @Override
     public String updateCustomer(CustomerUpdateDto customerUpdateDto) {
 
         Customer customer = customerRepository.findById(customerUpdateDto.getId()).orElseThrow(() -> new FindException(DatabaseErrorCode.CUSTOMER_NOT_FOUND.name()));
@@ -259,4 +273,6 @@ public class CustomerServiceImpl implements CustomerService {
                 CustomerFunnelCountDto.builder().funnel(modelMapper.map(funnel,FunnelResponseDto.class))
                         .count(qCustomerRepository.countCustomersByFunnel(funnel)).build()).collect(Collectors.toList());
     }
+
+
 }
