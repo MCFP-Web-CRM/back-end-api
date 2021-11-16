@@ -10,10 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -30,7 +27,7 @@ public class FileCustomerController {
     private final CustomerService customerService;
 
     @RequestMapping(value = "/upload",method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<String> saveCustomer(@RequestPart MultipartFile customerDocument) throws IOException {
+    public ResponseEntity<String> saveCustomer(@RequestParam("customerDocument") MultipartFile customerDocument) throws IOException {
         List<Customer> customerList = new ArrayList<>();
         Workbook workbook = new XSSFWorkbook(customerDocument.getInputStream());
         Sheet worksheet = workbook.getSheetAt(0);
