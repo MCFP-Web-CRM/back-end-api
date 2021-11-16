@@ -138,6 +138,10 @@ public class Customer {
         }
         return this;
     }
+    public Customer changeManager(User newManager){
+        this.manager = newManager;
+        return this;
+    }
 
 
 }
