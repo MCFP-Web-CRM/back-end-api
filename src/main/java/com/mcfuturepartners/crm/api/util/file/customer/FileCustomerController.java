@@ -27,9 +27,9 @@ public class FileCustomerController {
     private final CustomerService customerService;
 
     @RequestMapping(value = "/upload",method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<String> saveCustomer(@RequestParam("customerDocument") MultipartFile customerDocument) throws IOException {
+    public ResponseEntity<String> saveCustomer(@ModelAttribute FileInputDto fileInputDto) throws IOException {
         List<Customer> customerList = new ArrayList<>();
-        Workbook workbook = new XSSFWorkbook(customerDocument.getInputStream());
+        Workbook workbook = new XSSFWorkbook(fileInputDto.getCustomerDocument().getInputStream());
         Sheet worksheet = workbook.getSheetAt(0);
         for (int i = 1 ; i < worksheet.getPhysicalNumberOfRows(); i++){
             Row row = worksheet.getRow(i);
