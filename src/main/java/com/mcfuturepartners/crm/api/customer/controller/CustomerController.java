@@ -47,7 +47,7 @@ public class CustomerController {
                                           @RequestParam(value = "customer-category") @Nullable String customerCategory,
                                           @RequestParam(value = "product-name") @Nullable String productName,
                                           @RequestParam(value = "funnel-id") @Nullable Long funnelId,
-                                          @RequestParam(value = "manager-id") @Nullable Long managerId,
+                                          @RequestParam(value = "manager-id") @Nullable List<Long> managerIds,
                                           @RequestParam(value = "start-date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Nullable LocalDate startDate,
                                           @RequestParam(value = "end-date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Nullable LocalDate endDate,
                                           @RequestParam(value = "counsel-keyword") @Nullable String counselKeyword,
@@ -64,7 +64,7 @@ public class CustomerController {
                         .categoryName(customerCategory)
                         .productName(productName)
                         .funnelId(funnelId)
-                        .managerId(managerId)
+                        .managerId(managerIds)
                         .startDate(startDate)
                         .endDate(endDate)
                         .counselKeyword(counselKeyword)

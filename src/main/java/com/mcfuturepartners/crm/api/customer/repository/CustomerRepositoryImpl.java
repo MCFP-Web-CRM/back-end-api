@@ -13,6 +13,7 @@ import com.querydsl.core.QueryFactory;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
+@Slf4j
 public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements CustomCustomerRepository {
     private final JPAQueryFactory queryFactory;
     
@@ -64,8 +66,16 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
         if(!ObjectUtils.isEmpty(customerSearch.getEndDate())){
             booleanBuilder.and(customer.counsels.any().regDate.before(customerSearch.getEndDate().atTime(23,59,59)));
         }
-        if(!ObjectUtils.isEmpty(customerSearch.getManagerId())){
-            booleanBuilder.and(customer.manager.id.eq(customerSearch.getManagerId()));
+        if(!ObjectUtils.isEmpty(customerSearch.getUserId())){
+            booleanBuilder.and(customer.manager.id.eq(customerSearch.getUserId()));
+        }
+        else{
+
+            if(!ObjectUtils.isEmpty(customerSearch.getManagerId())){
+                for(int i = 0 ; i < customerSearch.getManagerId().size();i ++){
+                    booleanBuilder.or(customer.manager.id.eq(customerSearch.getManagerId().get(i)));
+                }
+            }
         }
         JPQLQuery<Customer> query =  queryFactory.selectFrom(customer).where(booleanBuilder);
         long totalCount = query.fetchCount();
@@ -98,8 +108,8 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
         if(!ObjectUtils.isEmpty(customerSearch.getEndDate())){
             booleanBuilder.and(customer.counsels.any().regDate.before(customerSearch.getEndDate().atTime(23,59,59)));
         }
-        if(!ObjectUtils.isEmpty(customerSearch.getManagerId())){
-            booleanBuilder.and(customer.manager.id.eq(customerSearch.getManagerId()));
+        if(!ObjectUtils.isEmpty(customerSearch.getUserId())){
+            booleanBuilder.and(customer.manager.id.eq(customerSearch.getUserId()));
         }
         JPQLQuery<Customer> query =  queryFactory.selectFrom(customer).where(booleanBuilder);
 

@@ -69,7 +69,7 @@ public class SmsServiceImpl implements SmsService{
         List<CategoryCustomerPhone> categoryCustomerPhones = new ArrayList<>();
 
         if(!customerSearch.getAuthority().contains(Authority.ADMIN.toString())){
-            customerSearch.setManagerId(user.getId());
+            customerSearch.setUserId(user.getId());
         }
 
         for(Category category: categories){
@@ -91,7 +91,7 @@ public class SmsServiceImpl implements SmsService{
         User user = userRepository.findByUsername(customerSearch.getUsername()).orElseThrow(()->new AuthorizationException("USER "+ ErrorCode.RESOURCE_NOT_FOUND));
 
         if(!customerSearch.getAuthority().contains(Authority.ADMIN.toString())){
-            customerSearch.setManagerId(user.getId());
+            customerSearch.setUserId(user.getId());
         }
         customerSearch.setCategoryName(category.getName());
         List<Customer> customerList = qCustomerRepository.searchWithoutPageable(customerSearch);
