@@ -8,10 +8,7 @@ import com.mcfuturepartners.crm.api.exception.AuthorizationException;
 import com.mcfuturepartners.crm.api.exception.ErrorCode;
 import com.mcfuturepartners.crm.api.exception.FindException;
 import com.mcfuturepartners.crm.api.exception.LoginException;
-import com.mcfuturepartners.crm.api.user.dto.AdminUserUpdateDto;
-import com.mcfuturepartners.crm.api.user.dto.UserDto;
-import com.mcfuturepartners.crm.api.user.dto.UserResponseDto;
-import com.mcfuturepartners.crm.api.user.dto.UserUpdateDto;
+import com.mcfuturepartners.crm.api.user.dto.*;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.user.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -50,7 +47,6 @@ public class AdminUserController {
         return new ResponseEntity<>(userResponseDto, HttpStatus.CREATED);
     }
     @PutMapping(path = "/{userid}")
-
     public ResponseEntity<UserResponseDto> updateUser(@PathVariable(name = "userid") Long userId,
                                                       @RequestBody AdminUserUpdateDto adminUserUpdateDto){
 
@@ -65,6 +61,21 @@ public class AdminUserController {
         }
         return new ResponseEntity<>(userResponseDto,HttpStatus.OK);
     }
+
+    @GetMapping(path = "/profit/{user-id}")
+    public ResponseEntity<UserRevenueRefundDto> getMonthlySalesRefundProfit(@PathVariable("user-id")Long userId){
+        UserRevenueRefundDto userRevenueRefundDto ;
+        try{
+            userRevenueRefundDto = userService.getMonthlySalesRefundProfit(userId);
+        } catch (FindException findException){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(userRevenueRefundDto, HttpStatus.OK);
+    }
+
     @DeleteMapping(path = "/{userid}")
     @ApiOperation(value = "사원 계정 삭제 api", notes = "삭제 시 담당하던 고객들을 배정 없음으로 돌리는 로직 추가적으로 필요")
     public ResponseEntity<String> deleteUser(@PathVariable("userid") long userId){
@@ -73,4 +84,5 @@ public class AdminUserController {
         }
         return new ResponseEntity<>("deleted",HttpStatus.OK);
     }
+
 }
