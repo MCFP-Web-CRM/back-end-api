@@ -22,7 +22,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Repository
@@ -65,6 +68,12 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
         }
         if(!ObjectUtils.isEmpty(customerSearch.getEndDate())){
             booleanBuilder.and(customer.counsels.any().regDate.before(customerSearch.getEndDate().atTime(23,59,59)));
+        }
+        if(customerSearch.getMonthSalesCustomer()){
+            booleanBuilder.and(customer.orders.any().regDate.after(LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(),ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonthValue(),1).atStartOfDay()));
+        }
+        if(customerSearch.getMonthRefundCustomer()){
+            booleanBuilder.and(customer.orders.any().refund.regDate.after(LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(),ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonthValue(),1).atStartOfDay()));
         }
         if(!ObjectUtils.isEmpty(customerSearch.getUserId())){
             booleanBuilder.and(customer.manager.id.eq(customerSearch.getUserId()));
