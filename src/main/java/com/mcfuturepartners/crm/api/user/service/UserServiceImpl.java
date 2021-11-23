@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId).orElseThrow(()->new FindException("USER "+ErrorCode.RESOURCE_NOT_FOUND));
 
         User modifiedUser = adminUserUpdateDto.toEntity();
-
+        
         //if new department
         if(!ObjectUtils.isEmpty(adminUserUpdateDto.getDepartmentId())){
             modifiedUser.setDepartment(departmentRepository.findById(adminUserUpdateDto.getDepartmentId()).orElseThrow(()-> new FindException("Department "+ErrorCode.RESOURCE_NOT_FOUND)));

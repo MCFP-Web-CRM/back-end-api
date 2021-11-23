@@ -77,7 +77,7 @@ public class CustomerServiceImpl implements CustomerService {
         User user = userRepository.findByUsername(customerSearch.getUsername()).get();
 
         if(!customerSearch.getAuthority().contains(Authority.ADMIN.toString())){
-            customerSearch.setManagerId(user.getId());
+            customerSearch.setUserId(user.getId());
         }
         Page<Customer> searchResult = qCustomerRepository.search(customerSearch,pageable);
 
