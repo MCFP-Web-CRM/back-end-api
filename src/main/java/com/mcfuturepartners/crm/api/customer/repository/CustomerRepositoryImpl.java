@@ -73,7 +73,6 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
 
             if(!ObjectUtils.isEmpty(customerSearch.getManagerId())){
                 for(int i = 0 ; i < customerSearch.getManagerId().size();i ++){
-                    log.info(customerSearch.getManagerId().get(i).toString());
                     booleanBuilder.or(customer.manager.id.eq(customerSearch.getManagerId().get(i)));
                 }
             }
