@@ -51,11 +51,13 @@ public class CustomerController {
                                           @RequestParam(value = "start-date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Nullable LocalDate startDate,
                                           @RequestParam(value = "end-date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Nullable LocalDate endDate,
                                           @RequestParam(value = "counsel-keyword") @Nullable String counselKeyword,
+                                          @RequestParam(value = "month-sales-customer",defaultValue = "false") @Nullable Boolean monthSalesCustomer,
+                                          @RequestParam(value = "month-refund-customer",defaultValue = "false") @Nullable Boolean monthRefundCustomer,
                                           Pageable pageable){
+
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
-
 
         Page<CustomerResponseDto> listCustomer = customerService.searchCustomers(
                 CustomerSearch.builder()
@@ -70,6 +72,8 @@ public class CustomerController {
                         .counselKeyword(counselKeyword)
                         .authority(tokenProvider.getAuthentication(token).getAuthorities().toString())
                         .username(username)
+                        .monthSalesCustomer(monthSalesCustomer)
+                        .monthRefundCustomer(monthRefundCustomer)
                         .build(),pageable);
 
         return new ResponseEntity<>(listCustomer, HttpStatus.OK);

@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 @Service
 @Transactional
 @Slf4j
@@ -25,7 +28,7 @@ public class RefundServiceImpl implements RefundService{
     @Override
     public void makeRefund(RefundDto refundDto) {
         Order order = orderRepository.findById(refundDto.getOrderId()).orElseThrow(()-> new FindException("Order "+ ErrorCode.RESOURCE_NOT_FOUND.getMsg()));
-        Refund refund = Refund.builder().order(order).refundAmount(refundDto.getAmount()).build();
+        Refund refund = Refund.builder().order(order).customer(order.getCustomer()).refundAmount(refundDto.getAmount()).regDate(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime()).build();
 
         if(!ObjectUtils.isEmpty(order.getRefund())){
             throw new RefundException("Already Refunded");

@@ -196,7 +196,7 @@ public class CustomerServiceImpl implements CustomerService {
         User newManager = userRepository.findById(checkManagerChangeDto.getNewManagerId()).orElseThrow(()-> new FindException("USER " + ErrorCode.RESOURCE_NOT_FOUND));
 
         try{
-            customerRepository.saveAll(customers.stream().peek(customer -> customer.setManager(newManager)).collect(Collectors.toList()));
+            customerRepository.saveAll(customers.stream().peek(customer -> customer.setManager(newManager)).collect(Collectors.toList())));
         }catch (Exception e){
             throw e;
         }

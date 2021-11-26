@@ -52,16 +52,6 @@ public class Counsel {
     @NotNull
     private LocalDateTime regDate;
 
-
-
-
-
-
-
-
-
-
-
     public Counsel updateModified(Counsel updatedCounsel){
         if(StringUtils.hasText(updatedCounsel.contents)){
             this.setContents(updatedCounsel.contents);

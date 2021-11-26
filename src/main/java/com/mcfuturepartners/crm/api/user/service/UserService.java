@@ -18,5 +18,5 @@ public interface UserService {
     UserResponseDto getUserById(long id);
     UserResponseDto updateUser(Long userId, UserUpdateDto userDto);
     UserResponseDto updateUserByAdmin(Long userId, AdminUserUpdateDto userDto);
-
+    UserRevenueRefundDto getMonthlySalesRefundProfit(Long managerId);
 }
