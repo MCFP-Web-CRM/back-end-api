@@ -26,6 +26,4 @@ public class CustomerSearch {
     private String counselKeyword;
     private String authority;
     private String username;
-    private Boolean monthSalesCustomer;
-    private Boolean monthRefundCustomer;
 }

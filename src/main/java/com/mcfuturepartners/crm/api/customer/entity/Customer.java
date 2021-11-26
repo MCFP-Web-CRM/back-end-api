@@ -11,7 +11,6 @@ import com.mcfuturepartners.crm.api.customer.dto.CustomerUpdateDto;
 import com.mcfuturepartners.crm.api.department.entity.Department;
 import com.mcfuturepartners.crm.api.funnel.entity.Funnel;
 import com.mcfuturepartners.crm.api.order.entity.Order;
-import com.mcfuturepartners.crm.api.refund.entity.Refund;
 import com.mcfuturepartners.crm.api.sms.entity.Sms;
 import com.mcfuturepartners.crm.api.user.entity.User;
 import lombok.AllArgsConstructor;
@@ -81,9 +80,6 @@ public class Customer {
 
     @OneToMany(mappedBy = "customer")
     private List<Order> orders = new ArrayList<>();
-
-    @OneToMany(mappedBy = "customer")
-    private List<Refund> refund = new ArrayList<>();
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Counsel> counsels = new ArrayList<>();

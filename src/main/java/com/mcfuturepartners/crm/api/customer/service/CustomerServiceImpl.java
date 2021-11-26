@@ -1,5 +1,6 @@
 package com.mcfuturepartners.crm.api.customer.service;
 
+import com.mcfuturepartners.crm.api.admin.customer.CheckManagerChangeDto;
 import com.mcfuturepartners.crm.api.admin.customer.ManagerChangeDto;
 import com.mcfuturepartners.crm.api.category.dto.CategoryDto;
 import com.mcfuturepartners.crm.api.category.entity.Category;
@@ -186,6 +187,20 @@ public class CustomerServiceImpl implements CustomerService {
         } catch (Exception e){
             throw e;
         }
+        return "Success";
+    }
+
+    @Override
+    public String changeMangagerOfCheckedCustomers(CheckManagerChangeDto checkManagerChangeDto) {
+        List<Customer> customers = customerRepository.findAllById(checkManagerChangeDto.customerIds);
+        User newManager = userRepository.findById(checkManagerChangeDto.getNewManagerId()).orElseThrow(()-> new FindException("USER " + ErrorCode.RESOURCE_NOT_FOUND));
+
+        try{
+            customerRepository.saveAll(customers.stream().peek(customer -> customer.setManager(newManager)).collect(Collectors.toList()));
+        }catch (Exception e){
+            throw e;
+        }
+
         return "Success";
     }
 

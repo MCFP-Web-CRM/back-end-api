@@ -113,30 +113,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserRevenueRefundDto getMonthlySalesRefundProfit(Long managerId) {
-        User manager = userRepository.findById(managerId).orElseThrow(()->new FindException("USER "+ErrorCode.RESOURCE_NOT_FOUND));
-        LocalDateTime startOfMonth = LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonthValue(), 1).atStartOfDay();
-        Long salesAmount = manager.getOrders().stream()
-                .filter(order -> order.getRegDate().isAfter(startOfMonth))
-                .map(order -> order.getPrice())
-                .reduce(0L,Long::sum);
-
-        Long refundAmount = manager.getOrders().stream()
-                .filter(order -> !ObjectUtils.isEmpty(order.getRefund()))
-                .map(order -> order.getRefund())
-                .filter(refund -> !ObjectUtils.isEmpty(refund.getRegDate()))
-                .filter(refund -> refund.getRegDate().isAfter(startOfMonth))
-                .map(refund -> refund.getRefundAmount())
-                .reduce(0L,Long::sum);
-
-        return UserRevenueRefundDto.builder()
-                .salesAmount(salesAmount)
-                .refundAmount(refundAmount)
-                .profitAmount(salesAmount-refundAmount)
-                .build();
-    }
-
-    @Override
     public UserLoginResponseDto signin(User user) throws LoginException{
         UserLoginResponseDto userLoginResponseDto = new UserLoginResponseDto();
         User loginUser = userRepository.findByUsername(user.getUsername()).get();
