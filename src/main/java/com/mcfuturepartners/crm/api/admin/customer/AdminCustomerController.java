@@ -27,4 +27,17 @@ public class AdminCustomerController {
         }
         return new ResponseEntity<>("Update Success",HttpStatus.OK);
     }
+
+    @PutMapping(path = "/manager/change")
+    @ApiOperation(value = "담당자 변경 API (고객관리)",notes = "고객관리 탭 체크")
+    public ResponseEntity<String> changeManagerInCustomerRelations(@RequestBody CheckManagerChangeDto checkManagerChangeDto){
+        try{
+            customerService.changeMangagerOfCheckedCustomers(checkManagerChangeDto);
+        }catch (FindException findException){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>("Update Success",HttpStatus.OK);
+    }
 }

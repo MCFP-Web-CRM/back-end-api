@@ -1,5 +1,6 @@
 package com.mcfuturepartners.crm.api.customer.service;
 
+import com.mcfuturepartners.crm.api.admin.customer.CheckManagerChangeDto;
 import com.mcfuturepartners.crm.api.admin.customer.ManagerChangeDto;
 import com.mcfuturepartners.crm.api.customer.dto.*;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
@@ -17,6 +18,7 @@ public interface CustomerService {
     String saveAll(List<Customer> customerList);
     String save(CustomerRegisterDto customerDto);
     String changeAllCustomersManager(ManagerChangeDto managerChangeDto);
+    String changeMangagerOfCheckedCustomers(CheckManagerChangeDto checkManagerChangeDto);
     List<Customer> selectCustomer(Map<String,String> map);
     String updateCustomer(CustomerUpdateDto customerUpdateDto);
     String deleteCustomer(Long id);

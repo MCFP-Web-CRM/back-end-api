@@ -1,6 +1,9 @@
 package com.mcfuturepartners.crm.api.user.repository;
 
 import com.mcfuturepartners.crm.api.user.entity.User;
+import org.apache.xmlbeans.impl.xb.xsdschema.Attribute;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
