@@ -44,7 +44,7 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
         QCustomer customer = QCustomer.customer;
 
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-
+        BooleanBuilder checkBoxBoolean = new BooleanBuilder();
         if(StringUtils.hasText(customerSearch.getCustomerName())){
             booleanBuilder.and(customer.name.contains(customerSearch.getCustomerName()));
         }
@@ -68,25 +68,26 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
         }
         if(!ObjectUtils.isEmpty(customerSearch.getEndDate())){
             booleanBuilder.and(customer.counsels.any().regDate.before(customerSearch.getEndDate().atTime(23,59,59)));
-        }
-        if(customerSearch.getMonthSalesCustomer()){
-            booleanBuilder.and(customer.orders.any().regDate.after(LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(),ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonthValue(),1).atStartOfDay()));
-        }
-        if(customerSearch.getMonthRefundCustomer()){
-            booleanBuilder.and(customer.orders.any().refund.regDate.after(LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(),ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonthValue(),1).atStartOfDay()));
-        }
-        if(!ObjectUtils.isEmpty(customerSearch.getUserId())){
+        }if(!ObjectUtils.isEmpty(customerSearch.getUserId())){
             booleanBuilder.and(customer.manager.id.eq(customerSearch.getUserId()));
         }
         else{
-
             if(!ObjectUtils.isEmpty(customerSearch.getManagerId())){
                 for(int i = 0 ; i < customerSearch.getManagerId().size();i ++){
                     booleanBuilder.or(customer.manager.id.eq(customerSearch.getManagerId().get(i)));
                 }
             }
         }
-        JPQLQuery<Customer> query =  queryFactory.selectFrom(customer).where(booleanBuilder);
+        if(customerSearch.getMonthSalesCustomer()){
+            checkBoxBoolean.and(customer.orders.any().regDate.after(LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(),ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonthValue(),1).atStartOfDay()));
+            if(customerSearch.getMonthRefundCustomer())
+                checkBoxBoolean.or(customer.orders.any().refund.regDate.after(LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(),ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonthValue(),1).atStartOfDay()));
+        }
+        if(customerSearch.getMonthRefundCustomer()){
+            checkBoxBoolean.and(customer.orders.any().refund.regDate.after(LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(),ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonthValue(),1).atStartOfDay()));
+        }
+
+        JPQLQuery<Customer> query =  queryFactory.selectFrom(customer).where(checkBoxBoolean).where(booleanBuilder);
         long totalCount = query.fetchCount();
         List<Customer> results = getQuerydsl().applyPagination(pageable, query).fetch();
         return new PageImpl<>(results,pageable,totalCount);

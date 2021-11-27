@@ -58,7 +58,7 @@ public class CustomerController {
         String token = bearerToken.replace("Bearer ", "");
         DecodedJWT decodedJWT = JWT.decode(token);
         String username = decodedJWT.getSubject();
-
+        log.info(username);
         Page<CustomerResponseDto> listCustomer = customerService.searchCustomers(
                 CustomerSearch.builder()
                         .customerName(customerName)
