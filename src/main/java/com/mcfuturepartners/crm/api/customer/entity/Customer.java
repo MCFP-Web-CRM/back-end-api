@@ -83,7 +83,7 @@ public class Customer {
     private List<Order> orders = new ArrayList<>();
 
     @OneToMany(mappedBy = "customer")
-    private List<Refund> refund = new ArrayList<>();
+    private List<Refund> refunds = new ArrayList<>();
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Counsel> counsels = new ArrayList<>();
@@ -117,6 +117,11 @@ public class Customer {
 
         if(!funnel.getCustomers().contains(this)){
             funnel.addCustomer(this);
+        }
+    }
+    public void removeRefundsFromCustomer(){
+        if(refunds.size() != 0){
+            refunds.stream().forEach(refund -> refund.setCustomer(null));
         }
     }
     public void removeOrdersFromCustomer(){

@@ -237,6 +237,7 @@ public class CustomerServiceImpl implements CustomerService {
     public String deleteCustomer(Long id) {
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new FindException(DatabaseErrorCode.CUSTOMER_NOT_FOUND.name()));
         customer.removeOrdersFromCustomer();
+        customer.removeRefundsFromCustomer();
         try {
             customerRepository.delete(customer);
             return "successfully done";
