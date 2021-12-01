@@ -290,5 +290,16 @@ public class CustomerServiceImpl implements CustomerService {
                         .count(qCustomerRepository.countCustomersByFunnel(funnel)).build()).collect(Collectors.toList());
     }
 
+    @Override
+    public String deleteMultipleCustomers(List<Long> customerIds) {
+
+        try{
+            customerRepository.deleteAllById(customerIds);
+        }catch (Exception e){
+            throw e;
+        }
+        return "Success";
+    }
+
 
 }

@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "/admin/customer")
 @RequiredArgsConstructor
@@ -39,5 +41,14 @@ public class AdminCustomerController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>("Update Success",HttpStatus.OK);
+    }
+    @DeleteMapping
+    public ResponseEntity<Void> deleteCustomers(@RequestParam(value = "customer-id") List<Long> customerIds){
+        try{
+            customerService.deleteMultipleCustomers(customerIds);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -24,4 +24,5 @@ public interface CustomerService {
     String deleteCustomer(Long id);
     List<CustomerStatusCountDto> getDailyCustomerStatus();
     List<CustomerFunnelCountDto> getFunnelCount();
+    String deleteMultipleCustomers(List<Long> customerIds);
 }
