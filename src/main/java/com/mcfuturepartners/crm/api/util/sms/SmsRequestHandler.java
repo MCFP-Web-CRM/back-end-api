@@ -41,9 +41,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SmsRequestHandler {
     private final SmsService smsService;
-    private static final String FROM="010";//발신번호
-    private static final String accessKey = "lpGtYBhXdSdQQ4T7225w";                                     // 네이버 클라우드 플랫폼 회원에게 발급되는 개인 인증키
-    private static final  String secretKey = "zupF8Pg54YvNHgNy6ciLhFNZyN4IHrmjs2cwQA3z";                // 2차 인증을 위해 서비스마다 할당되는 service secret
+    private static final String FROM="01039822902";//발신번호
+    private static final String accessKey = "xTnNljHbJXm5nJyrq2rs";                                     // 네이버 클라우드 플랫폼 회원에게 발급되는 개인 인증키
+    private static final  String secretKey = "bxJPdKfztwf68aZ89waEyxQwwfia1OCOIGN4vUOU";                // 2차 인증을 위해 서비스마다 할당되는 service secret
     private static final  String serviceId = "ncp:sms:kr:273955995903:mcfuturepartners";                        // 프로젝트에 할당된 SMS 서비스 ID
 
     @Scheduled(cron = "0 0/1 * * * ?")
@@ -53,7 +53,6 @@ public class SmsRequestHandler {
         log.info("scheduled process");
         reservedSms.stream().forEach(smsProcessDto ->{
             ResponseEntity responseEntity = sendMessage(smsProcessDto);
-            log.info(responseEntity.toString());
             smsService.updateReservedSmsTo(smsProcessDto, responseEntity);
         });
 
