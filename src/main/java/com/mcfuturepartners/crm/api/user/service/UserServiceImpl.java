@@ -112,6 +112,10 @@ public class UserServiceImpl implements UserService {
         return userResponseDto;
     }
 
+    @Override
+    public User getUserByName(String name) {
+        return userRepository.findByName(name).orElse(null);
+    }
 
     @Override
     public UserRevenueRefundDto getMonthlySalesRefundProfit(Long managerId) {

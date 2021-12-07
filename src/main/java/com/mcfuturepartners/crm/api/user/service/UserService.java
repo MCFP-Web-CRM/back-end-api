@@ -16,6 +16,7 @@ public interface UserService {
     List<UserResponseDto> getAllUsers();
     List<UserRevenueResponseDto> getAllUserRevenue();
     UserResponseDto getUserById(long id);
+    User getUserByName(String name);
     UserResponseDto updateUser(Long userId, UserUpdateDto userDto);
     UserResponseDto updateUserByAdmin(Long userId, AdminUserUpdateDto userDto);
     UserRevenueRefundDto getMonthlySalesRefundProfit(Long managerId);

@@ -3,6 +3,8 @@ package com.mcfuturepartners.crm.api.util.file.customer;
 import com.mcfuturepartners.crm.api.customer.dto.CustomerRegisterDto;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
 import com.mcfuturepartners.crm.api.customer.service.CustomerService;
+import com.mcfuturepartners.crm.api.user.entity.User;
+import com.mcfuturepartners.crm.api.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -25,6 +27,7 @@ import java.util.List;
 @Slf4j
 public class FileCustomerController {
     private final CustomerService customerService;
+    private final UserService userService;
 
     @RequestMapping(value = "/upload",method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<String> saveCustomer(@ModelAttribute FileInputDto fileInputDto) throws IOException {
@@ -39,22 +42,35 @@ public class FileCustomerController {
 
             Cell c1 = row.getCell(0);
             Cell c2 = row.getCell(1);
-
+            Cell c3 = row.getCell(2);
             if(c1 == null || c1.getCellType() == CellType.BLANK){
                 continue;
             }
-            log.info(c1.toString()+" "+c2.toString());
-            if(c2 == null||c2.getCellType() == CellType.BLANK) {
+
+            if(c2 == null || c2.getCellType() == CellType.BLANK) {
                c2.setCellValue("");
             }
+
+//            if(c3 == null || c3.getCellType() == CellType.BLANK){
+//                c3.setCellValue("");
+//            }
             c1.setCellType(CellType.STRING);
             c2.setCellType(CellType.STRING);
+            //c3.setCellType(CellType.STRING);
+
             if(row.getCell(1).getStringCellValue().equals("미입력")||row.getCell(1).getStringCellValue().equals("익명")){
                 row.getCell(1).setCellValue("");
             }
             String phone = row.getCell(0).getStringCellValue().replace("-","");
             String name = row.getCell(1).getStringCellValue();
-            customerList.add(Customer.builder().phone(phone).name(name).regDate(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime()).build());
+            User manager = null;
+            if(c3 != null){
+                String managerName = row.getCell(2).getStringCellValue();
+                manager = userService.getUserByName(managerName);
+            }
+
+
+            customerList.add(Customer.builder().phone(phone).manager(manager).name(name).regDate(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime()).build());
         }
         log.info(customerService.saveAll(customerList).toString());
         return new ResponseEntity<>(HttpStatus.CREATED);
