@@ -8,13 +8,13 @@ spring:
       max-request-size: 30MB
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://${spring.datasource.env}:3306/happyhouse?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
-    username: ssafy
-    password: ssafy
+    url: jdbc:mariadb://${spring.datasource.env}:3306/mcfuture?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: root
     env: 3.37.1.251
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     defer-datasource-initialization: true
 
 server:
