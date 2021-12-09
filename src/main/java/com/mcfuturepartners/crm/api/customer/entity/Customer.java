@@ -129,6 +129,11 @@ public class Customer {
             orders.stream().forEach(order -> order.setCustomer(null));
         }
     }
+    public void removeCounselFromCustomer(){
+        if(counsels.size() != 0){
+            counsels.stream().forEach(counsel -> counsel.setCustomer(null));
+        }
+    }
     public Customer updateModified(CustomerUpdateDto customerUpdateDto){
         if(StringUtils.hasText(customerUpdateDto.getPhone())){
             this.phone = customerUpdateDto.getPhone();

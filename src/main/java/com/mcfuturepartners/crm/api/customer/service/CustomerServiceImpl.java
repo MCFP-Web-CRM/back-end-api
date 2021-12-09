@@ -238,6 +238,7 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new FindException(DatabaseErrorCode.CUSTOMER_NOT_FOUND.name()));
         customer.removeOrdersFromCustomer();
         customer.removeRefundsFromCustomer();
+
         try {
             customerRepository.delete(customer);
             return "successfully done";
@@ -292,7 +293,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public String deleteMultipleCustomers(List<Long> customerIds) {
-
+        customerRepository.findAllById(customerIds).stream().forEach(customer -> {
+            customer.removeOrdersFromCustomer();
+            customer.removeRefundsFromCustomer();
+        });
         try{
             customerRepository.deleteAllById(customerIds);
         }catch (Exception e){
