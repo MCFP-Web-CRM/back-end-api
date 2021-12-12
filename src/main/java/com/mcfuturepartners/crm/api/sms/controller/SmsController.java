@@ -57,7 +57,29 @@ public class SmsController {
 
         return new ResponseEntity<>(categoryCustomerPhoneList, HttpStatus.OK);
     }
+    @GetMapping("/product")
+    @ApiOperation(value = "sms 상품별 고객 조회 api", notes = "상품별 고객과 현재 사원이 보낼 수 있는 고객의 수 전달(admin은 전체 고객 전달)")
+    public ResponseEntity<List<ProductCustomerPhone>> getProducts(@RequestHeader(HttpHeaders.AUTHORIZATION) String bearerToken){
+        String token = bearerToken.replace("Bearer ", "");
+        DecodedJWT decodedJWT = JWT.decode(token);
+        String username = decodedJWT.getSubject();
 
+        //바꿔야함
+        List<ProductCustomerPhone> productCustomerPhoneList;
+        try{
+            //바꿔야함
+            productCustomerPhoneList = smsService.getProductsWithNumberOfCustomers(
+                    CustomerSearch.builder()
+                            .authority(tokenProvider.getAuthentication(token).getAuthorities().toString())
+                            .username(username)
+                            .build());
+        }catch (FindException findException){
+            findException.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        return new ResponseEntity<>(productCustomerPhoneList, HttpStatus.OK);
+    }
     @GetMapping("/category/{category-id}/phone")
     @ApiOperation(value = "카테고리 선택 시 핸드폰 번호 조회", notes = "고객 카테고리 내 고객의 핸드폰번호 전달")
     public ResponseEntity<PhoneListDto> getCategoryCustomerPhone(@RequestHeader(HttpHeaders.AUTHORIZATION) String bearerToken,
@@ -85,6 +107,32 @@ public class SmsController {
         return new ResponseEntity<>(phoneListDto,HttpStatus.OK);
     }
 
+    @GetMapping("/product/{product-id}/phone")
+    @ApiOperation(value = "카테고리 선택 시 핸드폰 번호 조회", notes = "고객 카테고리 내 고객의 핸드폰번호 전달")
+    public ResponseEntity<PhoneListDto> getProductCustomerPhone(@RequestHeader(HttpHeaders.AUTHORIZATION) String bearerToken,
+                                                                 @PathVariable(name = "product-id") Long productId){
+
+        String token = bearerToken.replace("Bearer ", "");
+        DecodedJWT decodedJWT = JWT.decode(token);
+        String username = decodedJWT.getSubject();
+
+        PhoneListDto phoneListDto;
+        try{
+            phoneListDto = smsService.getProductCustomerPhone(productId,
+                    CustomerSearch.builder().authority(tokenProvider.getAuthentication(token).getAuthorities().toString())
+                            .username(username)
+                            .build());
+        }catch (AuthorizationException authorizationException){
+            authorizationException.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        catch (FindException findException){
+            findException.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(phoneListDto,HttpStatus.OK);
+    }
     @GetMapping("/reservedSms")
     @ApiOperation(value = "현재 예약 중인 sms 조회", notes = "사원의 예약 중 sms 조회 api, 쿼리스트링으로 size, page, sort 보내야함. sort=sendTime,desc&sort=smsId,desc 꼭 추가!")
     public ResponseEntity<Page<SmsResponseDto>> getReservedSms(@RequestHeader(HttpHeaders.AUTHORIZATION) String bearerToken,

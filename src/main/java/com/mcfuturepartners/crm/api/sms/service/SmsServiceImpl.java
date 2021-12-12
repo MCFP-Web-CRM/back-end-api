@@ -15,6 +15,9 @@ import com.mcfuturepartners.crm.api.exception.FindException;
 import com.mcfuturepartners.crm.api.message.dto.MessageDto;
 import com.mcfuturepartners.crm.api.message.entity.Message;
 import com.mcfuturepartners.crm.api.message.repository.MessageRepository;
+import com.mcfuturepartners.crm.api.product.dto.ProductDto;
+import com.mcfuturepartners.crm.api.product.entity.Product;
+import com.mcfuturepartners.crm.api.product.repository.ProductRepository;
 import com.mcfuturepartners.crm.api.sms.dto.*;
 import com.mcfuturepartners.crm.api.sms.entity.Sms;
 import com.mcfuturepartners.crm.api.sms.entity.SmsStatus;
@@ -56,6 +59,7 @@ public class SmsServiceImpl implements SmsService{
     private final CustomerRepositoryImpl qCustomerRepository;
     private final CustomerService customerService;
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final SmsRepositoryImpl qSmsRepository;
     private final MessageRepository messageRepository;
@@ -86,6 +90,30 @@ public class SmsServiceImpl implements SmsService{
     }
 
     @Override
+    public List<ProductCustomerPhone> getProductsWithNumberOfCustomers(CustomerSearch customerSearch) {
+        User user = userRepository.findByUsername(customerSearch.getUsername()).orElseThrow(()->new FindException("USER "+ ErrorCode.RESOURCE_NOT_FOUND));
+
+        List<Product> products = productRepository.findAll();
+        List<ProductCustomerPhone> productCustomerPhones = new ArrayList<>();
+
+        if(!customerSearch.getAuthority().contains(Authority.ADMIN.toString())){
+            customerSearch.setUserId(user.getId());
+        }
+
+        for(Product product: products){
+            customerSearch.setProductName(product.getName());
+            productCustomerPhones.add(
+                    ProductCustomerPhone.builder()
+                            .productDto(modelMapper.map(product, ProductDto.class))
+                            .customerCount(qCustomerRepository
+                                    .searchWithoutPageable(customerSearch).stream()
+                                    .count())
+                            .build());
+        }
+        return productCustomerPhones;
+    }
+
+    @Override
     public PhoneListDto getCategoryCustomerPhone(Long categoryId, CustomerSearch customerSearch) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(()->new FindException("Category "+ErrorCode.RESOURCE_NOT_FOUND.getMsg()));
         User user = userRepository.findByUsername(customerSearch.getUsername()).orElseThrow(()->new AuthorizationException("USER "+ ErrorCode.RESOURCE_NOT_FOUND));
@@ -98,6 +126,22 @@ public class SmsServiceImpl implements SmsService{
 
         return PhoneListDto.builder()
                 .category(modelMapper.map(category, CategoryDto.class))
+                .receiverPhone(customerList.stream().map(customer -> customer.getPhone()).collect(Collectors.toList()))
+                .build();
+    }
+
+    @Override
+    public PhoneListDto getProductCustomerPhone(Long productId, CustomerSearch customerSearch) {
+        Product product = productRepository.findById(productId).orElseThrow(()-> new FindException("Product "+ErrorCode.RESOURCE_NOT_FOUND.getMsg()));
+        User user = userRepository.findByUsername(customerSearch.getUsername()).orElseThrow(()->new AuthorizationException("USER "+ ErrorCode.RESOURCE_NOT_FOUND));
+
+        if(!customerSearch.getAuthority().contains(Authority.ADMIN.toString())){
+            customerSearch.setUserId(user.getId());
+        }
+        customerSearch.setProductName(product.getName());
+        List<Customer> customerList = qCustomerRepository.searchWithoutPageable(customerSearch);
+        return PhoneListDto.builder()
+                .product(modelMapper.map(product, ProductDto.class))
                 .receiverPhone(customerList.stream().map(customer -> customer.getPhone()).collect(Collectors.toList()))
                 .build();
     }

@@ -5,12 +5,9 @@ import com.mcfuturepartners.crm.api.product.dto.ProductDto;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
-
-@Builder
 @Data
-public class PhoneListDto {
-    private CategoryDto category;
-    private ProductDto product;
-    private List<String> receiverPhone;
+@Builder
+public class ProductCustomerPhone {
+    private ProductDto productDto;
+    private Long customerCount;
 }

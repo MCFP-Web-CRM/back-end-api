@@ -23,7 +23,11 @@ public interface SmsService {
 
     List<CategoryCustomerPhone> getCategoriesWithNumberOfCustomers(CustomerSearch customerSearch);
 
+    List<ProductCustomerPhone> getProductsWithNumberOfCustomers(CustomerSearch customerSearch);
+
     PhoneListDto getCategoryCustomerPhone (Long categoryId, CustomerSearch customerSearch);
+
+    PhoneListDto getProductCustomerPhone (Long productId, CustomerSearch customerSearch);
 
     Page<SmsResponseDto> getReservedSms(String username, Pageable pageable);
 
