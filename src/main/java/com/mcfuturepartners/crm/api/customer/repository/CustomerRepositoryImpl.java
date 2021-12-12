@@ -1,6 +1,7 @@
 package com.mcfuturepartners.crm.api.customer.repository;
 
 import com.mcfuturepartners.crm.api.category.entity.QCategory;
+import com.mcfuturepartners.crm.api.counsel.entity.CounselStatus;
 import com.mcfuturepartners.crm.api.counsel.entity.QCounsel;
 import com.mcfuturepartners.crm.api.customer.dto.CustomerSearch;
 import com.mcfuturepartners.crm.api.customer.entity.Customer;
@@ -26,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 @Repository
@@ -42,7 +44,7 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
     public Page<Customer> search(CustomerSearch customerSearch, Pageable pageable){
 
         QCustomer customer = QCustomer.customer;
-
+        QCounsel counsel = QCounsel.counsel;
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         BooleanBuilder checkBoxBoolean = new BooleanBuilder();
         if(StringUtils.hasText(customerSearch.getCustomerName())){
@@ -59,6 +61,13 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
         }
         if(StringUtils.hasText(customerSearch.getProductName())){
             booleanBuilder.and(customer.orders.any().product.name.eq(customerSearch.getProductName()));
+        }
+        if(StringUtils.hasText(customerSearch.getCounselStatus())){
+            booleanBuilder.and(customer.counsels.any()
+                    .status.eq(Arrays.stream(CounselStatus.values())
+                            .filter(counselStatus -> counselStatus.getStatus().equals(customerSearch.getCounselStatus()))
+                            .findFirst()
+                            .get()));
         }
         if(StringUtils.hasText(customerSearch.getCounselKeyword())){
             booleanBuilder.and(customer.counsels.any().contents.contains(customerSearch.getCounselKeyword()));
@@ -90,6 +99,7 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
         JPQLQuery<Customer> query =  queryFactory.selectFrom(customer).where(checkBoxBoolean).where(booleanBuilder);
         long totalCount = query.fetchCount();
         List<Customer> results = getQuerydsl().applyPagination(pageable, query).fetch();
+
         return new PageImpl<>(results,pageable,totalCount);
     }
 
@@ -109,8 +119,13 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
         if(StringUtils.hasText(customerSearch.getProductName())){
             booleanBuilder.and(customer.orders.any().product.name.eq(customerSearch.getProductName()));
         }
+        if(StringUtils.hasText(customerSearch.getCounselStatus())){
+            booleanBuilder.and(customer.counsels.get(customer.counsels.size())
+                    .status.eq(Arrays.stream(CounselStatus.values())
+                    .filter(counselStatus -> counselStatus.getStatus().equals(customerSearch.getCounselStatus())).findFirst().get()));
+        }
         if(StringUtils.hasText(customerSearch.getCounselKeyword())){
-            booleanBuilder.and(customer.counsels.any().contents.contains(customerSearch.getCounselKeyword()));
+            booleanBuilder.and(customer.counsels.any().contents.contains(customerSearch.getCounselStatus()));
         }
         if(!ObjectUtils.isEmpty(customerSearch.getStartDate())){
             booleanBuilder.and(customer.counsels.any().regDate.after(customerSearch.getStartDate().atStartOfDay()));
@@ -121,6 +136,7 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
         if(!ObjectUtils.isEmpty(customerSearch.getUserId())){
             booleanBuilder.and(customer.manager.id.eq(customerSearch.getUserId()));
         }
+
         JPQLQuery<Customer> query =  queryFactory.selectFrom(customer).where(booleanBuilder);
 
 

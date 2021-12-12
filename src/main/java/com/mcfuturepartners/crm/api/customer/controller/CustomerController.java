@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Null;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -47,6 +48,7 @@ public class CustomerController {
                                           @RequestParam(value = "customer-category") @Nullable String customerCategory,
                                           @RequestParam(value = "product-name") @Nullable String productName,
                                           @RequestParam(value = "funnel-id") @Nullable Long funnelId,
+                                          @RequestParam(value = "counsel-status") @Nullable String counselStatus,
                                           @RequestParam(value = "manager-id") @Nullable List<Long> managerIds,
                                           @RequestParam(value = "start-date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Nullable LocalDate startDate,
                                           @RequestParam(value = "end-date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Nullable LocalDate endDate,
@@ -65,6 +67,7 @@ public class CustomerController {
                         .categoryName(customerCategory)
                         .productName(productName)
                         .funnelId(funnelId)
+                        .counselStatus(counselStatus)
                         .managerId(managerIds)
                         .startDate(startDate)
                         .endDate(endDate)
