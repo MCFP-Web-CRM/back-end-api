@@ -14,7 +14,7 @@ spring:
     env: 3.37.1.251
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     defer-datasource-initialization: true
 
 server:

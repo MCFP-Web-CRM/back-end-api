@@ -18,6 +18,8 @@ public class CustomerSearch {
     private String customerPhone;
     private String categoryName;
     private String productName;
+    //고객 상태 바탕으로 검색
+    private String counselStatus;
     private Long funnelId;
     private Long userId;
     private List<Long> managerId;
