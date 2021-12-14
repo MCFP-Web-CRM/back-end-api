@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.mcfuturepartners.crm.api.category.entity.Category;
 import com.mcfuturepartners.crm.api.counsel.entity.Counsel;
+import com.mcfuturepartners.crm.api.counsel.entity.CounselStatus;
 import com.mcfuturepartners.crm.api.customer.dto.CustomerUpdateDto;
 import com.mcfuturepartners.crm.api.department.entity.Department;
 import com.mcfuturepartners.crm.api.funnel.entity.Funnel;
@@ -67,6 +68,9 @@ public class Customer {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @Enumerated(EnumType.STRING)
+    private CounselStatus counselStatus;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
