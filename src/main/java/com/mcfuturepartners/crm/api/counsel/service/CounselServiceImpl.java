@@ -48,10 +48,12 @@ public class CounselServiceImpl implements CounselService {
     public List<CounselResponseDto> saveCounsel(CounselDto counselDto) {
         Counsel counsel = counselDto.toEntity();
         Customer customer = customerRepository.getById(counselDto.getCustomerId());
+        customer.setCounselStatus(counsel.getStatus());
         counsel.setCustomer(customer);
         counsel.setUser(userRepository.getByUsername(counselDto.getUsername()));
-        counselRepository.save(counsel);
 
+        customerRepository.save(customer);
+        counselRepository.save(counsel);
 
         return counselRepository.findAllByCustomer(customer).stream()
                 .map(counsel1 -> wrapCounselResponseDto(counsel1)).collect(Collectors.toList());
@@ -111,9 +113,12 @@ public class CounselServiceImpl implements CounselService {
         Counsel originalCounsel = counselRepository.findById(counselId)
                 .orElseThrow(()->
                         new FindException(DatabaseErrorCode.CUSTOMER_NOT_FOUND.name()));
-
+        Customer customer = customerRepository.findById(counselUpdateDto.getCustomerId()).orElseThrow(()->
+                new FindException("Customer "+ ErrorCode.RESOURCE_NOT_FOUND));
         try{
-            counselRepository.save(originalCounsel.updateModified(counselUpdateDto.toEntity()));
+            originalCounsel  = counselRepository.save(originalCounsel.updateModified(counselUpdateDto.toEntity()));
+            customer.setCounselStatus(originalCounsel.getStatus());
+
         } catch (Exception e){
             log.info("Counsel Update Failed");
             throw e;
