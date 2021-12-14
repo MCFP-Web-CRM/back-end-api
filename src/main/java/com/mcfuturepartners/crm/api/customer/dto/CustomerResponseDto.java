@@ -2,6 +2,7 @@ package com.mcfuturepartners.crm.api.customer.dto;
 
 import com.mcfuturepartners.crm.api.category.dto.CategoryDto;
 import com.mcfuturepartners.crm.api.counsel.dto.CounselDto;
+import com.mcfuturepartners.crm.api.counsel.entity.CounselStatus;
 import com.mcfuturepartners.crm.api.funnel.dto.FunnelResponseDto;
 import com.mcfuturepartners.crm.api.order.dto.OrderDto;
 import com.mcfuturepartners.crm.api.order.dto.OrderResponseDto;
@@ -37,6 +38,8 @@ public class CustomerResponseDto {
     private CategoryDto category;
     @ApiModelProperty(position = 8, example = "담당 직원")
     private UserResponseDto manager;
+    @ApiModelProperty(position = 9, example = "상담 상태")
+    private String counselStatus;
     @ApiModelProperty(position = 8, example = "구독 상품 이력")
     private List<OrderResponseDto> orderList;
     @ApiModelProperty(position = 8, example = "상담 이력")
