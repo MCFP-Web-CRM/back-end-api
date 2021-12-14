@@ -84,6 +84,9 @@ public class CustomerServiceImpl implements CustomerService {
 
         return new PageImpl<>(searchResult.stream().map(customer -> {
                     CustomerResponseDto customerResponseDto = modelMapper.map(customer, CustomerResponseDto.class);
+                    if(!ObjectUtils.isEmpty(customer.getCounselStatus())){
+                        customerResponseDto.setCounselStatus(customer.getCounselStatus().getStatus());
+                    }
                     if (customer.getManager() != null)
                         customerResponseDto.setManager(modelMapper.map(customer.getManager(), UserResponseDto.class));
                     if (customer.getFunnel() != null)

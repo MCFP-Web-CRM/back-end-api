@@ -63,11 +63,8 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
             booleanBuilder.and(customer.orders.any().product.name.eq(customerSearch.getProductName()));
         }
         if(StringUtils.hasText(customerSearch.getCounselStatus())){
-            booleanBuilder.and(customer.counsels.any()
-                    .status.eq(Arrays.stream(CounselStatus.values())
-                            .filter(counselStatus -> counselStatus.getStatus().equals(customerSearch.getCounselStatus()))
-                            .findFirst()
-                            .get()));
+            booleanBuilder.and(customer.counselStatus.eq(Arrays.stream(CounselStatus.values())
+                    .filter(counselStatus -> counselStatus.getStatus().equals(customerSearch.getCounselStatus())).findFirst().get()));
         }
         if(StringUtils.hasText(customerSearch.getCounselKeyword())){
             booleanBuilder.and(customer.counsels.any().contents.contains(customerSearch.getCounselKeyword()));
@@ -120,8 +117,7 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
             booleanBuilder.and(customer.orders.any().product.name.eq(customerSearch.getProductName()));
         }
         if(StringUtils.hasText(customerSearch.getCounselStatus())){
-            booleanBuilder.and(customer.counsels.get(customer.counsels.size())
-                    .status.eq(Arrays.stream(CounselStatus.values())
+            booleanBuilder.and(customer.counselStatus.eq(Arrays.stream(CounselStatus.values())
                     .filter(counselStatus -> counselStatus.getStatus().equals(customerSearch.getCounselStatus())).findFirst().get()));
         }
         if(StringUtils.hasText(customerSearch.getCounselKeyword())){
