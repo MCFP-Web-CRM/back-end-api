@@ -15,6 +15,7 @@ public interface CustomerService {
     Page<CustomerResponseDto> searchCustomers(CustomerSearch customerSearch, Pageable pageable);
     CustomerResponseDto findCustomer(Long id);
     Boolean findCustomerIfManager(long counselId, String username);
+    Boolean checkCustomerExists(String phone);
     String saveAll(List<Customer> customerList);
     String save(CustomerRegisterDto customerDto);
     String changeAllCustomersManager(ManagerChangeDto managerChangeDto);

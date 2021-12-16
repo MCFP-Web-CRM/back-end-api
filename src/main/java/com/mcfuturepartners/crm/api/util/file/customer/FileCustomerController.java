@@ -63,12 +63,17 @@ public class FileCustomerController {
             }
             String phone = row.getCell(0).getStringCellValue().replace("-","");
             String name = row.getCell(1).getStringCellValue();
+
+
             User manager = null;
+
+            if(customerService.checkCustomerExists(phone)) {
+                continue;
+            }
             if(c3 != null){
                 String managerName = row.getCell(2).getStringCellValue();
                 manager = userService.getUserByName(managerName);
             }
-
 
             customerList.add(Customer.builder().phone(phone).manager(manager).name(name).regDate(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime()).build());
         }

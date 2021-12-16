@@ -96,6 +96,15 @@ public class CustomerServiceImpl implements CustomerService {
                 .collect(Collectors.toList()),pageable,searchResult.getTotalElements());
 
     }
+
+    @Override
+    public Boolean checkCustomerExists(String phone) {
+        if (!customerRepository.findTopByPhone(phone).isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public Boolean findCustomerIfManager(long customerId, String username) {
         Customer customer = customerRepository.findById(customerId)
@@ -164,7 +173,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public String save(CustomerRegisterDto customerDto) {
-        if (!customerRepository.findTopByPhone(customerDto.getPhone()).isEmpty()) {
+        if (checkCustomerExists(customerDto.getPhone())) {
             return "customer already exists";
         }
 
