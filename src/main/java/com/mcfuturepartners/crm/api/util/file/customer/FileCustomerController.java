@@ -34,10 +34,9 @@ public class FileCustomerController {
         List<Customer> customerList = new ArrayList<>();
         Workbook workbook = new XSSFWorkbook(fileInputDto.getCustomerDocument().getInputStream());
         Sheet worksheet = workbook.getSheetAt(0);
-        for (int i = 1 ; i < worksheet.getPhysicalNumberOfRows(); i++){
+        for (int i = 0 ; i < worksheet.getPhysicalNumberOfRows(); i++){
             Row row = worksheet.getRow(i);
             //row.getCell(0).setCellType(CellType.STRING);
-            log.info(Integer.toString(i));
             if(row==null) continue;
 
             Cell c1 = row.getCell(0);
@@ -68,6 +67,8 @@ public class FileCustomerController {
             User manager = null;
 
             if(customerService.checkCustomerExists(phone)) {
+                log.info(Integer.toString(i));
+                log.info(name);
                 continue;
             }
             if(c3 != null){
