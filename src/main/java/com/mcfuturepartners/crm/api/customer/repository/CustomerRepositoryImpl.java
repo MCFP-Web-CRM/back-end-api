@@ -47,6 +47,7 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
         QCounsel counsel = QCounsel.counsel;
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         BooleanBuilder checkBoxBoolean = new BooleanBuilder();
+        BooleanBuilder managerBoolean = new BooleanBuilder();
         if(StringUtils.hasText(customerSearch.getCustomerName())){
             booleanBuilder.and(customer.name.contains(customerSearch.getCustomerName()));
         }
@@ -80,7 +81,7 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
         else{
             if(!ObjectUtils.isEmpty(customerSearch.getManagerId())){
                 for(int i = 0 ; i < customerSearch.getManagerId().size();i ++){
-                    booleanBuilder.or(customer.manager.id.eq(customerSearch.getManagerId().get(i)));
+                    managerBoolean.or(customer.manager.id.eq(customerSearch.getManagerId().get(i)));
                 }
             }
         }
@@ -93,7 +94,7 @@ public class CustomerRepositoryImpl extends QuerydslRepositorySupport implements
             checkBoxBoolean.and(customer.orders.any().refund.regDate.after(LocalDate.of(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getYear(),ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime().getMonthValue(),1).atStartOfDay()));
         }
 
-        JPQLQuery<Customer> query =  queryFactory.selectFrom(customer).where(checkBoxBoolean).where(booleanBuilder);
+        JPQLQuery<Customer> query =  queryFactory.selectFrom(customer).where(checkBoxBoolean).where(booleanBuilder).where(managerBoolean);
         long totalCount = query.fetchCount();
         List<Customer> results = getQuerydsl().applyPagination(pageable, query).fetch();
 
