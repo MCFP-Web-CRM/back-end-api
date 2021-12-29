@@ -185,7 +185,7 @@ public class SmsController {
             responseEntity = smsRequestHandler.sendMessage(smsProcessDto);
         }
 
-        //smsService.saveAll(smsProcessDto,responseEntity);
+        smsService.saveAll(smsProcessDto,responseEntity);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @DeleteMapping("/reservedSms")

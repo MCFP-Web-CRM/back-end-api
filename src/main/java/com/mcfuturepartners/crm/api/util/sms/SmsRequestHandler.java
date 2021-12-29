@@ -100,9 +100,9 @@ public class SmsRequestHandler {
             }
         }
 
-        log.info("no problem");
+
         String body = bodyJson.toJSONString();
-        /*try {
+       /* try {
             URL url = new URL(apiUrl);
             HttpURLConnection con = (HttpURLConnection)url.openConnection();
             con.setUseCaches(false);
