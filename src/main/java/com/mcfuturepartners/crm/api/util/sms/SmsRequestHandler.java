@@ -102,7 +102,7 @@ public class SmsRequestHandler {
 
 
         String body = bodyJson.toJSONString();
-       /* try {
+        /*try {
             URL url = new URL(apiUrl);
             HttpURLConnection con = (HttpURLConnection)url.openConnection();
             con.setUseCaches(false);
