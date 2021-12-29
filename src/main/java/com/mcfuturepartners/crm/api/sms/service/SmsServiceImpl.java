@@ -176,9 +176,8 @@ public class SmsServiceImpl implements SmsService{
     @Override
     public List<Sms> saveAll(SmsProcessDto smsDto, ResponseEntity responseEntity) {
         User user = userRepository.findByUsername(smsDto.getUsername()).orElseThrow(()-> new FindException("User "+ ErrorCode.RESOURCE_NOT_FOUND));
-        log.info("1");
 
-        List<Sms> smsList = smsDto.getReceiverPhone().stream().peek(phone -> log.info(phone)).map(
+        List<Sms> smsList = smsDto.getReceiverPhone().stream().map(
                 phone -> Sms.builder()
                     .message(smsDto.getMessage())
                     .receiver(customerRepository.findByPhone(phone).orElseThrow(()->new FindException("Customer "+ ErrorCode.RESOURCE_NOT_FOUND)))
@@ -186,7 +185,6 @@ public class SmsServiceImpl implements SmsService{
                     .sendTime(smsDto.getReservationTime())
                     .build()).collect(Collectors.toList());
 
-        log.info("2");
         if(ObjectUtils.isEmpty(responseEntity)){
             return smsRepository.saveAll(smsList.stream().peek(sms -> sms.setSmsStatus(SmsStatus.RESERVED)).collect(Collectors.toList()));
         }
