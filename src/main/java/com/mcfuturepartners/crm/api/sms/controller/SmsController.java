@@ -182,7 +182,7 @@ public class SmsController {
         SmsProcessDto smsProcessDto = smsService.createSmsProcessDto(smsDto);
 
         if(ObjectUtils.isEmpty(smsDto.getReservationTime())){
-            //responseEntity = smsRequestHandler.sendMessage(smsProcessDto);
+            responseEntity = smsRequestHandler.sendMessage(smsProcessDto);
         }
 
         //smsService.saveAll(smsProcessDto,responseEntity);
