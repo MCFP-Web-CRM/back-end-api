@@ -180,7 +180,7 @@ public class SmsServiceImpl implements SmsService{
         List<Sms> smsList = smsDto.getReceiverPhone().stream().map(
                 phone -> Sms.builder()
                     .message(smsDto.getMessage())
-                    .receiver(customerRepository.findByPhone(phone).orElseThrow(()->new FindException("Customer "+ ErrorCode.RESOURCE_NOT_FOUND)))
+                    .receiver(customerRepository.findFirstByPhone(phone).orElseThrow(()->new FindException("Customer "+ ErrorCode.RESOURCE_NOT_FOUND)))
                     .sender(user)
                     .sendTime(smsDto.getReservationTime())
                     .build()).collect(Collectors.toList());
