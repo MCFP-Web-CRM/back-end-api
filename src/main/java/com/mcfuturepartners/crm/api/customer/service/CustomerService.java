@@ -18,6 +18,7 @@ public interface CustomerService {
     Boolean checkCustomerExists(String phone);
     String saveAll(List<Customer> customerList);
     String save(CustomerRegisterDto customerDto);
+    String save(Customer customer);
     String changeAllCustomersManager(ManagerChangeDto managerChangeDto);
     String changeMangagerOfCheckedCustomers(CheckManagerChangeDto checkManagerChangeDto);
     List<Customer> selectCustomer(Map<String,String> map);

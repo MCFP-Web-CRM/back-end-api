@@ -20,6 +20,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>, Query
     List<Customer> findByManager(String managerNo);
     List<Customer> findByRegDateIsAfter(LocalDateTime startDate);
     long countCustomerByRegDateIsAfter(LocalDateTime startDate);
+    Optional<Customer> findFirstByPhone(String phone);
+
     Optional<Customer> findByPhone(String phone);
 //    List<Customer> findByProduct(String Product);
     List<Customer> findByFunnel(String funnel);

@@ -172,6 +172,12 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public String save(Customer customer) {
+        customerRepository.save(customer);
+        return "Success";
+    }
+
+    @Override
     public String save(CustomerRegisterDto customerDto) {
         if (checkCustomerExists(customerDto.getPhone())) {
             return "customer already exists";
