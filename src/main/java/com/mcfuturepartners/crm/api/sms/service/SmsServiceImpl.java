@@ -37,6 +37,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -185,13 +186,15 @@ public class SmsServiceImpl implements SmsService{
                     .sendTime(smsDto.getReservationTime())
                     .build()).collect(Collectors.toList());
 
-        if(ObjectUtils.isEmpty(responseEntity)){
-            return smsRepository.saveAll(smsList.stream().peek(sms -> sms.setSmsStatus(SmsStatus.RESERVED)).collect(Collectors.toList()));
-        }
         if(responseEntity.getStatusCode().equals(HttpStatus.OK)){
-            return smsRepository.saveAll(smsList.stream().peek(sms -> sms.setSmsStatus(SmsStatus.SENT))
-                    .peek(sms -> sms.setSendTime(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime()))
+            if(ObjectUtils.isEmpty(smsDto.getReservationTime())){
+                return smsRepository.saveAll(smsList.stream().peek(sms -> sms.setSmsStatus(SmsStatus.SENT))
+                        .peek(sms -> sms.setSendTime(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime()))
+                        .collect(Collectors.toList()));
+            }
+            return smsRepository.saveAll(smsList.stream().peek(sms -> sms.setSmsStatus(SmsStatus.RESERVED))
                     .collect(Collectors.toList()));
+
         }
         return smsRepository.saveAll(smsList.stream().peek(sms -> sms.setSmsStatus(SmsStatus.FAILED))
                 .peek(sms -> sms.setSendTime(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime()))
@@ -217,18 +220,12 @@ public class SmsServiceImpl implements SmsService{
 
 
     @Override
-    public List<Sms> updateReservedSmsTo(SmsProcessDto smsProcessDto, ResponseEntity responseEntity) {
+    public List<Sms> updateReservedSmsTo(SmsProcessDto smsProcessDto) {
         List<Sms> smsList = smsRepository.findAllById(smsProcessDto.getSmsIds());
 
         smsList = smsRepository.saveAll(smsList.stream().map(sms -> {
-            if(responseEntity.getStatusCode().equals(HttpStatus.OK)){
                 sms.setSmsStatus(SmsStatus.SENT);
                 sms.setSendTime(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime());
-            }
-            else{
-                sms.setSmsStatus(SmsStatus.FAILED);
-                sms.setSendTime(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime());
-            }
             return sms;
         }).collect(Collectors.toList()));
         return smsList;
@@ -258,6 +255,7 @@ public class SmsServiceImpl implements SmsService{
 
     }
 
+
     @Override
     public void deleteSmsRecords(List<Long> smsIds, String username) {
         User user = userRepository.findByUsername(username).orElseThrow(()->new AuthorizationException("USER "+ErrorCode.UNAUTHORIZED));
@@ -282,39 +280,18 @@ public class SmsServiceImpl implements SmsService{
     }
 
     @Override
-    public List<SmsProcessDto> findReservedSmsBeforeNow(LocalDateTime processTime) {
-        List<Sms> smsList = qSmsRepository.findReservedSmsBeforeNow(processTime);
-        List<SmsProcessDto> smsProcessDtoList = new ArrayList<>();
-        Map<Message, List<String>> receiverPhones = new HashMap<>();
-        Map<Message, List<Long>> smsIds = new HashMap<>();
+    public List<Sms> findReservedSmsBeforeNow(LocalDateTime localDateTime) {
+        List<Sms> smsList = qSmsRepository.findReservedSmsBeforeNow(localDateTime);
+        try{
+            smsRepository.saveAll(smsList.stream().map(sms -> {
+                sms.setSmsStatus(SmsStatus.SENT);
+                return sms;
+            }).collect(Collectors.toList()));
 
-        for(Sms sms : smsList){
-            if(receiverPhones.containsKey(sms.getMessage())){
-                List<String> tempPhones = receiverPhones.get(sms.getMessage());
-                tempPhones.add(sms.getReceiver().getPhone());
-                receiverPhones.put(sms.getMessage(),tempPhones);
-
-                List<Long> tempIds = smsIds.get(sms.getMessage());
-                tempIds.add(sms.getSmsId());
-                smsIds.put(sms.getMessage(),tempIds);
-
-
-                continue;
-            }
-            List<String> tempPhones = new ArrayList<>();
-            List<Long> tempIds = new ArrayList<>();
-            tempPhones.add(sms.getReceiver().getPhone());
-            tempIds.add(sms.getSmsId());
-
-            smsIds.put(sms.getMessage(),tempIds);
-            receiverPhones.put(sms.getMessage(),tempPhones);
+        } catch(Exception e){
+            throw e;
         }
-
-        for(Message message : receiverPhones.keySet()){
-            smsProcessDtoList.add(SmsProcessDto.builder().message(message).smsIds(smsIds.get(message)).receiverPhone(receiverPhones.get(message)).build());
-        }
-
-        return smsProcessDtoList;
+        return smsList;
     }
 
 }

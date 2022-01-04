@@ -15,11 +15,11 @@ import java.util.List;
 public interface SmsService {
     List<Sms> saveAll(SmsProcessDto smsDto, ResponseEntity responseEntity);
 
-    List<SmsProcessDto> findReservedSmsBeforeNow(LocalDateTime localDateTime);
+    List<Sms> findReservedSmsBeforeNow(LocalDateTime localDateTime);
 
     SmsProcessDto createSmsProcessDto(SmsDto smsDto);
 
-    List<Sms> updateReservedSmsTo(SmsProcessDto smsProcessDto, ResponseEntity responseEntity);
+    List<Sms> updateReservedSmsTo(SmsProcessDto smsProcessDto);
 
     List<CategoryCustomerPhone> getCategoriesWithNumberOfCustomers(CustomerSearch customerSearch);
 

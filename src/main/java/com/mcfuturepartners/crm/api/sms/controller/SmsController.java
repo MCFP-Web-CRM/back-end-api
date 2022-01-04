@@ -16,6 +16,7 @@ import com.mcfuturepartners.crm.api.user.entity.User;
 import com.mcfuturepartners.crm.api.util.sms.SmsRequestHandler;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -30,6 +31,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/sms")
 @RequiredArgsConstructor
+@Slf4j
 public class SmsController {
     private final SmsRequestHandler smsRequestHandler;
     private final TokenProvider tokenProvider;
@@ -178,16 +180,15 @@ public class SmsController {
         String username = decodedJWT.getSubject();
         smsDto.setUsername(username);
 
-        ResponseEntity responseEntity = null;
         SmsProcessDto smsProcessDto = smsService.createSmsProcessDto(smsDto);
 
-        if(ObjectUtils.isEmpty(smsDto.getReservationTime())){
-            responseEntity = smsRequestHandler.sendMessage(smsProcessDto);
-        }
+        ResponseEntity responseEntity = smsRequestHandler.sendMessage(smsProcessDto);
 
         smsService.saveAll(smsProcessDto,responseEntity);
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        return responseEntity;
     }
+
     @DeleteMapping("/reservedSms")
     @ApiOperation(value = "예약 취소 sms", notes = "쿼리 스트링으로 sms-id를 보내주면 해당 예약 문자 삭제 / 쿼리 스트링 없을 시 전체 예약 문자 일괄 삭제")
     public ResponseEntity<Void> deleteAllReservedSms(@RequestHeader(HttpHeaders.AUTHORIZATION) String bearerToken,
