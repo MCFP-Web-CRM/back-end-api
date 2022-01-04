@@ -12,10 +12,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +37,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Component
 @Slf4j
@@ -48,20 +51,18 @@ public class SmsRequestHandler {
 
     @Scheduled(cron = "0 0/1 * * * ?")
     public ResponseEntity processReservedMessage(){
-
-        List<SmsProcessDto> reservedSms = smsService.findReservedSmsBeforeNow(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime());
-        log.info("scheduled process");
-        reservedSms.stream().forEach(smsProcessDto ->{
-            ResponseEntity responseEntity = sendMessage(smsProcessDto);
-            smsService.updateReservedSmsTo(smsProcessDto, responseEntity);
-        });
-
+        try{
+            smsService.updateReservedSmsTo(LocalDateTime.now());
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
 
     public ResponseEntity sendMessage(@RequestBody SmsProcessDto sms) {
+        String pattern2 = "^01(?:0|1|[6-9])[.-]?(-\\d{3}|\\d{4})[.-]?(\\d{4})$";
 
         String hostNameUrl = "https://sens.apigw.ntruss.com";           // 호스트 URL
         String requestUrl= "/sms/v2/services/";                         // 요청 URL
@@ -72,6 +73,7 @@ public class SmsRequestHandler {
         requestUrl += serviceId + requestUrlType;
         String apiUrl = hostNameUrl + requestUrl;
         SmsType smsType;
+        int count = 0;
         if(sms.getMessage().getContent().length()>80){
             smsType = SmsType.LMS;
         }else{
@@ -92,14 +94,24 @@ public class SmsRequestHandler {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }else{
             for(int i=0; i<sms.getReceiverPhone().size(); i++) {
+                String phone = sms.getReceiverPhone().get(i);
+                if(!Pattern.matches(pattern2,sms.getReceiverPhone().get(i))) {
+                    continue;
+                }
+                phone = phone.replace("-","");
+
                 JSONObject toJson = new JSONObject();
                 toJson.put("subject","");                           // 메시지 제목 * LMS Type에서만 사용할 수 있습니다.
                 toJson.put("content",sms.getMessage().getContent());                // 메시지 내용 * Type별로 최대 byte 제한이 다릅니다.* SMS: 80byte / LMS: 2000byte
-                toJson.put("to",sms.getReceiverPhone().get(i).toString());       // 수신번호 목록  * 최대 1000개까지 한번에 전송할 수 있습니다.
+                toJson.put("to",phone);       // 수신번호 목록  * 최대 1000개까지 한번에 전송할 수 있습니다.
                 toArr.add(toJson);
+                count++;
             }
         }
 
+        if(!ObjectUtils.isEmpty(sms.getReservationTime())){
+            bodyJson.put("reserveTime", sms.getReservationTime().toString().replace("T"," "));
+        }
 
         String body = bodyJson.toJSONString();
         try {
@@ -123,7 +135,7 @@ public class SmsRequestHandler {
 
             int responseCode = con.getResponseCode();
 
-
+            log.info(con.getResponseMessage());
             if(responseCode==202) { // 정상 호출
                 return new ResponseEntity(HttpStatus.OK);
             } else {  // 에러 발생

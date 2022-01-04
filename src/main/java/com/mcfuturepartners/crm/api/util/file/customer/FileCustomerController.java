@@ -38,8 +38,8 @@ public class FileCustomerController {
         HashMap<String, Customer> customerBook = new HashMap<>();
         Workbook workbook = new XSSFWorkbook(fileInputDto.getCustomerDocument().getInputStream());
         Sheet worksheet = workbook.getSheetAt(0);
-        String pattern1 =  "^\\d{10,11}$";
-        String pattern2 = "^\\d{3}-\\d{3,4}-\\d{4}$";
+        String pattern2 = "^01(?:0|1|[6-9])[.-]?(-\\d{3}|\\d{4})[.-]?(\\d{4})$";
+
 
         for (int i = 0 ; i < worksheet.getPhysicalNumberOfRows(); i++){
             Row row = worksheet.getRow(i);
@@ -69,12 +69,12 @@ public class FileCustomerController {
             }
             String phone = row.getCell(0).getStringCellValue();//
 
-            if(!Pattern.matches(pattern1,phone)&&!Pattern.matches(pattern2,phone)){
+            if(!Pattern.matches(pattern2,phone)){
                 continue;
             }
-            if(Pattern.matches(pattern2,phone)){
-                phone = phone.replace("-","");
-            }
+
+            phone = phone.replace("-","");
+
             String name = row.getCell(1).getStringCellValue();
 
             User manager = null;
