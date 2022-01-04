@@ -15,7 +15,7 @@ import java.util.List;
 public interface SmsService {
     List<Sms> saveAll(SmsProcessDto smsDto, ResponseEntity responseEntity);
 
-    List<Sms> findReservedSmsBeforeNow(LocalDateTime localDateTime);
+    List<Sms> updateReservedSmsTo(LocalDateTime localDateTime);
 
     SmsProcessDto createSmsProcessDto(SmsDto smsDto);
 

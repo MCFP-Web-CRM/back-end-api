@@ -52,7 +52,7 @@ public class SmsRequestHandler {
     @Scheduled(cron = "0 0/1 * * * ?")
     public ResponseEntity processReservedMessage(){
         try{
-            smsService.findReservedSmsBeforeNow(LocalDateTime.now());
+            smsService.updateReservedSmsTo(LocalDateTime.now());
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

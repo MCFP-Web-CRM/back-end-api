@@ -280,7 +280,7 @@ public class SmsServiceImpl implements SmsService{
     }
 
     @Override
-    public List<Sms> findReservedSmsBeforeNow(LocalDateTime localDateTime) {
+    public List<Sms> updateReservedSmsTo(LocalDateTime localDateTime) {
         List<Sms> smsList = qSmsRepository.findReservedSmsBeforeNow(localDateTime);
         try{
             smsRepository.saveAll(smsList.stream().map(sms -> {
